@@ -1,0 +1,20 @@
+
+.chatMessageEven {
+	background-color: lightblue;
+}
+
+.chatMessageOdd {
+	background-color: white;
+}
+
+#status {
+	font-weight: bold;
+}
+
+.errorMessage {
+	color: red;
+}
+
+.infoMessage {
+	color: blue;
+}
