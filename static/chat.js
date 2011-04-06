@@ -170,7 +170,7 @@ var count = 0;
 var i = 0;
 var titleCurrentlyChanging = false;
 function addMessage(from, msg) {
-	var tr_class = from === 'Me' ? 'blue_row' : 'white_row';
+	var tr_class = from === 'Me' ? 'blue-row' : 'white-row';
 	var row = $('#chatWindow > tbody:last').append('<tr class="' + tr_class + '"><td>' + from + ': ' + msg + '</td></tr>');
 	var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
 	scrollDiv.scrollTop = scrollDiv.scrollHeight;
