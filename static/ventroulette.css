@@ -1,10 +1,10 @@
 
-.chatMessageEven {
-	background-color: lightblue;
+.white_row {
+	background-color:#fff; /* this probably isn't necesarry... */
 }
 
-.chatMessageOdd {
-	background-color: white;
+.blue_row {
+	background-color:#add8e6;
 }
 
 #status {

@@ -24,8 +24,8 @@ function error(msg) {
 }
 
 function status(msg, cssClass) {
-	
-	
+
+
 	if(msg == '') {
 		msg = '<form id="msgForm"><input id="chatInput" type="text" size=90 /><input type="submit" value="Send Chat"  /></form>';
 		msgform = true;
@@ -33,7 +33,7 @@ function status(msg, cssClass) {
 	else {
 		msgform = false;
 	}
-	
+
 	var status = $('#status');
 	status.removeClass('errorMessage infoMessage');
 	status.addClass(cssClass);
@@ -47,7 +47,7 @@ function status(msg, cssClass) {
 				}
 			);
 	}
-	
+
 }
 
 var chatId = -1;
@@ -71,38 +71,38 @@ function newPartner(cb, sync) {
 }
 
 var hasFocus = true;
-$(window).bind("blur", function() { 
+$(window).bind("blur", function() {
 	hasFocus = false;
 });
 $(window).bind("focus", function() {
 	hasFocus = true;
-	document.title = 'CompassionPit | Chat'; 
+	document.title = 'CompassionPit | Chat';
 });
 
 $(document).ready(
 	function() {
 		$('#enable_sound').attr('checked', true);
 		info('Initializing');
-		
+
 		try {
 			function audioReady() {
 				this.element.jPlayer('setFile', '/gong.mp3');
 			}
 			$('#audioPlayer').jPlayer({
-				ready: audioReady, 
-				swfPath: '/', 
+				ready: audioReady,
+				swfPath: '/',
 				reload: 'auto'
 			});
 		} catch(e) {
 		}
-		
+
 		$('#msgForm').submit(
 				function() {
 					sendMessage();
 					return false;
 				}
 			);
-		
+
 		$('#newPartner').click(
 				function() {
 					newPartner(
@@ -113,7 +113,7 @@ $(document).ready(
 						);
 				}
 			);
-		
+
 		// window.onbeforeunload = function(event) {
 		// 	return 'You sure?';
 		// }
@@ -128,9 +128,9 @@ $(document).ready(
 				}
 			});
 		})
-			
+
 		other = ($.getUrlVar('type') == 'listener') ? 'Venter' : 'Listener';
-		
+
 		getPartner();
 	}
 );
@@ -139,7 +139,7 @@ $(document).ready(
 function getPartner() {
 	hasPartner = false;
 	$.getJSON(
-			'/join?type=' + $.getUrlVar('type'), 
+			'/join?type=' + $.getUrlVar('type'),
 			function(data) {
 				initChat(data);
 			}
@@ -154,7 +154,7 @@ function initChat(data) {
 	}
 	// console.log("initChat", data);
 	chatId = data.id;
-	
+
 	getMessages();
 }
 
@@ -170,10 +170,10 @@ var count = 0;
 var i = 0;
 var titleCurrentlyChanging = false;
 function addMessage(from, msg) {
-	var cls = ((count++ & 1) == 0) ? 'chatMessageEven' : 'chatMessageOdd';
-	var row = $('#chatWindow > tbody:last').append('<tr class="' + cls + '"><td>' + from + ': ' + msg + '</td></tr>');
+	var tr_class = from === 'Me' ? 'blue_row' : 'white_row';
+	var row = $('#chatWindow > tbody:last').append('<tr class="' + tr_class + '"><td>' + from + ': ' + msg + '</td></tr>');
 	var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
-	scrollDiv.scrollTop = scrollDiv.scrollHeight;	
+	scrollDiv.scrollTop = scrollDiv.scrollHeight;
 	if(!hasFocus && !titleCurrentlyChanging) {
 		changeTitle();
 		if($("#enable_sound").is(':checked')) {
@@ -208,7 +208,7 @@ function getMessages() {
 			'/receive', {
 				rid: chatId,
 				type: $.getUrlVar('type')
-			}, 
+			},
 			function(data) {
 				// console.log("getMessages", data);
 				// if(data == false) {
@@ -222,7 +222,7 @@ function getMessages() {
 				// }
 				if(data.length)
 					handleMessages(data);
-				
+
 				getMessages();
 			}
 		)
