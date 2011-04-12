@@ -114,9 +114,10 @@ $(document).ready(
 				}
 			);
 
-		// window.onbeforeunload = function(event) {
-		// 	return 'You sure?';
-		// }
+        window.onbeforeunload = function(event) {
+            return hasPartner === true ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
+        }
+
 		$(window).unload(function () {
 			$.ajax({
 				url: "/send",
