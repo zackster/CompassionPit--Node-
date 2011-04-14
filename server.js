@@ -32,6 +32,7 @@ var Room = function(id) {
 		self.poke(type);
 		var messages = self.messages[type];
 
+	    // this looks suspicious
 		if (!messages.length) {
 			var timeout = setTimeout(function () {
 				self.waiting[type] = false;

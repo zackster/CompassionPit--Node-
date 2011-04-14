@@ -142,6 +142,7 @@ function getPartner() {
 	$.getJSON(
 			'/join?type=' + $.getUrlVar('type'),
 			function(data) {
+			    console.log("getPartner", data);
 				initChat(data);
 			}
 		);
@@ -153,7 +154,6 @@ function initChat(data) {
 		getPartner();
 		return;
 	}
-	// console.log("initChat", data);
 	chatId = data.id;
 
 	getMessages();
@@ -205,6 +205,7 @@ function changeTitle() {
 function getMessages() {
 	if (chatId == -1) return;
 	var curChatId = chatId;
+    console.log("getting messages", chatId);
 	$.getJSON(
 			'/receive', {
 				rid: chatId,
@@ -221,6 +222,7 @@ function getMessages() {
 				// 	addMessage('System', 'A new chat partner has entered your chat (#' + (chatId >> 1) + ').');
 				// 	hasPartner = true;
 				// }
+			    console.log("gotMessages", data);
 				if(data.length)
 					handleMessages(data);
 
