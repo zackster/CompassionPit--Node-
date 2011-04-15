@@ -81,6 +81,13 @@ $(window).bind("focus", function() {
 
 $(document).ready(
 	function() {
+	    now.ready(function () {
+		now.testFunc(function (resp) {
+		    alert(resp);
+		});
+	    });
+
+
 		$('#enable_sound').attr('checked', true);
 		info('Initializing');
 

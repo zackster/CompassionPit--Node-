@@ -1,5 +1,6 @@
 var fu  = require("./fu");
 var sys = require("sys");
+var nowjs = require("now");
 
 var PORT = 8000;
 
@@ -209,6 +210,13 @@ setInterval(function () {
 fu.get("/", fu.staticHandler("static/index.html"));
 
 fu.listen(PORT, null);
+
+var everyone = nowjs.initialize(fu.server, {host: 'localhost',
+				     port: 8080});
+
+everyone.now.testFunc = function (callback) {
+    callback("meow");
+}
 
 
 function S4() {
