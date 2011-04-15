@@ -81,13 +81,6 @@ $(window).bind("focus", function() {
 
 $(document).ready(
 	function() {
-	    now.ready(function () {
-		now.testFunc(function (resp) {
-		    alert(resp);
-		});
-	    });
-
-
 		$('#enable_sound').attr('checked', true);
 		info('Initializing');
 
@@ -265,21 +258,19 @@ function sendMessage() {
 	if(msg == '' || chatId == -1)
 		return;
 	info('Sending message...')
-	$.getJSON(
-			'/send', {
-				rid: chatId,
-				type: $.getUrlVar('type'),
-				action: "message",
-				data: msg
-			},
-			function(data) {
-				if(data == true) {
-					addMessage('Me', msg);
-					info('');
-					$('#chatInput').val('')
-				} else {
-					error('Failed to send message.')
-				}
-			}
-		);
+
+    now.send({rid: chatId,
+	      type: $.getUrlVar('type'),
+	      action: "message",
+	      data: msg
+	     }, 
+	     function (data) {
+		 if(data == true) {
+		     addMessage('Me', msg);
+		     info('');
+		     $('#chatInput').val('')
+		 } else {
+		     error('Failed to send message.')
+		 }
+	     });
 }

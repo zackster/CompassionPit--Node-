@@ -54,9 +54,9 @@ var Room = function(id) {
 		messages.length = 0;
 	}
 	
-	self.send = function (type, opposite, message, response) {
+    self.send = function (type, opposite, message, callback) {
 		self.poke(type);
-		
+
 		var messages = self.messages[opposite];
 		if (message.action == "disconnect") {
 			removeFromWaiters(self.id);
@@ -65,7 +65,7 @@ var Room = function(id) {
 		messages.push(message);
 		if (self.waiting[opposite]) self.waiting[opposite]();
 
-		response.simpleJSON(200, true);
+	callback(true);
 	}
 
 	self.start = function () {
@@ -216,6 +216,25 @@ var everyone = nowjs.initialize(fu.server, {host: 'localhost',
 
 everyone.now.testFunc = function (callback) {
     callback("meow");
+}
+
+everyone.now.send = function (params, callback) {
+    var type = params.type;
+    type = (type == "venter") ? "venter" : "listener";
+    opposite = (type == "venter") ? "listener" : "venter";
+    var room_id = params.rid;
+    var message = {
+	action: params.action,
+	data: params.data
+    };
+	
+    var room = rooms[room_id];
+    if (!room) {
+	callback(null);
+	return;
+    }
+
+    room.send(type, opposite, message, callback);
 }
 
 
