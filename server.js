@@ -66,7 +66,7 @@ var Room = function(id) {
 		if (self.waiting[opposite]) self.waiting[opposite]();
 
 	callback(true);
-	}
+    }
 
 	self.start = function () {
 		self.venter = self.listener = new Date().getTime();
@@ -214,10 +214,6 @@ fu.listen(PORT, null);
 var everyone = nowjs.initialize(fu.server, {host: 'localhost',
 				     port: 8080});
 
-everyone.now.testFunc = function (callback) {
-    callback("meow");
-}
-
 everyone.now.send = function (params, callback) {
     var type = params.type;
     type = (type == "venter") ? "venter" : "listener";
@@ -235,7 +231,34 @@ everyone.now.send = function (params, callback) {
     }
 
     room.send(type, opposite, message, callback);
-}
+};
+
+everyone.now.join = function (type, callback) {
+    type = (type == "venter") ? "venter" : "listener";
+    opposite = (type == "venter") ? "listener" : "venter";
+    
+	if (waiters[opposite].length) {
+		// TODO loop through waiters until we find a room that is still defined (exists in rooms)
+		var room_id = waiters[opposite].shift();
+		try {
+			rooms[room_id].start();
+		    return callback({ id: room_id });
+		}
+		catch (e) {
+			console.log("Error starting room:", e);
+		    return callback({});
+		}
+		return;
+	}
+	
+	var room_id = guid();
+	var tmp_room = new Room(room_id);
+	rooms[room_id] = tmp_room;
+	
+	waiters[type].push(room_id);
+	
+    return callback({ id: room_id });
+};
 
 
 function S4() {

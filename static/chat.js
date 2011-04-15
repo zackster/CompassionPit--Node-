@@ -79,8 +79,8 @@ $(window).bind("focus", function() {
 	document.title = 'CompassionPit | Chat';
 });
 
-$(document).ready(
-	function() {
+$(document).ready(function() {
+    now.ready(function () {
 		$('#enable_sound').attr('checked', true);
 		info('Initializing');
 
@@ -133,20 +133,19 @@ $(document).ready(
 		other = ($.getUrlVar('type') == 'listener') ? 'Venter' : 'Listener';
 
 		getPartner();
-	}
-);
+    })});
 
 
 function getPartner() {
-	hasPartner = false;
-	$.getJSON(
-			'/join?type=' + $.getUrlVar('type'),
-			function(data) {
-			    console.log("getPartner", data);
-				initChat(data);
-			}
-		);
-	info('Waiting for a chat partner... ');
+    hasPartner = false;
+    console.log('joining');
+    console.log(now);
+
+    now.join($.getUrlVar('type'), function(data) {
+	console.log('joined?');
+	initChat(data);
+    });
+    info('Waiting for a chat partner... ');
 }
 
 function initChat(data) {
