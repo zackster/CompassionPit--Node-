@@ -119,8 +119,8 @@ fu.get("/", fu.staticHandler("static/index.html"));
 
 fu.listen(PORT, null);
 
-var everyone = nowjs.initialize(fu.server, {host: 'localhost',
-				     port: 8080});
+var everyone = nowjs.initialize(fu.server, {host: 'compassionpit.com',
+					    port: 80});
 
 everyone.now.send = function (params, callback) {
     var callback = callback || function () {};
