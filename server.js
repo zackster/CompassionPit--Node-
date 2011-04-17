@@ -22,7 +22,9 @@ var Room = function(id) {
     self.group = nowjs.getGroup(id);
 
     self.group.on('connect', function (clientId) {
-	console.log(self.waiting);
+	for (var k in self.group) {
+	    console.log(k);
+	}
 	if (self.waiting.listener && self.waiting.venter) {
 	    console.log("sending receive to all");
 	    self.group.now.receive([{action: 'join'}]);
