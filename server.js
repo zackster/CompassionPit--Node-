@@ -19,6 +19,7 @@ var Room = function(id) {
 	self.start_timer = 0;
 	self.venter = 0;
 	self.listener = 0;
+    self.group = nowjs.getGroup(id);
 	
 	self.poke = function (type) {
 		self.last_access_time = new Date().getTime();
@@ -33,7 +34,6 @@ var Room = function(id) {
 		self.poke(type);
 		var messages = self.messages[type];
 
-	    
 
 	    // this looks suspicious
 		/*if (!messages.length) {
@@ -83,7 +83,7 @@ var Room = function(id) {
 		});
 		if (self.waiting["listener"]) self.waiting["listener"]();
 		if (self.waiting["venter"]) self.waiting["venter"]();
-		
+
 		self.start_timer = setInterval(function () {
 			var now = new Date().getTime();
 			if ((self.venter < (now - (20 * 1000))) ||
@@ -120,68 +120,6 @@ function removeFromWaiters(room_id) {
 
 var rooms = {};
 
-// TODO, get rid of waiters and just look through the active rooms
-// for a room that has the appropriate slot open. It's more brute-
-// forcy, but it makes things simpler as well.
-fu.get("/join", function (request, response) {
-	var type = request.query.type;
-	type = (type == "venter") ? "venter" : "listener";
-	opposite = (type == "venter") ? "listener" : "venter";
-	
-	if (waiters[opposite].length) {
-		// TODO loop through waiters until we find a room that is still defined (exists in rooms)
-		var room_id = waiters[opposite].shift();
-		try {
-			rooms[room_id].start();
-			response.simpleJSON(200, { id: room_id });
-		}
-		catch (e) {
-			console.log("Error starting room:", e);
-			response.simpleJSON(200, {});
-		}
-		return;
-	}
-	
-	var room_id = guid();
-	var tmp_room = new Room(room_id);
-	rooms[room_id] = tmp_room;
-	
-	waiters[type].push(room_id);
-	
-	return response.simpleJSON(200, { id: room_id });
-});
-fu.get("/receive", function (request, response) {
-	var type = request.query.type;
-	type = (type == "venter") ? "venter" : "listener";
-	opposite = (type == "venter") ? "listener" : "venter";
-	var room_id = request.query.rid;
-	
-	var room = rooms[room_id];
-	if (!room) {
-		response.simpleJSON(404, {});
-		return;
-	}
-	
-	return room.receive(type, response);
-});
-fu.get("/send", function (request, response) {
-	var type = request.query.type;
-	type = (type == "venter") ? "venter" : "listener";
-	opposite = (type == "venter") ? "listener" : "venter";
-	var room_id = request.query.rid;
-	var message = {
-		action: request.query.action,
-		data: request.query.data
-	};
-	
-	var room = rooms[room_id];
-	if (!room) {
-		response.simpleJSON(404, {});
-		return;
-	}
-	
-	room.send(type, opposite, message, response);
-})
 fu.get("/counts", function (request, response) {
 	var listeners = 0;
 	var venters = 0;
@@ -237,46 +175,54 @@ everyone.now.send = function (params, callback) {
 
     room.send(type, opposite, message, callback);
 
-    room.receive(type, function (data, callback) {
-	everyone.now.receive(data, callback);
+    console.log("sending a receive");
+    room.receive(opposite, function (data, callback) {
+	console.log("with this", data);
+	room.group.now.receive(data, callback);
     });
 };
 
+// TODO, get rid of waiters and just look through the active rooms
+// for a room that has the appropriate slot open. It's more brute-
+// forcy, but it makes things simpler as well.
 everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
 
     console.log(waiters);
     
-	if (waiters[opposite].length) {
-		// TODO loop through waiters until we find a room that is still defined (exists in rooms)
-		var room_id = waiters[opposite].shift();
-		try {
-			rooms[room_id].start();
-		    callback({ id: room_id });
-		    return rooms[room_id].receive(type, function (data, callback) {
-			console.log("sending out", data);
-			everyone.now.receive(data, callback);
-		    });
-		}
-		catch (e) {
-			console.log("Error starting room:", e);
-		    return callback({});
-		}
-		return;
+    if (waiters[opposite].length) {
+	// TODO loop through waiters until we find a room that is still defined (exists in rooms)
+	var room_id = waiters[opposite].shift();
+	try {
+	    console.log("addUser", this.user.clientId);
+	    rooms[room_id].group.addUser(this.user.clientId);
+	    rooms[room_id].start();
+	    callback({ id: room_id });
+	    return rooms[room_id].receive(type, function (data, callback) {
+		rooms[room_id].group.now.receive(data, callback);
+	    });
 	}
+	catch (e) {
+	    console.log("Error starting room:", e);
+	    return callback({});
+	}
+	return;
+    }
 	
-	var room_id = guid();
-	var tmp_room = new Room(room_id);
-	rooms[room_id] = tmp_room;
-	
-	waiters[type].push(room_id);
+    var room_id = guid();
+    var tmp_room = new Room(room_id);
+    rooms[room_id] = tmp_room;
+    
+    waiters[type].push(room_id);
+
+    console.log(this.user);
+ //   console.log("addUser", this.user.clientId);
+    tmp_room.group.addUser(this.user.clientId);
 	
     callback({ id: room_id });
-
     tmp_room.receive(type, function (data, callback) {
-	console.log("sending out", data);
-	everyone.now.receive(data, callback);
+	tmp_room.group.now.receive(data, callback);
     });
 };
 
