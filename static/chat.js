@@ -54,19 +54,15 @@ var chatId = -1;
 var other;
 var hasPartner = false;
 
-function newPartner(cb, sync) {
+function newPartner(callback, sync) {
 	if(hasPartner) {
 		var oldChatId = chatId;
 		chatId = -1;
 		hasPartner = false;
-		$.getJSON(
-			'/send', {
-				rid: oldChatId,
-				type: $.getUrlVar('type'),
-				action: "disconnect"
-			},
-			cb
-		);
+	    now.send({rid: oldChatId,
+		      type: $.getUrlVar('type'),
+		      action: "disconnect"},
+		     callback);
 	}
 }
 
@@ -119,15 +115,9 @@ $(document).ready(function() {
         }
 
 		$(window).unload(function () {
-			$.ajax({
-				url: "/send",
-				async: false,
-				data: {
-					rid: chatId,
-					type: $.getUrlVar('type'),
-					action: "disconnect"
-				}
-			});
+		    now.send({rid: chatId,
+			      type: $.getUrlVar('type'),
+			      action: "disconnect"});
 		})
 
 		other = ($.getUrlVar('type') == 'listener') ? 'Venter' : 'Listener';

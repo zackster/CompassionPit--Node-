@@ -20,16 +20,6 @@ var Room = function(id) {
 	self.venter = 0;
 	self.listener = 0;
     self.group = nowjs.getGroup(id);
-    
-
-    self.group.on('connect', function (clientId) {
-	console.log("a client!");
-    });
-
-    self.group.on('disconnect', function (clientId) {
-	console.log("a client is gone!");
-//	self.group.now.receive([{action: 'disconnect'}]);
-    });
 	
 	self.poke = function (type) {
 		self.last_access_time = new Date().getTime();
@@ -49,11 +39,12 @@ var Room = function(id) {
 	    });
 	}
 	
-    self.send = function (type, opposite, message, callback) {
+    self.send = function (type, opposite, message, clientId, callback) {
 		self.poke(type);
 
 		var messages = self.messages[opposite];
 		if (message.action == "disconnect") {
+		    self.group.removeUser(clientId);
 			removeFromWaiters(self.id);
 		}
 
@@ -141,6 +132,8 @@ var everyone = nowjs.initialize(fu.server, {host: 'localhost',
 				     port: 8080});
 
 everyone.now.send = function (params, callback) {
+    var callback = callback || function () {};
+
     var type = params.type;
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
@@ -157,7 +150,7 @@ everyone.now.send = function (params, callback) {
 	return;
     }
 
-    room.send(type, opposite, message, callback);
+    room.send(type, opposite, message, this.user.clientId, callback);
 };
 
 // TODO, get rid of waiters and just look through the active rooms
