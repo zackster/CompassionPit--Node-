@@ -173,7 +173,7 @@ var i = 0;
 var titleCurrentlyChanging = false;
 function addMessage(from, msg) {
 	var tr_class = from === 'Me' ? 'blue-row' : 'white-row';
-	var row = $('#chatWindow > tbody:last').append('<tr class="' + tr_class + '"><td>' + from + ': ' + msg + '</td></tr>');
+    var row = $('#chatWindow > tbody:last').append('<tr class="' + tr_class + '"><td>' + from.capitalize() + ': ' + msg + '</td></tr>');
 	var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
 	scrollDiv.scrollTop = scrollDiv.scrollHeight;
 	if(!hasFocus && !titleCurrentlyChanging) {
@@ -203,38 +203,9 @@ function changeTitle() {
 	}
 }
 
-function getMessages() {
-	if (chatId == -1) return;
-    //return;
-	var curChatId = chatId;
-    console.log("getting messages", chatId);
-	$.getJSON(
-			'/receive', {
-				rid: chatId,
-				type: $.getUrlVar('type')
-			},
-			function(data) {
-				// console.log("getMessages", data);
-				// if(data == false) {
-				// 	addMessage('System', 'Your chat partner got disconnected. Please wait while we find you a new ' + other + '.');
-				// 	return getPartner();
-				// }
-				// else if(data == true) {
-				// 	info('');
-				// 	addMessage('System', 'A new chat partner has entered your chat (#' + (chatId >> 1) + ').');
-				// 	hasPartner = true;
-				// }
-			    console.log("gotMessages", data);
-				if(data.length)
-					handleMessages(data);
-
-				getMessages();
-			}
-		)
-}
-
 now.receive = function (data, callback) {
     var callback = callback || function () {};
+    console.log("received", data);
     handleMessages(data);
     callback();
 }
@@ -248,7 +219,9 @@ function handleMessages(messages) {
 				hasPartner = true;
 				break;
 			case "message":
-				addMessage(other, message.data);
+		    if (message.type != $.getUrlVar('type')) {
+			addMessage(message.type, message.data);
+		    }
 				break;
 			case "disconnect":
 				addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
@@ -281,4 +254,8 @@ function sendMessage() {
 		     error('Failed to send message.')
 		 }
 	     });
+}
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
 }

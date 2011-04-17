@@ -22,7 +22,9 @@ var Room = function(id) {
     self.group = nowjs.getGroup(id);
 
     self.group.on('connect', function (clientId) {
-	if (clientId != this.user.clientId) {
+	console.log(self.waiting);
+	if (self.waiting.listener && self.waiting.venter) {
+	    console.log("sending receive to all");
 	    self.group.now.receive([{action: 'join'}]);
 	}
     });
@@ -76,8 +78,10 @@ var Room = function(id) {
 			removeFromWaiters(self.id);
 		}
 
-		messages.push(message);
-		if (self.waiting[opposite]) self.waiting[opposite]();
+	self.group.now.receive([message]);
+
+//		messages.push(message);
+//		if (self.waiting[opposite]) self.waiting[opposite]();
 
 	callback(true);
     }
@@ -93,7 +97,7 @@ var Room = function(id) {
 		if (self.waiting["listener"]) self.waiting["listener"]();
 		if (self.waiting["venter"]) self.waiting["venter"]();
 
-		self.start_timer = setInterval(function () {
+		/*self.start_timer = setInterval(function () {
 			var now = new Date().getTime();
 			if ((self.venter < (now - (20 * 1000))) ||
 			    (self.listener < (now - (20 * 1000)))) {
@@ -110,7 +114,7 @@ var Room = function(id) {
 				
 				clearInterval(self.start_timer);
 			}
-		}, 1000 * 2);
+		}, 1000 * 2);*/
 	}
 }
 
@@ -173,7 +177,8 @@ everyone.now.send = function (params, callback) {
     var room_id = params.rid;
     var message = {
 	action: params.action,
-	data: params.data
+	data: params.data,
+	type: type
     };
 	
     var room = rooms[room_id];
@@ -183,10 +188,6 @@ everyone.now.send = function (params, callback) {
     }
 
     room.send(type, opposite, message, callback);
-
-    room.receive(opposite, function (data, callback) {
-	room.group.now.receive(data, callback);
-    });
 };
 
 // TODO, get rid of waiters and just look through the active rooms
