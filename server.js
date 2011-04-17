@@ -19,19 +19,19 @@ var Room = function(id) {
 	self.start_timer = 0;
 	self.venter = 0;
 	self.listener = 0;
-    self.group = nowjs.getGroup(id);
-    self.clients = [];
+        self.group = nowjs.getGroup(id);
+        self.clients = [];
 
-    self.group.on('connect', function (clientId) {
-	self.clients.push(clientId);
-    });
+        self.group.on('connect', function (clientId) {
+        	self.clients.push(clientId);
+        });
 
-    self.group.on('disconnect', function (clientId) {
-	self.clients.splice(self.clients.indexOf(clientId), 1);
-	if (self.clients.length < 1) {
-	    delete_room(self.id);
-	}
-    });
+        self.group.on('disconnect', function (clientId) {
+	        self.clients.splice(self.clients.indexOf(clientId), 1);
+        	if (self.clients.length < 1) {
+        	    delete_room(self.id);
+	        }
+        });
 	
 	self.poke = function (type) {
 		self.last_access_time = new Date().getTime();
@@ -42,7 +42,7 @@ var Room = function(id) {
 		return self.last_access_time < (new Date().getTime() - (1000 * 30));
 	}
 	
-    self.send = function (type, opposite, message, clientId, callback) {
+        self.send = function (type, opposite, message, clientId, callback) {
 		self.poke(type);
 
 		var messages = self.messages[opposite];
@@ -51,10 +51,10 @@ var Room = function(id) {
 			removeFromWaiters(self.id);
 		}
 
-	self.group.now.receive([message]);
+        	self.group.now.receive([message]);
 
-	callback(true);
-    }
+	        callback(true);
+        }
 
 	self.start = function () {
 	    self.venter = self.listener = new Date().getTime();

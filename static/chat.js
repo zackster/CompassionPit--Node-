@@ -128,8 +128,6 @@ $(document).ready(function() {
 
 function getPartner() {
     hasPartner = false;
-    console.log('joining');
-    console.log(now);
 
     now.join($.getUrlVar('type'), function(data) {
 	console.log('joined?');
@@ -139,15 +137,11 @@ function getPartner() {
 }
 
 function initChat(data) {
-    console.log("initing", data);
 	if (!data) {
 		getPartner();
 		return;
 	}
 	chatId = data.id;
-
-    console.log("getmessages!");
-//	getMessages();
 }
 
 function gong() {
@@ -193,13 +187,6 @@ function changeTitle() {
 	}
 }
 
-now.receive = function (data, callback) {
-    var callback = callback || function () {};
-    console.log("received", data);
-    handleMessages(data);
-    callback();
-}
-
 function handleMessages(messages) {
 	messages.forEach(function (message) {
 		switch (message.action) {
@@ -209,10 +196,10 @@ function handleMessages(messages) {
 				hasPartner = true;
 				break;
 			case "message":
-		    if (message.type != $.getUrlVar('type')) {
-			addMessage(message.type, message.data);
-		    }
-				break;
+		                if (message.type != $.getUrlVar('type')) {
+        			        addMessage(message.type, message.data);
+	                        }
+		    		break;
 			case "disconnect":
 				addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
 				chatId = -1;
@@ -225,11 +212,11 @@ function handleMessages(messages) {
 }
 
 function sendMessage() {
-	var msg = $('#chatInput').val();
-	if(msg == '' || chatId == -1)
-		return;
-	info('Sending message...')
-
+    var msg = $('#chatInput').val();
+    if(msg == '' || chatId == -1)
+	    return;
+    info('Sending message...')
+    
     now.send({rid: chatId,
 	      type: $.getUrlVar('type'),
 	      action: "message",
@@ -244,6 +231,14 @@ function sendMessage() {
 		     error('Failed to send message.')
 		 }
 	     });
+}
+
+// this function gets called by the server
+now.receive = function (data, callback) {
+    var callback = callback || function () {};
+    console.log("received", data);
+    handleMessages(data);
+    callback();
 }
 
 String.prototype.capitalize = function() {
