@@ -29,12 +29,14 @@ var Room = function(id) {
 		return self.last_access_time < (new Date().getTime() - (1000 * 30));
 	}
 	
-	self.receive = function (type, response) {
+	self.receive = function (type, callback) {
 		self.poke(type);
 		var messages = self.messages[type];
 
+	    
+
 	    // this looks suspicious
-		if (!messages.length) {
+		/*if (!messages.length) {
 			var timeout = setTimeout(function () {
 				self.waiting[type] = false;
 				response.simpleJSON(200, []);
@@ -48,10 +50,13 @@ var Room = function(id) {
 			};
 			
 			return;
-		}
+		}*/
 
-		response.simpleJSON(200, messages);
+	    console.log("callbacking", messages);
+	    callback(messages, function () {
 		messages.length = 0;
+	    });
+		//messages.length = 0;
 	}
 	
     self.send = function (type, opposite, message, callback) {
@@ -231,18 +236,28 @@ everyone.now.send = function (params, callback) {
     }
 
     room.send(type, opposite, message, callback);
+
+    room.receive(type, function (data, callback) {
+	everyone.now.receive(data, callback);
+    });
 };
 
 everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
+
+    console.log(waiters);
     
 	if (waiters[opposite].length) {
 		// TODO loop through waiters until we find a room that is still defined (exists in rooms)
 		var room_id = waiters[opposite].shift();
 		try {
 			rooms[room_id].start();
-		    return callback({ id: room_id });
+		    callback({ id: room_id });
+		    return rooms[room_id].receive(type, function (data, callback) {
+			console.log("sending out", data);
+			everyone.now.receive(data, callback);
+		    });
 		}
 		catch (e) {
 			console.log("Error starting room:", e);
@@ -257,7 +272,12 @@ everyone.now.join = function (type, callback) {
 	
 	waiters[type].push(room_id);
 	
-    return callback({ id: room_id });
+    callback({ id: room_id });
+
+    tmp_room.receive(type, function (data, callback) {
+	console.log("sending out", data);
+	everyone.now.receive(data, callback);
+    });
 };
 
 

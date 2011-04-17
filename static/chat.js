@@ -149,13 +149,15 @@ function getPartner() {
 }
 
 function initChat(data) {
+    console.log("initing", data);
 	if (!data) {
 		getPartner();
 		return;
 	}
 	chatId = data.id;
 
-	getMessages();
+    console.log("getmessages!");
+//	getMessages();
 }
 
 function gong() {
@@ -203,6 +205,7 @@ function changeTitle() {
 
 function getMessages() {
 	if (chatId == -1) return;
+    //return;
 	var curChatId = chatId;
     console.log("getting messages", chatId);
 	$.getJSON(
@@ -228,6 +231,12 @@ function getMessages() {
 				getMessages();
 			}
 		)
+}
+
+now.receive = function (data, callback) {
+    console.log("received", data);
+    handleMessages(data);
+    callback();
 }
 
 function handleMessages(messages) {
