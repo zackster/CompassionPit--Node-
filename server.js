@@ -20,19 +20,15 @@ var Room = function(id) {
 	self.venter = 0;
 	self.listener = 0;
     self.group = nowjs.getGroup(id);
+    
 
     self.group.on('connect', function (clientId) {
-	for (var k in self.group) {
-	    console.log(k);
-	}
-	if (self.waiting.listener && self.waiting.venter) {
-	    console.log("sending receive to all");
-	    self.group.now.receive([{action: 'join'}]);
-	}
+	console.log("a client!");
     });
 
     self.group.on('disconnect', function (clientId) {
-	self.group.now.receive([{action: 'disconnect'}]);
+	console.log("a client is gone!");
+//	self.group.now.receive([{action: 'disconnect'}]);
     });
 	
 	self.poke = function (type) {
@@ -48,28 +44,9 @@ var Room = function(id) {
 		self.poke(type);
 		var messages = self.messages[type];
 
-
-	    // this looks suspicious
-		/*if (!messages.length) {
-			var timeout = setTimeout(function () {
-				self.waiting[type] = false;
-				response.simpleJSON(200, []);
-			}, 10 * 1000);
-			
-			self.waiting[type] = function() {
-				response.simpleJSON(200, messages);
-				messages.length = 0;
-				self.waiting[type] = false;
-				clearTimeout(timeout);
-			};
-			
-			return;
-		}*/
-
 	    callback(messages, function () {
 		messages.length = 0;
 	    });
-		//messages.length = 0;
 	}
 	
     self.send = function (type, opposite, message, callback) {
@@ -82,22 +59,13 @@ var Room = function(id) {
 
 	self.group.now.receive([message]);
 
-//		messages.push(message);
-//		if (self.waiting[opposite]) self.waiting[opposite]();
-
 	callback(true);
     }
 
 	self.start = function () {
-		self.venter = self.listener = new Date().getTime();
-		self.messages["listener"].push({
-			action: "join"
-		});
-		self.messages["venter"].push({
-			action: "join"
-		});
-		if (self.waiting["listener"]) self.waiting["listener"]();
-		if (self.waiting["venter"]) self.waiting["venter"]();
+	    self.venter = self.listener = new Date().getTime();
+
+	    self.group.now.receive([{action: 'join'}]);
 
 		/*self.start_timer = setInterval(function () {
 			var now = new Date().getTime();
