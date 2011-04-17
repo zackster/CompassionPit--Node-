@@ -20,6 +20,18 @@ var Room = function(id) {
 	self.venter = 0;
 	self.listener = 0;
     self.group = nowjs.getGroup(id);
+    self.clients = [];
+
+    self.group.on('connect', function (clientId) {
+	self.clients.push(clientId);
+    });
+
+    self.group.on('disconnect', function (clientId) {
+	self.clients.splice(self.clients.indexOf(clientId), 1);
+	if (self.clients.length < 1) {
+	    delete_room(self.id);
+	}
+    });
 	
 	self.poke = function (type) {
 		self.last_access_time = new Date().getTime();
@@ -28,15 +40,6 @@ var Room = function(id) {
 	
 	self.expired = function () {
 		return self.last_access_time < (new Date().getTime() - (1000 * 30));
-	}
-	
-	self.receive = function (type, callback) {
-		self.poke(type);
-		var messages = self.messages[type];
-
-	    callback(messages, function () {
-		messages.length = 0;
-	    });
 	}
 	
     self.send = function (type, opposite, message, clientId, callback) {
@@ -65,6 +68,8 @@ var waiters = {
 	venter:   []
 };
 
+var rooms = {};
+
 function removeFromWaiters(room_id) {
 	var idx = waiters["listener"].indexOf(room_id);
 	if (idx != -1) waiters["listener"].splice(idx, 1);
@@ -73,7 +78,11 @@ function removeFromWaiters(room_id) {
 	if (idx != -1) waiters["venter"].splice(idx, 1);
 }
 
-var rooms = {};
+
+function delete_room(roomId) {
+    console.log("Removing room", roomId);
+    delete rooms[roomId];
+}
 
 fu.get("/counts", function (request, response) {
 	var listeners = 0;
@@ -94,16 +103,17 @@ fu.get("/dump", function (request, response) {
 	response.simpleText(200, sys.inspect(rooms));
 })
 
-setInterval(function () {
+// is there any particularly good reason for this to exist?
+/*setInterval(function () {
 	for (i in rooms) {
 		var room = rooms[i];
 		if (room.expired()) {
-			console.log("Removing room", i);
-			delete rooms[i];
+		    console.log("Removing room", i);
+		    delete rooms[i];
 		}
 	}
 }, 1000 * 10);
-
+*/
 
 fu.get("/", fu.staticHandler("static/index.html"));
 
@@ -149,9 +159,6 @@ everyone.now.join = function (type, callback) {
 	    rooms[room_id].group.addUser(this.user.clientId);
 	    rooms[room_id].start();
 	    callback({ id: room_id });
-/*	    return rooms[room_id].receive(type, function (data, callback) {
-		rooms[room_id].group.now.receive(data, callback);
-	    });*/
 	}
 	catch (e) {
 	    console.log("Error starting room:", e);
