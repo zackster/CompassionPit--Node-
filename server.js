@@ -20,6 +20,16 @@ var Room = function(id) {
 	self.venter = 0;
 	self.listener = 0;
     self.group = nowjs.getGroup(id);
+
+    self.group.on('connect', function (clientId) {
+	if (clientId != this.user.clientId) {
+	    self.group.now.receive([{action: 'join'}]);
+	}
+    });
+
+    self.group.on('disconnect', function (clientId) {
+	self.group.now.receive([{action: 'disconnect'}]);
+    });
 	
 	self.poke = function (type) {
 		self.last_access_time = new Date().getTime();
@@ -52,7 +62,6 @@ var Room = function(id) {
 			return;
 		}*/
 
-	    console.log("callbacking", messages);
 	    callback(messages, function () {
 		messages.length = 0;
 	    });
@@ -175,9 +184,7 @@ everyone.now.send = function (params, callback) {
 
     room.send(type, opposite, message, callback);
 
-    console.log("sending a receive");
     room.receive(opposite, function (data, callback) {
-	console.log("with this", data);
 	room.group.now.receive(data, callback);
     });
 };
@@ -189,13 +196,11 @@ everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
 
-    console.log(waiters);
     
     if (waiters[opposite].length) {
 	// TODO loop through waiters until we find a room that is still defined (exists in rooms)
 	var room_id = waiters[opposite].shift();
 	try {
-	    console.log("addUser", this.user.clientId);
 	    rooms[room_id].group.addUser(this.user.clientId);
 	    rooms[room_id].start();
 	    callback({ id: room_id });
@@ -216,14 +221,9 @@ everyone.now.join = function (type, callback) {
     
     waiters[type].push(room_id);
 
-    console.log(this.user);
- //   console.log("addUser", this.user.clientId);
     tmp_room.group.addUser(this.user.clientId);
 	
     callback({ id: room_id });
-    tmp_room.receive(type, function (data, callback) {
-	tmp_room.group.now.receive(data, callback);
-    });
 };
 
 

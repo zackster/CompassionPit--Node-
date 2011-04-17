@@ -234,7 +234,7 @@ function getMessages() {
 }
 
 now.receive = function (data, callback) {
-    console.log("received", data);
+    var callback = callback || function () {};
     handleMessages(data);
     callback();
 }
