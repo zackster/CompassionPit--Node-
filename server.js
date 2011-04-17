@@ -57,25 +57,6 @@ var Room = function(id) {
 	    self.venter = self.listener = new Date().getTime();
 
 	    self.group.now.receive([{action: 'join'}]);
-
-		/*self.start_timer = setInterval(function () {
-			var now = new Date().getTime();
-			if ((self.venter < (now - (20 * 1000))) ||
-			    (self.listener < (now - (20 * 1000)))) {
-				self.messages["listener"].push({
-					action: "disconnect"
-				});
-				if (self.waiting["listener"]) self.waiting["listener"]();
-				self.messages["venter"].push({
-					action: "disconnect"
-				});
-				if (self.waiting["venter"]) self.waiting["venter"]();
-				
-				removeFromWaiters(self.id);
-				
-				clearInterval(self.start_timer);
-			}
-		}, 1000 * 2);*/
 	}
 }
 
@@ -168,9 +149,9 @@ everyone.now.join = function (type, callback) {
 	    rooms[room_id].group.addUser(this.user.clientId);
 	    rooms[room_id].start();
 	    callback({ id: room_id });
-	    return rooms[room_id].receive(type, function (data, callback) {
+/*	    return rooms[room_id].receive(type, function (data, callback) {
 		rooms[room_id].group.now.receive(data, callback);
-	    });
+	    });*/
 	}
 	catch (e) {
 	    console.log("Error starting room:", e);
