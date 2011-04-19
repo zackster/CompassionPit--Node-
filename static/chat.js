@@ -114,10 +114,10 @@ $(document).ready(function() {
             return hasPartner === true ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
         }
 
-		$(window).unload(function () {
-		    now.send({rid: chatId,
+		$(window).unload(function (event) {
+/*		    now.send({rid: chatId,
 			      type: $.getUrlVar('type'),
-			      action: "disconnect"});
+			      action: "disconnect"});*/
 		})
 
 		other = ($.getUrlVar('type') == 'listener') ? 'Venter' : 'Listener';

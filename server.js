@@ -8,14 +8,6 @@ var Room = function(id) {
 	var self = this;
 	self.id = id;
 	self.last_access_time = new Date().getTime();
-	self.messages = {
-		listener: [],
-		venter:   []
-	};
-	self.waiting = {
-		listener: false,
-		venter: false
-	};
 	self.start_timer = 0;
 	self.venter = 0;
 	self.listener = 0;
@@ -30,7 +22,7 @@ var Room = function(id) {
         self.group.on('disconnect', function (clientId) {
 	        self.clients.splice(self.clients.indexOf(clientId), 1);
 	    console.log("lost", self.clients);
-        	if (self.clients.length < 1) {
+        	if (self.clients.length < 2) {
 		    console.log("dead");
         	    delete_room(self.id);
 	        }
@@ -48,7 +40,6 @@ var Room = function(id) {
         self.send = function (type, opposite, message, clientId, callback) {
 		self.poke(type);
 
-		var messages = self.messages[opposite];
 		if (message.action == "disconnect") {
 		    self.removeUser(clientId);
 		}
@@ -152,9 +143,6 @@ everyone.now.send = function (params, callback) {
     room.send(type, opposite, message, this.user.clientId, callback);
 };
 
-// TODO, get rid of waiters and just look through the active rooms
-// for a room that has the appropriate slot open. It's more brute-
-// forcy, but it makes things simpler as well.
 everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
@@ -199,7 +187,9 @@ everyone.now.join = function (type, callback) {
 everyone.disconnected(function () {
     var room = rooms[client_rooms[this.user.clientId]];
     if (room) {
-	rooms[client_rooms[this.user.clientId]].removeUser(this.user.clientId);
+	everyone.now.send.call(this, {rid: room.id,
+				      action: 'disconnect',
+				      type: 'listener'});
     }
 
     delete client_rooms[this.user.clientId];
