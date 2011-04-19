@@ -236,7 +236,6 @@ function sendMessage() {
 // this function gets called by the server
 now.receive = function (data, callback) {
     var callback = callback || function () {};
-    console.log("received", data);
     handleMessages(data);
     callback();
 }

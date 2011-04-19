@@ -75,6 +75,7 @@ var Room = function(id) {
 }
 
 var rooms = {};
+var client_rooms = {};
 
 function delete_room(roomId) {
     console.log("Removing room", roomId);
@@ -161,10 +162,19 @@ everyone.now.join = function (type, callback) {
     console.log("new", type);
     var room = {};
 
+    // disconnect from old room if rejoining
+    var oldRoomId = client_rooms[this.user.clientId];
+    if (rooms[oldRoomId]) {
+	console.log("disconnecting old room", oldRoomId);
+	rooms[oldRoomId].removeUser(this.user.clientId);
+    }
+
+    // find new room
     for (var id in rooms) {
 	room = rooms[id];
 	if (!room[type]) {
 	    try {
+		client_rooms[this.user.clientId] = id;
 		room.addUser(this.user.clientId, type)
 		room.start();
 		
@@ -178,6 +188,7 @@ everyone.now.join = function (type, callback) {
 	
     var room_id = guid();
     var tmp_room = new Room(room_id);
+    client_rooms[this.user.clientId] = room_id;
     rooms[room_id] = tmp_room;
     
     tmp_room.addUser(this.user.clientId, type);
@@ -186,12 +197,12 @@ everyone.now.join = function (type, callback) {
 };
 
 everyone.disconnected(function () {
-    console.log("finding user's room");
-    for (var id in rooms) {
-	if (rooms[id].clients.indexOf(this.user.clientId) > -1) {
-	    rooms[id].removeUser(this.user.clientId);
-	}
+    var room = rooms[client_rooms[this.user.clientId]];
+    if (room) {
+	rooms[client_rooms[this.user.clientId]].removeUser(this.user.clientId);
     }
+
+    delete client_rooms[this.user.clientId];
 });
 
 
