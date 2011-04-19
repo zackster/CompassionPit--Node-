@@ -24,11 +24,14 @@ var Room = function(id) {
 
         self.group.on('connect', function (clientId) {
         	self.clients.push(clientId);
+	    console.log("got", self.clients);
         });
 
         self.group.on('disconnect', function (clientId) {
 	        self.clients.splice(self.clients.indexOf(clientId), 1);
+	    console.log("lost", self.clients);
         	if (self.clients.length < 1) {
+		    console.log("dead");
         	    delete_room(self.id);
 	        }
         });
@@ -47,8 +50,7 @@ var Room = function(id) {
 
 		var messages = self.messages[opposite];
 		if (message.action == "disconnect") {
-		    self.group.removeUser(clientId);
-			removeFromWaiters(self.id);
+		    self.removeUser(clientId);
 		}
 
         	self.group.now.receive([message]);
@@ -61,23 +63,18 @@ var Room = function(id) {
 
 	    self.group.now.receive([{action: 'join'}]);
 	}
-}
 
-var waiters = {
-	listener: [],
-	venter:   []
-};
+    self.addUser = function (clientId, type) {
+	self.group.addUser(clientId);
+	self[type] = new Date().getTime();
+    }
+
+    self.removeUser = function (clientId) {
+	self.group.removeUser(clientId);
+    }
+}
 
 var rooms = {};
-
-function removeFromWaiters(room_id) {
-	var idx = waiters["listener"].indexOf(room_id);
-	if (idx != -1) waiters["listener"].splice(idx, 1);
-	
-	idx = waiters["venter"].indexOf(room_id);
-	if (idx != -1) waiters["venter"].splice(idx, 1);
-}
-
 
 function delete_room(roomId) {
     console.log("Removing room", roomId);
@@ -87,16 +84,20 @@ function delete_room(roomId) {
 fu.get("/counts", function (request, response) {
 	var listeners = 0;
 	var venters = 0;
+
+    var room_ids = [];
 	
-	for (var i in rooms) {
-		var room = rooms[i];
+	for (var id in rooms) {
+		var room = rooms[id];
 		if (room.listener) listeners += 1;
 		if (room.venter) venters += 1;
+	    room_ids.push(id);
 	}
 	
 	response.simpleJSON(200, {
 		listeners: listeners,
-		venters: venters
+	    venters: venters,
+	    rooms: room_ids,
 	});
 });
 fu.get("/dump", function (request, response) {
@@ -119,8 +120,14 @@ fu.get("/", fu.staticHandler("static/index.html"));
 
 fu.listen(PORT, null);
 
-var everyone = nowjs.initialize(fu.server, {host: 'compassionpit.com',
-					    port: 80});
+// production
+//var options = {host: 'compassionpit.com',
+//	       port: 80}
+
+// testing
+var options = {host: '192.168.1.5',
+	       port: 8080}
+var everyone = nowjs.initialize(fu.server, options);
 
 everyone.now.send = function (params, callback) {
     var callback = callback || function () {};
@@ -151,32 +158,41 @@ everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
 
-    
-    if (waiters[opposite].length) {
-	// TODO loop through waiters until we find a room that is still defined (exists in rooms)
-	var room_id = waiters[opposite].shift();
-	try {
-	    rooms[room_id].group.addUser(this.user.clientId);
-	    rooms[room_id].start();
-	    callback({ id: room_id });
+    console.log("new", type);
+    var room = {};
+
+    for (var id in rooms) {
+	room = rooms[id];
+	if (!room[type]) {
+	    try {
+		room.addUser(this.user.clientId, type)
+		room.start();
+		
+		return callback({ id: id });
+	    }catch (e) {
+		console.log("Fail joining room", e);
+		return callback({});
+	    }
 	}
-	catch (e) {
-	    console.log("Error starting room:", e);
-	    return callback({});
-	}
-	return;
     }
 	
     var room_id = guid();
     var tmp_room = new Room(room_id);
     rooms[room_id] = tmp_room;
     
-    waiters[type].push(room_id);
-
-    tmp_room.group.addUser(this.user.clientId);
+    tmp_room.addUser(this.user.clientId, type);
 	
     callback({ id: room_id });
 };
+
+everyone.disconnected(function () {
+    console.log("finding user's room");
+    for (var id in rooms) {
+	if (rooms[id].clients.indexOf(this.user.clientId) > -1) {
+	    rooms[id].removeUser(this.user.clientId);
+	}
+    }
+});
 
 
 function S4() {
