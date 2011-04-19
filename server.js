@@ -3,6 +3,8 @@ var sys = require("sys");
 var nowjs = require("now");
 
 var PORT = 8000;
+var PUBLIC_ADDRESS = {host: 'compassionpit.com',
+		      port: 80}
 
 var Room = function(id) {
 	var self = this;
@@ -111,13 +113,8 @@ fu.get("/", fu.staticHandler("static/index.html"));
 
 fu.listen(PORT, null);
 
-// production
-//var options = {host: 'compassionpit.com',
-//	       port: 80}
-
-// testing
-var options = {host: 'localhost',
-	       port: 8080}
+var options = {host: PUBLIC_ADDRESS.host,
+	       port: PUBLIC_ADDRESS.port}
 var everyone = nowjs.initialize(fu.server, options);
 
 everyone.now.send = function (params, callback) {
