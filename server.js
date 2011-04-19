@@ -24,14 +24,11 @@ var Room = function(id) {
 
         self.group.on('connect', function (clientId) {
         	self.clients.push(clientId);
-	    console.log("got", self.clients);
         });
 
         self.group.on('disconnect', function (clientId) {
 	        self.clients.splice(self.clients.indexOf(clientId), 1);
-	    console.log("lost", self.clients);
         	if (self.clients.length < 1) {
-		    console.log("dead");
         	    delete_room(self.id);
 	        }
         });
@@ -51,9 +48,9 @@ var Room = function(id) {
 		var messages = self.messages[opposite];
 		if (message.action == "disconnect") {
 		    self.removeUser(clientId);
+		}else{
+        	    self.group.now.receive([message]);
 		}
-
-        	self.group.now.receive([message]);
 
 	        callback(true);
         }
@@ -71,6 +68,8 @@ var Room = function(id) {
 
     self.removeUser = function (clientId) {
 	self.group.removeUser(clientId);
+	self.group.now.receive([{type: 'listener',
+				 action: 'disconnect'}]);
     }
 }
 
@@ -126,7 +125,7 @@ fu.listen(PORT, null);
 //	       port: 80}
 
 // testing
-var options = {host: '192.168.1.5',
+var options = {host: 'localhost',
 	       port: 8080}
 var everyone = nowjs.initialize(fu.server, options);
 
@@ -159,13 +158,11 @@ everyone.now.join = function (type, callback) {
     type = (type == "venter") ? "venter" : "listener";
     opposite = (type == "venter") ? "listener" : "venter";
 
-    console.log("new", type);
     var room = {};
 
     // disconnect from old room if rejoining
     var oldRoomId = client_rooms[this.user.clientId];
     if (rooms[oldRoomId]) {
-	console.log("disconnecting old room", oldRoomId);
 	rooms[oldRoomId].removeUser(this.user.clientId);
     }
 
