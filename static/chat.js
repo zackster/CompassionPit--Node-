@@ -114,16 +114,6 @@ $(document).ready(function() {
             return hasPartner === true ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
         }
 
-		/*$(window).unload(function (event) {
-		    // nowjs simply doesn't handle this
-		    $.ajax({url: "/disconnect",
-			    async: false,
-			    data: {rid: chatId,
-				   type: $.getUrlVar('type')
-				}
-			   });
-		})*/
-
 		other = ($.getUrlVar('type') == 'listener') ? 'Venter' : 'Listener';
 
 		getPartner();
