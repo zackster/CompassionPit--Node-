@@ -111,6 +111,10 @@
     		other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
 
     		getPartner();
+    		
+            setInterval(function () {
+                now.ping();
+            }, 30000);
         })});
 
 
@@ -232,8 +236,4 @@
     function capitalize(text) {
         return text.charAt(0).toUpperCase() + text.substring(1);
     }
-    
-    setInterval(function () {
-        now.ping();
-    }, 30000);
 }(jQuery));
