@@ -146,6 +146,7 @@
         var clientId = this.user.clientId;
         var roomId = clientIdToRoomId[clientId];
         if (!roomId) {
+            console.log(clientId + ": disconnected, not in a room");
             return;
         }
 
@@ -155,5 +156,6 @@
         if (room) {
             room.removeUser(clientId);
         }
+        console.log(clientId + ": disconnected, was in room " + roomId);
     });
 }());
