@@ -48,7 +48,10 @@
         app.listen(config.port);
     }
 
-    var everyone = nowjs.initialize(app);
+    var everyone = nowjs.initialize(app, {
+        port: config.nowjsPort,
+        host: config.nowjsHost
+    });
 
     everyone.now.sendMessage = function (params, callback) {
         var roomId = params.rid;
