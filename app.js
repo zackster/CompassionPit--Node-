@@ -94,6 +94,10 @@
         // find new room
         var found = false;
         Room.forEach(function (room, roomId) {
+            if (found) {
+                // already found a room, we can stop.
+                return;
+            }
             if (oldRoomId && oldRoomId === roomId) {
                 // we don't want to join the same room we just left.
                 return;
