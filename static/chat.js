@@ -79,8 +79,8 @@
         queryQueuePosition();
     }
 
-    var chatId = -1;
     var other;
+    var initialized = false;
     var hasPartner = false;
 
     function newPartner() {
@@ -142,16 +142,12 @@
 
         now.join(CLIENT_TYPE, function(data) {
         	console.log('joined?');
-        	initChat(data);
+        	initialized = true;
         	if (!hasPartner) {
                 infoWithQueue('Waiting for a chat partner... ');
             }
         });
         info('Waiting for a chat partner... ');
-    }
-
-    function initChat(data) {
-    	chatId = data.id;
     }
 
     function gong() {
@@ -227,17 +223,11 @@
     }
 
     function sendMessage(msg) {
-        if (msg == '')
+        if (msg == '' || !initialized)
     	    return;
-    	console.log(chatId);
-        if (chatId === -1) {
-            return;
-        }
         info('Sending message...')
     
-        now.sendMessage({rid: chatId,
-    	      data: msg
-    	     }, 
+        now.sendMessage(msg, 
     	     function (data) {
     		 if(data == true) {
     		     addMessage('Me', msg);
