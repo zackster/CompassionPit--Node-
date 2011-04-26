@@ -21,36 +21,62 @@
     function info(msg) {
     	status(msg, 'infoMessage');
     }
+    
+    function infoWithQueue(msg) {
+    	status(msg, 'infoMessage', true);
+    }
 
     function error(msg) {
     	status(msg, 'errorMessage');
     }
+    
+    var checkingQueue = false;
+    var queryQueuePosition = function () {
+        if (!checkingQueue) {
+            return;
+        }
+        now.getQueuePosition(function (position) {
+            if (checkingQueue) {
+                if (position < 0) {
+                    $('#status').text(checkingQueue);
+                    return;
+                } else {
+                    $('#status').text(checkingQueue + " Queue #" + (position + 1));
+                    setTimeout(queryQueuePosition, 5000);
+                }
+            }
+        });
+    };
+    function status(msg, cssClass, checkQueue) {
+        checkingQueue = checkQueue && msg;
+        
+        var msgform = (msg === false);
 
-    function status(msg, cssClass) {
-
-
-    	if(msg == '') {
-    		msg = '<form id="msgForm"><input id="chatInput" type="text" size=90 /><input type="submit" value="Send Chat"  /></form>';
-    		msgform = true;
-    	}
-    	else {
-    		msgform = false;
-    	}
-
-    	var status = $('#status');
-    	status.removeClass('errorMessage infoMessage');
-    	status.addClass(cssClass);
-    	status.html(msg);
+    	var $status = $('#status');
+    	$status.removeClass('errorMessage infoMessage');
+    	$status.addClass(cssClass);
     	if(msgform) {
-    		$('#chatInput').focus();
-    		$('#msgForm').submit(
-    				function() {
-    					sendMessage();
-    					return false;
-    				}
-    			);
+    	    var $chatInput;
+    	    $status
+    	        .empty()
+    	        .append($("<form>")
+    	            .append($chatInput = $("<input>")
+    	                .attr("type", "text")
+    	                .attr("autocomplete", "off")
+    	                .attr("size", "90"))
+    	            .append($("<input>")
+    	                .attr("type", "submit")
+    	                .attr("value", "Send Chat"))
+    	            .submit(function () {
+    	                sendMessage($chatInput.val());
+    	                return false;
+    	            }));
+    	    $chatInput.focus();
+    	} else {
+        	$status.text(msg);
     	}
-
+        
+        queryQueuePosition();
     }
 
     var chatId = -1;
@@ -58,7 +84,7 @@
     var hasPartner = false;
 
     function newPartner() {
-    	if(hasPartner) {
+    	if (hasPartner) {
     		hasPartner = false;
     		addMessage('System', 'Please wait while we find you a new chat partner.');
     		getPartner();
@@ -81,7 +107,7 @@
 
     		try {
     			function audioReady() {
-    				this.element.jPlayer('setFile', '/gong.mp3');
+    				this.element.jPlayer('setFile', '/shortgong.mp3');
     			}
     			$('#audioPlayer').jPlayer({
     				ready: audioReady,
@@ -90,13 +116,6 @@
     			});
     		} catch(e) {
     		}
-
-    		$('#msgForm').submit(
-    				function() {
-    					sendMessage();
-    					return false;
-    				}
-    			);
 
     		$('#newPartner').click(
     				function() {
@@ -124,15 +143,14 @@
         now.join(CLIENT_TYPE, function(data) {
         	console.log('joined?');
         	initChat(data);
+        	if (!hasPartner) {
+                infoWithQueue('Waiting for a chat partner... ');
+            }
         });
         info('Waiting for a chat partner... ');
     }
 
     function initChat(data) {
-    	if (!data) {
-    		getPartner();
-    		return;
-    	}
     	chatId = data.id;
     }
 
@@ -187,7 +205,7 @@
     		switch (message.action) {
     			case "join":
     			    if (message.type !== CLIENT_TYPE) {
-        				info('');
+        				info(false);
         				addMessage('System', 'A new chat partner has entered your chat');
         				hasPartner = true;
     				}
@@ -200,7 +218,7 @@
     			case "disconnect":
     				addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
     				hasPartner = false;
-    				info('Waiting for a chat partner... ');
+    				infoWithQueue('Waiting for a chat partner... ');
     				break;
     			default:
     				console.log("Unhandled message", message);
@@ -208,10 +226,13 @@
     	})
     }
 
-    function sendMessage() {
-        var msg = $('#chatInput').val();
-        if(msg == '' || chatId == -1)
+    function sendMessage(msg) {
+        if (msg == '')
     	    return;
+    	console.log(chatId);
+        if (chatId === -1) {
+            return;
+        }
         info('Sending message...')
     
         now.sendMessage({rid: chatId,
@@ -220,7 +241,7 @@
     	     function (data) {
     		 if(data == true) {
     		     addMessage('Me', msg);
-    		     info('');
+    		     info(false);
     		     $('#chatInput').val('')
     		 } else {
     		     error('Failed to send message.')

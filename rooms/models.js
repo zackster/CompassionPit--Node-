@@ -12,8 +12,13 @@
     var EXPIRY_TIME = 60 * 1000; // 60 secs
     
     var rooms = Object.create(null);
+
+    var VALID_TYPES = Object.create(null);
+    VALID_TYPES.venter = true;
+    VALID_TYPES.listener = true;
     
-    var availableRoomQueue = [];
+    var listenerRoomQueue = [];
+    var venterRoomQueue = [];
     
     var Room = exports.Room = function (id) {
         if (!(this instanceof Room)) {
@@ -29,7 +34,8 @@
         this.types.listener = 0;
         
         rooms[id] = this;
-        availableRoomQueue.push(this);
+        listenerRoomQueue.push(this);
+        venterRoomQueue.push(this);
         
         log.info({
             event: "New room",
@@ -59,17 +65,31 @@
     };
     
     Room.findOrCreate = function (type, oldRoomId) {
-        for (var i = 0, len = availableRoomQueue.length; i < len; i += 1) {
-            var room = availableRoomQueue[i];
+        if (!VALID_TYPES[type]) {
+            throw new Error("Unknown type: " + type);
+        }
+        
+        var queue = type === "venter" ? venterRoomQueue : listenerRoomQueue;
+        
+        for (var i = 0, len = queue.length; i < len; i += 1) {
+            var room = queue[i];
             if (oldRoomId && room.id === oldRoomId) {
                 continue;
             }
-            if (!room.hasType(type)) {
-                return room;
-            }
+            return room;
         }
         
         return new Room(guid());
+    };
+    
+    Room.prototype.getQueuePosition = function (clientId) {
+        var type = this.clients[clientId];
+        if (!VALID_TYPES[type]) {
+            return -1;
+        }
+        
+        var queue = type !== "venter" ? venterRoomQueue : listenerRoomQueue;
+        return queue.indexOf(this);
     };
     
     Room.prototype.delete = function () {
@@ -78,11 +98,16 @@
             room: this.id
         });
         delete rooms[this.id];
+        var index = venterRoomQueue.indexOf(this);
+        if (index !== -1) {
+            venterRoomQueue.splice(index, 1);
+        }
+        index = listenerRoomQueue.indexOf(this);
+        if (index !== -1) {
+            listenerRoomQueue.splice(index, 1);
+        }
     };
     
-    var VALID_TYPES = Object.create(null);
-    VALID_TYPES.venter = true;
-    VALID_TYPES.listener = true;
     Room.prototype.onConnect = function (client, clientId) {
         if (!this.clients[clientId]) {
             this.clients[clientId] = 'unknown';
@@ -179,6 +204,10 @@
     };
     
     Room.prototype.addUser = function (clientId, type) {
+        if (!VALID_TYPES[type]) {
+            throw new Error("Unknown type: " + type);
+        }
+        
         log.info({
             event: "Add user",
             client: clientId,
@@ -198,11 +227,11 @@
         this.types[type] += 1;
         this.group.addUser(clientId);
         
-        if (this.isFull()) {
-            var index = availableRoomQueue.indexOf(this);
-            if (index !== -1) {
-                availableRoomQueue.splice(index, 1);
-            }
+        var queue = type === "venter" ? venterRoomQueue : listenerRoomQueue;
+        
+        var index = queue.indexOf(this);
+        if (index !== -1) {
+            queue.splice(index, 1);
         }
     };
 
@@ -229,8 +258,9 @@
                     action: 'disconnect'
                 }
             ]);
-            if (availableRoomQueue.indexOf(this) === -1) {
-                availableRoomQueue.push(this);
+            var queue = clientType === "venter" ? venterRoomQueue : listenerRoomQueue;
+            if (queue.indexOf(this) === -1) {
+                queue.push(this);
             }
         }
     };
