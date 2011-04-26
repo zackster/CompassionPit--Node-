@@ -107,7 +107,7 @@
 
     		try {
     			function audioReady() {
-    				this.element.jPlayer('setFile', '/gong.mp3');
+    				this.element.jPlayer('setFile', '/shortgong.mp3');
     			}
     			$('#audioPlayer').jPlayer({
     				ready: audioReady,
