@@ -165,4 +165,8 @@
         }
         console.log(clientId + ": disconnected, was in room " + roomId);
     });
+    
+    process.on('uncaughtException', function (err) {
+        console.error('Uncaught exception: ' + err);
+    });
 }());
