@@ -90,7 +90,7 @@
                 }
             }
             counts.sort(function (a, b) {
-                return a.count < b.count;
+                return b.count - a.count;
             });
             $tbody.empty();
             counts.forEach(function (data) {
