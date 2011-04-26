@@ -13,13 +13,15 @@
     
     var rooms = Object.create(null);
     
+    var availableRoomQueue = [];
+    
     var Room = exports.Room = function (id) {
         if (!(this instanceof Room)) {
             return new Room(id);
         }
         id = String(id);
         this.id = id;
-        this.lastAccessTime = Date.now();
+        this.sessionTime = this.lastAccessTime = Date.now();
         this.group = nowjs.getGroup(id);
         this.clients = Object.create(null);
         this.types = Object.create(null);
@@ -27,6 +29,7 @@
         this.types.listener = 0;
         
         rooms[id] = this;
+        availableRoomQueue.push(this);
         
         log.info({
             event: "New room",
@@ -56,13 +59,11 @@
     };
     
     Room.findOrCreate = function (type, oldRoomId) {
-        for (var roomId in rooms) {
-            if (oldRoomId && roomId === oldRoomId) {
-                // skip the room we were just in
+        for (var i = 0, len = availableRoomQueue.length; i < len; i += 1) {
+            var room = availableRoomQueue[i];
+            if (oldRoomId && room.id === oldRoomId) {
                 continue;
             }
-            var room = rooms[roomId];
-            
             if (!room.hasType(type)) {
                 return room;
             }
@@ -120,6 +121,15 @@
     
     Room.prototype.hasType = function (type) {
         return !!this.types[type];
+    };
+    
+    Room.prototype.isFull = function () {
+        for (var type in VALID_TYPES) {
+            if (!this.hasType(type)) {
+                return false;
+            }
+        }
+        return true;
     };
     
     Room.prototype.getNumClientsOfType = function (type) {
@@ -187,6 +197,13 @@
         this.clients[clientId] = type;
         this.types[type] += 1;
         this.group.addUser(clientId);
+        
+        if (this.isFull()) {
+            var index = availableRoomQueue.indexOf(this);
+            if (index !== -1) {
+                availableRoomQueue.splice(index, 1);
+            }
+        }
     };
 
     Room.prototype.removeUser = function (clientId) {
@@ -203,6 +220,7 @@
             }
         }
         
+        this.sessionTime = Date.now();
         this.group.removeUser(clientId);
         if (this.hasAnyClients()) {
             this.group.now.receive([
@@ -211,6 +229,9 @@
                     action: 'disconnect'
                 }
             ]);
+            if (availableRoomQueue.indexOf(this) === -1) {
+                availableRoomQueue.push(this);
+            }
         }
     };
 }());
