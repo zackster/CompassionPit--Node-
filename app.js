@@ -150,25 +150,19 @@
     everyone.disconnected(function () {
         var clientId = this.user.clientId;
         var roomId = clientIdToRoomId[clientId];
-        if (!roomId) {
-            log.info({
-                event: "Disconnected",
-                client: clientId,
-                room: null
-            });
-            return;
+        if (roomId) {
+            delete clientIdToRoomId[clientId];
+        
+            var room = Room.get(roomId);
+            if (room) {
+                room.removeUser(clientId);
+            }
         }
 
-        delete clientIdToRoomId[clientId];
-        
-        var room = Room.get(roomId);
-        if (room) {
-            room.removeUser(clientId);
-        }
         log.info({
             event: "Disconnected",
             client: clientId,
-            room: roomId
+            room: roomId || null
         });
     });
     
