@@ -106,7 +106,6 @@
     everyone.now.ping = function (callback) {
         var clientId = this.user.clientId;
 
-        // disconnect from old room if rejoining
         var roomId = clientIdToRoomId[clientId];
         var room;
         if (roomId) {
@@ -119,6 +118,21 @@
         if (callback) {
             callback("pong");
         }
+    };
+    
+    everyone.now.getQueuePosition = function (callback) {
+        var clientId = this.user.clientId;
+
+        var roomId = clientIdToRoomId[clientId];
+        var room;
+        if (roomId) {
+            room = Room.get(roomId);
+            if (room) {
+                room.poke(clientId);
+            }
+        }
+        
+        callback(room.getQueuePosition(clientId));
     };
 
     everyone.disconnected(function () {
