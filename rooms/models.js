@@ -22,6 +22,9 @@
         this.lastAccessTime = Date.now();
         this.group = nowjs.getGroup(id);
         this.clients = Object.create(null);
+        this.types = Object.create(null);
+        this.types.venter = 0;
+        this.types.listener = 0;
         
         rooms[id] = this;
         
@@ -116,11 +119,12 @@
     };
     
     Room.prototype.hasType = function (type) {
-        var clients = this.clients;
-        for (var clientId in clients) {
-            if (clients[clientId] === type) {
-                return true;
-            }
+        return !!this.types[type];
+    };
+    
+    Room.prototype.hasAnyClients = function () {
+        for (var clientId in this.clients) {
+            return true;
         }
         return false;
     };
@@ -167,7 +171,7 @@
             room: this.id,
             type: type
         });
-        if (this.getNumClients() > 0) {
+        if (this.hasAnyClients()) {
             this.group.now.receive([
                 {
                     action: 'join',
@@ -175,7 +179,9 @@
                 }
             ]);
         }
+        this.sessionTime = Date.now();
         this.clients[clientId] = type;
+        this.types[type] += 1;
         this.group.addUser(clientId);
     };
 
@@ -188,10 +194,13 @@
                 room: this.id,
                 type: clientType || 'unknown'
             });
+            if (clientType in this.types) {
+                this.types[clientType] -= 1;
+            }
         }
         
         this.group.removeUser(clientId);
-        if (this.getNumClients() > 0) {
+        if (this.hasAnyClients()) {
             this.group.now.receive([
                 {
                     type: clientType || 'unknown',
