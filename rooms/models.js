@@ -4,13 +4,14 @@
     "use strict";
     
     var nowjs = require("now"),
-        log = require("../log");
+        log = require("../log"),
+        guid = require("../utils").guid;
     
     var has = Object.prototype.hasOwnProperty;
     
     var EXPIRY_TIME = 60 * 1000; // 60 secs
     
-    var rooms = {};
+    var rooms = Object.create(null);
     
     var Room = exports.Room = function (id) {
         if (!(this instanceof Room)) {
@@ -20,7 +21,7 @@
         this.id = id;
         this.lastAccessTime = Date.now();
         this.group = nowjs.getGroup(id);
-        this.clients = {};
+        this.clients = Object.create(null);
         
         rooms[id] = this;
         
@@ -41,16 +42,30 @@
     
     Room.forEach = function (callback) {
         for (var key in rooms) {
-            if (has.call(rooms, key)) {
-                if (callback(rooms[key], key) === false) {
-                    return;
-                }
+            if (callback(rooms[key], key) === false) {
+                return;
             }
         }
     };
     
     Room.get = function (id) {
         return rooms[id];
+    };
+    
+    Room.findOrCreate = function (type, oldRoomId) {
+        for (var roomId in rooms) {
+            if (oldRoomId && roomId === oldRoomId) {
+                // skip the room we were just in
+                continue;
+            }
+            var room = rooms[roomId];
+            
+            if (!room.hasType(type)) {
+                return room;
+            }
+        }
+        
+        return new Room(guid());
     };
     
     Room.prototype.delete = function () {
@@ -65,20 +80,19 @@
     VALID_TYPES.venter = true;
     VALID_TYPES.listener = true;
     Room.prototype.onConnect = function (client, clientId) {
-        this.clients[clientId] = {
-            type: 'unknown',
-            accessTime: Date.now()
-        };
+        if (!this.clients[clientId]) {
+            this.clients[clientId] = 'unknown';
+        }
         
         // let the new client know about the other clients in the room.
         for (var otherClientId in this.clients) {
-            if (otherClientId !== clientId && has.call(this.clients, otherClientId)) {
-                var otherClient = this.clients[otherClientId];
-                if (VALID_TYPES[otherClient.type]) {
+            if (otherClientId !== clientId) {
+                var otherClientType = this.clients[otherClientId];
+                if (VALID_TYPES[otherClientType]) {
                     client.now.receive([
                         {
                             action: 'join',
-                            type: otherClient.type
+                            type: otherClientType
                         }
                     ]);
                 }
@@ -90,10 +104,8 @@
         var clients = this.clients;
         delete clients[clientId];
         for (var key in clients) {
-            if (has.call(clients, key)) {
-                // have at least one still in.
-                return;
-            }
+            // have at least one still in.
+            return;
         }
         // didn't find any clients
         this.delete();
@@ -101,86 +113,88 @@
     
     Room.prototype.poke = function (clientId) {
         this.lastAccessTime = Date.now();
-        
-        var client = this.clients[clientId];
-        if (client) {
-            client.accessTime = this.lastAccessTime;
-        }
     };
     
     Room.prototype.hasType = function (type) {
         var clients = this.clients;
         for (var clientId in clients) {
-            if (has.call(clients, clientId)) {
-                var client = clients[clientId];
-                if (client.type === type) {
-                    return true;
-                }
+            if (clients[clientId] === type) {
+                return true;
             }
         }
         return false;
     };
     
-    Room.prototype.expired = function () {
+    Room.prototype.getNumClients = function () {
+        var count = 0;
+        for (var clientId in this.clients) {
+            count += 1;
+        }
+        return count;
+    };
+    
+    Room.prototype.isExpired = function () {
         return this.lastAccessTime < Date.now() - EXPIRY_TIME;
     };
     
     Room.prototype.send = function (message, clientId, callback) {
         this.poke(clientId);
         
-        var client = this.clients[clientId];
-        if (!client || !VALID_TYPES[client.type]) {
+        var clientType = this.clients[clientId];
+        if (!clientType || !VALID_TYPES[clientType]) {
             return;
         }
-        message = {
-            action: "message",
-            type: client.type,
-            data: message
-        };
         
         log.info({
             event: "Chat",
             client: clientId,
             room: this.id,
-            type: client.type || 'unknown'
+            type: clientType
         });
-        this.group.now.receive([message]);
+        this.group.now.receive([{
+            action: "message",
+            type: clientType,
+            data: message
+        }]);
         
         callback(true);
     };
     
     Room.prototype.addUser = function (clientId, type) {
-        this.group.addUser(clientId);
-        var client = this.clients[clientId] || (this.clients[clientId] = {});
-        client.type = type;
-        client.accessTime = Date.now();
         log.info({
             event: "Add user",
             client: clientId,
             room: this.id,
             type: type
         });
-        this.group.now.receive([
-            {
-                action: 'join',
-                type: type
-            }
-        ]);
+        if (this.getNumClients() > 0) {
+            this.group.now.receive([
+                {
+                    action: 'join',
+                    type: type
+                }
+            ]);
+        }
+        this.clients[clientId] = type;
+        this.group.addUser(clientId);
     };
 
     Room.prototype.removeUser = function (clientId) {
-        var client = this.clients[clientId];
-        this.group.removeUser(clientId);
-        if (client) {
+        var clientType = this.clients[clientId];
+        if (clientType) {
             log.info({
                 event: "Remove user",
                 client: clientId,
                 room: this.id,
-                type: client.type || 'unknown'
+                type: clientType || 'unknown'
             });
+        }
+        
+        this.group.removeUser(clientId);
+        if (this.getNumClients() > 0) {
             this.group.now.receive([
                 {
-                    type: client.type || 'unknown',
+                    type: clientType || 'unknown',
                     action: 'disconnect'
                 }
             ]);

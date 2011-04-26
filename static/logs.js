@@ -60,6 +60,7 @@
                                     $ul
                                         .append($("<li>")
                                             .append($item
+                                                .css("white-space", "pre")
                                                 .text(key + ": " + entry[key])));
                                 }
                             });
@@ -75,7 +76,7 @@
             } else {
                 currentFilters[key] = value;
                 
-                var $filter = $("<p>")
+                var $filter = $("<div>")
                     .append($("<a>")
                         .attr("href", "#")
                         .click(function () {
@@ -83,6 +84,7 @@
                             $filter.remove();
                             return false;
                         })
+                        .css("white-space", "pre")
                         .text(key + ": " + value));
                 $("#filters")
                     .append($filter);

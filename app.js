@@ -96,37 +96,11 @@
         }
         delete clientIdToRoomId[clientId];
 
-        // find new room
-        var found = false;
-        Room.forEach(function (room, roomId) {
-            if (found) {
-                // already found a room, we can stop.
-                return;
-            }
-            if (oldRoomId && oldRoomId === roomId) {
-                // we don't want to join the same room we just left.
-                return;
-            }
-            if (!room.hasType(type)) {
-                found = true;
-                clientIdToRoomId[clientId] = roomId;
-                room.addUser(clientId, type);
-                
-                callback({ id: roomId });
-                return false; // break out of forEach
-            }
-        });
-        if (found) {
-            return;
-        }
-
-        var roomId = guid();
-        room = new Room(roomId);
-        clientIdToRoomId[clientId] = roomId;
-
-        room.addUser(clientId, type);
+        room = Room.findOrCreate(type, oldRoomId);
         
-        callback({ id: roomId });
+        clientIdToRoomId[clientId] = room.id;
+        room.addUser(clientId, type);
+        callback({ id: room.id });
     };
     
     everyone.now.ping = function (callback) {
@@ -169,7 +143,8 @@
     process.on('uncaughtException', function (err) {
         log.error({
             event: "Uncaught exception",
-            error: err,
+            error: String(err.message),
+            stack: String(err.stack)
         });
     });
 }());
