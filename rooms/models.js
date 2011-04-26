@@ -122,6 +122,10 @@
         return !!this.types[type];
     };
     
+    Room.prototype.getNumClientsOfType = function (type) {
+        return this.types[type];
+    };
+    
     Room.prototype.hasAnyClients = function () {
         for (var clientId in this.clients) {
             return true;

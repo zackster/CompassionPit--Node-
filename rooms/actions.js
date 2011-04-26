@@ -7,22 +7,15 @@
         app.get("/counts", function (req, res) {
             var numListeners = 0;
             var numVenters = 0;
-            var roomIds = [];
     
             Room.forEach(function (room, id) {
-                if (room.hasType("listener")) {
-                    numListeners += 1;
-                }
-                if (room.hasType("venter")) {
-                    numVenters += 1;
-                }
-                roomIds.push(id);
+                numListeners += room.getNumClientsOfType("listener");
+                numVenters += room.getNumClientsOfType("venter");
             });
     
             res.send({
                 listeners: numListeners,
-                venters: numVenters,
-                rooms: roomIds,
+                venters: numVenters
             });
         });
     
