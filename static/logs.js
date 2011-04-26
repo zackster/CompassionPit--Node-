@@ -5,6 +5,7 @@
     var logTypes = ["info", "warn", "error"];
     var logEntries = null;
     var logCounts = null;
+    var rooms = null;
     
     var has = Object.prototype.hasOwnProperty;
 
@@ -18,7 +19,6 @@
             if (!logEntries) {
                 return;
             }
-
             var $tbody = $("#log-tbody");
             $tbody.empty();
             var logs = logEntries[currentTab] || [];
@@ -72,7 +72,11 @@
         };
         
         var refresh = function () {
-            var $tbody = $("#counts-tbody");
+            if (!logEntries) {
+                return;
+            }
+            
+            var $countsTbody = $("#counts-tbody");
             var counts = [];
             for (var severity in logCounts) {
                 if (has.call(logCounts, severity)) {
@@ -92,9 +96,9 @@
             counts.sort(function (a, b) {
                 return b.count - a.count;
             });
-            $tbody.empty();
+            $countsTbody.empty();
             counts.forEach(function (data) {
-                $tbody
+                $countsTbody
                     .append($("<tr>")
                         .append($("<td>")
                             .text(data.severity))
@@ -102,6 +106,36 @@
                             .text(data.event))
                         .append($("<td>")
                             .text(data.count)));
+            });
+            
+            var $roomsTbody = $("#rooms-tbody");
+            rooms.forEach(function (room) {
+                var listeners = [];
+                var venters = [];
+                
+                var clients = room.clients;
+                for (var clientId in clients) {
+                    if (has.call(clients, clientId)) {
+                        var type = clients[clientId];
+                        
+                        if (type === "listener") {
+                            listeners.push(clientId);
+                        } else if (type === "venter") {
+                            venters.push(clientId);
+                        }
+                    }
+                }
+                
+                $roomsTbody
+                    .append($("<tr>")
+                        .append($("<td>")
+                            .text(room.id))
+                        .append($("<td>")
+                            .text(new Date(room.time).toString()))
+                        .append($("<td>")
+                            .text(listeners.join(", ")))
+                        .append($("<td>")
+                            .text(venters.join(", "))));
             });
             
             refreshDisplayedEntries();
@@ -138,7 +172,8 @@
             $.getJSON("/logs.json", function (data) {
                 logEntries = data.entries;
                 logCounts = data.counts;
-
+                rooms = data.rooms;
+                
                 for (var i = 0, len = logTypes.length; i < len; i += 1) {
                     var severity = logTypes[i];
                     $("#severity-tab-" + severity).text(severity + " (" + logEntries[severity].length + ")");

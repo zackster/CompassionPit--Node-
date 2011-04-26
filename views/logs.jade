@@ -4,6 +4,12 @@ style
     display: inline-block;
     padding-right: 5px;
   }
+  caption {
+    font-size: 140%;
+  }
+  table {
+    margin-bottom: 40px;
+  }
 
 button(id="refresh") Refresh
 
@@ -15,6 +21,16 @@ table(style="width:100%")
       th Event
       th Count
   tbody(id="counts-tbody")
+
+table(style="width:100%")
+  caption Rooms
+  thead
+    tr
+      th ID
+      th Time
+      th Listeners
+      th Venters
+  tbody(id="rooms-tbody")
 
 #filters
 

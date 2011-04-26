@@ -82,6 +82,19 @@
         return new Room(guid());
     };
     
+    Room.dumpData = function () {
+        var result = [];
+        for (var roomId in rooms) {
+            var room = rooms[roomId];
+            result.push({
+                id: roomId,
+                clients: room.clients,
+                time: room.lastAccessTime
+            });
+        }
+        return result;
+    };
+    
     Room.prototype.getQueuePosition = function (clientId) {
         var type = this.clients[clientId];
         if (!VALID_TYPES[type]) {
