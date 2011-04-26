@@ -1,0 +1,22 @@
+script(src="/logs.js")
+style
+  ul > li {
+    display: inline-block;
+    padding-right: 5px;
+  }
+
+#filters
+
+#severity-tabs
+  - each severity in logTypes
+    button(id="severity-tab-" + severity, class="severity-tab", data-severity=severity) #{severity}
+
+button(id="refresh") Refresh
+
+table(style="width:100%")
+  thead
+    tr
+      th Time
+      th Event
+      th Info
+  tbody(id="log-tbody")

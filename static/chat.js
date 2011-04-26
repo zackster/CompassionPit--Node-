@@ -122,8 +122,8 @@
         hasPartner = false;
 
         now.join(CLIENT_TYPE, function(data) {
-    	console.log('joined?');
-    	initChat(data);
+        	console.log('joined?');
+        	initChat(data);
         });
         info('Waiting for a chat partner... ');
     }
@@ -186,9 +186,11 @@
     	messages.forEach(function (message) {
     		switch (message.action) {
     			case "join":
-    				info('');
-    				addMessage('System', 'A new chat partner has entered your chat');
-    				hasPartner = true;
+    			    if (message.type !== CLIENT_TYPE) {
+        				info('');
+        				addMessage('System', 'A new chat partner has entered your chat');
+        				hasPartner = true;
+    				}
     				break;
     			case "message":
     		                if (message.type != CLIENT_TYPE) {
