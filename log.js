@@ -36,7 +36,8 @@
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify({
                 entries: logEntries,
-                counts: logCounts
+                counts: logCounts,
+                rooms: require('./rooms/models').Room.dumpData()
             }));
         });
     };

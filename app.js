@@ -58,10 +58,13 @@
         host: config.nowjsHost
     });
 
-    everyone.now.sendMessage = function (params, callback) {
-        var roomId = params.rid;
+    var clientIdToRoomId = Object.create(null);
 
-        var room = Room.get(roomId);
+    everyone.now.sendMessage = function (message, callback) {
+        var clientId = this.user.clientId;
+        var roomId = clientIdToRoomId[clientId];
+        
+        var room = roomId && Room.get(roomId);
         if (!room) {
             if (callback) {
                 callback(null);
@@ -69,10 +72,8 @@
             return;
         }
         
-        room.send(params.data, this.user.clientId, callback || function () {});
+        room.send(message, clientId, callback || function () {});
     };
-
-    var clientIdToRoomId = {};
 
     everyone.now.join = function (type, callback) {
         var opposite;
@@ -100,7 +101,7 @@
         
         clientIdToRoomId[clientId] = room.id;
         room.addUser(clientId, type);
-        callback({ id: room.id });
+        callback(true);
     };
     
     everyone.now.ping = function (callback) {
