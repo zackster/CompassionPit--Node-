@@ -11,7 +11,8 @@
         connect = require("connect"),
         Room = require("./rooms/models").Room,
         guid = require("./utils").guid,
-        config = require("./config");
+        config = require("./config"),
+        log = require("./log");
     
     app.dynamicHelpers({
         base: function () {
@@ -35,6 +36,9 @@
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
     
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
+    
     app.get("/", function (req, res, next) {
         connect.static.send(req, res, next, {
             path: "static/index.html"
@@ -42,6 +46,7 @@
     });
     
     require("./rooms/actions")(app);
+    log.addActions(app);
     
     if (!module.parent) {
         require('sys').puts("Server started on port " + config.port);
@@ -91,44 +96,11 @@
         }
         delete clientIdToRoomId[clientId];
 
-        // find new room
-        var found = false;
-        Room.forEach(function (room, roomId) {
-            if (found) {
-                // already found a room, we can stop.
-                return;
-            }
-            if (oldRoomId && oldRoomId === roomId) {
-                // we don't want to join the same room we just left.
-                return;
-            }
-            if (!room.hasType(type)) {
-                found = true;
-                try {
-                    clientIdToRoomId[clientId] = roomId;
-                    room.addUser(clientId, type);
-                    room.start();
-                    
-                    console.log(clientId + ": Joined existing room " + roomId);
-                    return callback({ id: roomId });
-                } catch (e) {
-                    console.log(clientId + ": Fail joining room", e);
-                    return callback({});
-                }
-            }
-        });
-        if (found) {
-            return;
-        }
-
-        var roomId = guid();
-        room = new Room(roomId);
-        clientIdToRoomId[clientId] = roomId;
-
-        room.addUser(clientId, type);
+        room = Room.findOrCreate(type, oldRoomId);
         
-        console.log(clientId + ": Joined new room " + roomId);
-        callback({ id: roomId });
+        clientIdToRoomId[clientId] = room.id;
+        room.addUser(clientId, type);
+        callback({ id: room.id });
     };
     
     everyone.now.ping = function (callback) {
@@ -152,21 +124,27 @@
     everyone.disconnected(function () {
         var clientId = this.user.clientId;
         var roomId = clientIdToRoomId[clientId];
-        if (!roomId) {
-            console.log(clientId + ": disconnected, not in a room");
-            return;
+        if (roomId) {
+            delete clientIdToRoomId[clientId];
+        
+            var room = Room.get(roomId);
+            if (room) {
+                room.removeUser(clientId);
+            }
         }
 
-        delete clientIdToRoomId[clientId];
-        
-        var room = Room.get(roomId);
-        if (room) {
-            room.removeUser(clientId);
-        }
-        console.log(clientId + ": disconnected, was in room " + roomId);
+        log.info({
+            event: "Disconnected",
+            client: clientId,
+            room: roomId || null
+        });
     });
     
     process.on('uncaughtException', function (err) {
-        console.error('Uncaught exception: ' + err);
+        log.error({
+            event: "Uncaught exception",
+            error: String(err.message),
+            stack: String(err.stack)
+        });
     });
 }());

@@ -1,0 +1,32 @@
+script(src="/logs.js")
+style
+  ul > li {
+    display: inline-block;
+    padding-right: 5px;
+  }
+
+button(id="refresh") Refresh
+
+table(style="width:100%")
+  caption Log counts
+  thead
+    tr
+      th Severity
+      th Event
+      th Count
+  tbody(id="counts-tbody")
+
+#filters
+
+#severity-tabs
+  - each severity in logTypes
+    button(id="severity-tab-" + severity, class="severity-tab", data-severity=severity) #{severity}
+
+table(style="width:100%")
+  caption Log entries
+  thead
+    tr
+      th Time
+      th Event
+      th Info
+  tbody(id="log-tbody")
