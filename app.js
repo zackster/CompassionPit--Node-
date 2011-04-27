@@ -26,12 +26,6 @@
     });
     
     app.configure(function () {
-        app.use(express.logger('\x1b[33m:method\x1b[0m \x1b[32m:url\x1b[0m :response-time'));
-        app.use(express.favicon(__dirname + '/static/favicon.ico'));
-        app.use(express.bodyParser());
-        app.use(express.methodOverride());
-        app.use(express.cookieParser());
-        app.use(express.session({ secret: 'FRV28vqUlKTXOKxl7SsH3sgJCXNfWruOmi2AsuTMGpSHFY6efhcd2gQDwzSN' }));
         app.use(express.static(__dirname + '/static'));
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
