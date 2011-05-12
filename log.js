@@ -4,6 +4,7 @@
     /*global console: false*/
     
     var config = require('./config');
+    var mongodb = require('mongodb');
     
     var logEntries = {};
     var logCounts = {};
@@ -22,10 +23,33 @@
             }
         };
     };
+
+    var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
+    var mongoDb = new mongodb.Db(config.mongodb.logDb, mongoServer, {});
+    
     
     exports.info = makeLogFunction("info");
     exports.warn = makeLogFunction("warn");
     exports.error = makeLogFunction("error");
+
+    exports.store = function(obj) { 
+        mongoDb.open(function (error, client) {
+            if (error) {
+                console.warn("Could not connect to mongoDB @" + config.mongodb.host + ":" + config.mongodb.port + ". Error: " + error.message);
+                return;
+            }
+            var collection = new mongodb.Collection(client, config.mongodb.logCollection);
+            collection.insert(obj, {safe:true}, function(err, objects) {
+                if (err) { 
+                    console.warn(err.message);
+                }
+                if (err && err.message.indexOf('E11000 ') !== -1) {
+                    console.warn("Entry was already entered int the db");   
+                }
+                mongoDb.close();
+             });                       
+        });
+    };
     
     exports.addActions = function (app) {
         app.get("/logs", function (req, res) {
