@@ -58,6 +58,14 @@
         res.redirect("/privacy-policy", 301);
     });
     
+    app.get("/terms-of-service", function (req, res) {
+        res.render('terms-of-service');
+    });
+    
+    app.get("/tos.html", function (req, res) {
+        res.redirect("/terms-of-service", 301);
+    });
+    
     app.get('/messageChart', function(req, res){
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
