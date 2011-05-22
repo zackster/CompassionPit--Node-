@@ -5,10 +5,37 @@ html
     link(rel="stylesheet", href="/css/reset.css", type="text/css")
     link(rel="stylesheet", href="/css/style.css", type="text/css")
     script(src="/jquery-1.5.min.js")
+    script
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-17971348-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
   body
     #container
       #header
         a(href="/")
           h1 Compassion Pit
-      hr
-      #main!= body
+      != body
+      #footer
+        #copyright_notice
+          span &copy; 2010-2011
+          #{" CompassionPit.com All rights reserved."}
+        #nav
+          ul#links
+            li
+              a(href="/") Home
+            li
+              a(href="/about-us") About Us
+            li
+              a(href="/blog/") Blog
+            li
+              a(href="/forum/", target="_blank") Forum
+            li
+              a(href="/tos.html") Terms of Service
+            li
+              a(href="/privacypolicy.html") Privacy Policy

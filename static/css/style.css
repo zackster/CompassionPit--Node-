@@ -319,3 +319,7 @@ ul#links a:hover {
   text-indent: -5000px;
   margin: 0px 30px 0px 55px;
 }
+
+#column_full {
+	padding:0px 60px 0px 60px;
+}

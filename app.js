@@ -41,7 +41,15 @@
             path: "static/index.html"
         });
     });
-
+    
+    app.get("/about-us", function (req, res) {
+        res.render('about-us');
+    });
+    
+    app.get("/about-us.html", function (req, res) {
+        res.redirect("/about-us", 301);
+    });
+    
     app.get('/messageChart', function(req, res){
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
