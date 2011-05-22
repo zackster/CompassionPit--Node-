@@ -68,6 +68,32 @@
         res.redirect("/terms-of-service", 301);
     });
     
+    app.get("/vent", function (req, res) {
+        res.render("chat", {
+            type: "venter"
+        });
+    });
+    
+    app.get("/listen", function (req, res) {
+        res.render("chat", {
+            type: "listener"
+        });
+    });
+
+    app.get("/chat.html", function (req, res) {
+        if (req.query) {
+            switch (req.query.type) {
+            case "venter":
+                res.redirect("/vent", 301);
+                return;
+            case "listener":
+                res.redirect("/listen", 301);
+                return;
+            }
+        }
+        res.redirect("/", 301);
+    });
+    
     app.get('/messageChart', function(req, res){
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});

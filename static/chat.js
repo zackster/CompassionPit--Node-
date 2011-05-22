@@ -16,7 +16,7 @@
     	}
     });
     
-    var CLIENT_TYPE = $.getUrlVar('type') === 'listener' ? 'listener' : 'venter';
+    var CLIENT_TYPE = window.CLIENT_TYPE;
 
     function info(msg) {
     	status(msg, 'infoMessage');
