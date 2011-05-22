@@ -37,9 +37,11 @@
     // / just serves up static/index.html
     // Might want to change this to a jade template later, since some dynamic data is on the page
     app.get("/", function (req, res, next) {
-        connect.static.send(req, res, next, {
-            path: "static/index.html"
-        });
+        res.render('index');
+    });
+    
+    app.get("/index.html", function (req, res) {
+        res.redirect("/", 301);
     });
     
     app.get("/about-us", function (req, res) {
