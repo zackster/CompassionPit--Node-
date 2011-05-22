@@ -141,7 +141,7 @@
         hasPartner = false;
 
         now.join(CLIENT_TYPE, function(data) {
-        	console.log('joined?');
+        	//console.log('joined?');
         	initialized = true;
         	if (!hasPartner) {
                 infoWithQueue('Waiting for a chat partner... ');
@@ -197,7 +197,8 @@
     }
 
     function handleMessages(messages) {
-    	messages.forEach(function (message) {
+	for(mesg in messages) {
+		message = messages[mesg]; // sloppy and ugly code, but before we were doing messages.foreach(function(message) {    --- and that wasn't cross-browser compatible
     		switch (message.action) {
     			case "join":
     			    if (message.type !== CLIENT_TYPE) {
@@ -217,9 +218,10 @@
     				infoWithQueue('Waiting for a chat partner... ');
     				break;
     			default:
-    				console.log("Unhandled message", message);
+				alert("An error has an occurred. Please send an email to zackster@gmail.com so I can look into it. Thank you!!");
+    				//console.log("Unhandled message", message);
     		}
-    	})
+    	}
     }
 
     function sendMessage(msg) {

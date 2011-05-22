@@ -1,16 +1,31 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script type="text/javascript">
-  var _kmq = _kmq || [];
-  function _kms(u){
-    setTimeout(function(){
-      var s = document.createElement('script'); var f = document.getElementsByTagName('script')[0]; s.type = 'text/javascript'; s.async = true;
-      s.src = u; f.parentNode.insertBefore(s, f);
-    }, 1);
-  }
-  _kms('//i.kissmetrics.com/i.js');_kms('//doug1izaerwt3.cloudfront.net/42d8f6ead7caea0acad879301d830970aa2be630.1.js');
+<!-- Google Website Optimizer Control Script -->
+<script>
+function utmx_section(){}function utmx(){}
+(function(){var k='0837955242',d=document,l=d.location,c=d.cookie;function f(n){
+if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
+length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
+d.write('<sc'+'ript src="'+
+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com'
++'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
++new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
+'" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
 </script>
+<!-- End of Google Website Optimizer Control Script -->
+<!-- Google Website Optimizer Tracking Script -->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
+  _gaq.push(['gwo._trackPageview', '/0837955242/test']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<!-- End of Google Website Optimizer Tracking Script -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="description" content="Feeling down? CompassionPit makes it easy to find an anonymous friend to share your troubles with, without fear of being blackmailed later on.">
 <title>CompassionPit</title>
@@ -80,15 +95,20 @@ $(document).ready(
 	<!-- End Header DIV -->
 
     <div id="tagline"><!-- Start Tagline DIV -->
-    <!-- Tagline Goes Here -->
-    <h1>Chat with an anonymous stranger who won't judge you</h1>
-    </div><!-- End Tagline DIV -->
+   	<!-- Tagline Goes Here -->
+		<script>utmx_section("Tagline")</script>
+	    <h1>Chat with an anonymous stranger who won't judge you</h1>
+		</noscript>    
+	</div><!-- End Tagline DIV -->
 
     <!-- Start Main Content -->
     <div id="main"><!-- Start Main DIV -->
     	<div id="column_left"><!-- Start Left Column DIV -->
        		<!-- Subheader Goes Here -->
+			<script>utmx_section("Subheader")</script>
       		<h2>Connect with someone who will listen</h2>
+			</noscript>    			
+
        		<!-- Paragraph Of Text Goes Here -->
     		<p>You want to share your feelings, but you can't talk to somebody you know - because let's face it, they might judge you for it or use it against you in the future. CompassionPit is the solution to this: get anonymously connected to another compassionate human from around the world.</p>
       		<p><b>Pick an option to the right, and then you will be randomly connected to a chat with an anonymous partner.</b></p>  		    
@@ -97,6 +117,8 @@ $(document).ready(
 			<p id="need-listeners" style="display: none;"><b>There are venters who need someone to talk to -- please join as a listener.</b></p>
 			<p id="need-venters" style="display: none;"><b>If you join as a listener and aren't immediately paired up with a venter, your computer will play a sound when a venter joins your chat.</b></p>
 			<p id="need-anyone" style="display: none;"><b>Nobody's online right now, please join in and keep things going!</b><p>
+
+<p>*<span style="color:red;font-weight:bold;">NEW</span>* <a href="/forum/" target="_blank">The CompassionPit forum</a>!</p>
 
       		<!-- End Paragraph Of Text -->
 
@@ -108,8 +130,12 @@ $(document).ready(
         <div id="column_right"><!-- Start Right Column DIV -->		
 			<div id="buttons1"><!-- Start Right Column Buttons -->
 					<ul>
+						
+						<script>utmx_section("Calls To Action")</script>						
 						<li><a href="/chat.html?type=venter&">Share your troubles</a></li>
 						<li><a href="/chat.html?type=listener&">Participate as a listener</a></li>
+						</noscript>
+						
 <br /><br /><br /><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
 					</ul>
 			</div><!-- End Right Column Buttons -->
@@ -126,6 +152,7 @@ $(document).ready(
                 <li><a href="#" title="Home">Home</a></li>
                 <li><a href="/about-us.html" title="About Us">About Us</a></li>
                 <li><a href="/blog/" title="Blog">Blog</a></li>
+		<li><a href="/forum/" title="Forum" target="_blank">Forum</a></li>
                 <li><a href="/tos.html" title="Terms Of Service">Terms of Service</a></li>
                 <li><a href="/privacypolicy.html" title="Privacy Policy">Privacy Policy</a></li>
             </ul><!-- End Links UL -->

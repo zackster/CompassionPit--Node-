@@ -3,6 +3,12 @@ var config = {
         port: 8000,
         nowjsPort: 8000,
         nowjsHost: "localhost",
+        mongodb: { 
+            host: "localhost",
+            port: "27017",
+            logDb: "log-d",
+            logCollection: "logs"   
+        },
         logLimits: {
             info: 1000,
             warn: 1000,
@@ -13,6 +19,12 @@ var config = {
         port: 8000,
         nowjsPort: 80,
         nowjsHost: "compassionpit.com",
+        mongodb: { 
+            host: "localhost",
+            port: "27017",
+            logDb: "log-p",
+            logCollection: "logs"    
+        },
         logLimits: {
             info: 1000,
             warn: 1000,
@@ -21,4 +33,4 @@ var config = {
     }
 };
 
-module.exports = config[process.env.NODE_ENV || "development"];
+module.exports = config[process.env.NODE_ENV || "production"];

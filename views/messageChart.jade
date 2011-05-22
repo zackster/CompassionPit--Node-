@@ -1,0 +1,100 @@
+script(type="text/javascript",src="https://www.google.com/jsapi")
+script
+    var data = !{messageJSON};
+    Date.prototype.addHours = function(hours) {
+        this.setTime(this.getTime() + (1000 * 60 * 60 * hours));
+        return this;
+    }
+    Date.prototype.getShortDateAndTime = function() {
+        return this.getShortDate() + " " + this.getTimeString();
+    }
+    Date.prototype.getShortDate = function() {
+        return this.getMonth() + "/" +  this.getDate() + "/" +  this.getFullYear();
+    }
+
+    Date.prototype.getTimeString = function() {
+        var hours = this.getHours();
+        var hourString;
+        var minutesString = (this.getMinutes() == 0) ? "00" : this.getMinutes(); 
+        if (hours > 12) {
+            hourString = hours - 12 + ":" + minutesString + 'PM';
+        }
+        else {
+            hourString = hours + ":" + minutesString  + 'AM';
+        }
+        return hourString;
+    }    
+    
+script 
+    var dataRows = [];
+    for (var i=0;i<data.length; i++) {
+      dataRows.push([new Date(data[i].time - 0), data[i].action]);
+    }
+    var backup = dataRows[0];
+    dataRows[0] = dataRows[1];
+    dataRows[1] = backup;
+    dataRows.sort(sortFunction);
+    var sortFunction = function(i, j) {
+        if (i[0] > j[0]) {
+            return i;
+        }
+        return j;
+    }
+
+    
+
+    var startChart = getDayStart(dataRows[0][0]);
+    var endChart = getNextDayStart(dataRows[dataRows.length - 1][0]);
+    var timeElapsed = endChart - startChart;
+    var hoursToPlot = numHours(timeElapsed);
+    var plottingArr = [];
+    var i = 0;
+    var chartDelimiter = startChart;
+    
+    var total = 0;
+    while (endChart > chartDelimiter) {
+        chartDelimiter = chartDelimiter.addHours(1);
+        console.log(chartDelimiter);
+        total = 0;
+        while (i < dataRows.length  && dataRows[i][0] < chartDelimiter) {
+            total += 1;
+            i += 1;             
+        }
+        plottingArr.push([chartDelimiter.getShortDateAndTime(), total]);
+    }
+    console.log(plottingArr);
+
+
+    function numDays(elapsed) {
+        return (date.getTime())/1000/60/60/24;
+    }
+
+    function numHours(elapsed) {
+        return elapsed/1000/60/60;
+    }
+
+    function getDayStart(date) {
+        var dateMod = new Date(date.getTime());
+        dateMod.setHours(0);
+        dateMod.setSeconds(0);
+        dateMod.setMinutes(0);
+        return dateMod;
+    }
+    function getNextDayStart(date) {
+        var dayStart = getDayStart(date);
+        return dayStart.addHours(24);
+    }
+    
+ 
+    google.load('visualization', '1', {'packages':['corechart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Date');
+        data.addColumn('number', 'Message Sent');
+        data.addRows(plottingArr);
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, {width: 600, height: 400, title: 'Time(from previous hour to the displayed)',
+                          vAxis: {title: 'Messages Sent', titleTextStyle: {color: 'red'}}});
+      }
+div#chart_div

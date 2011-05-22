@@ -12,7 +12,8 @@
         Room = require("./rooms/models").Room,
         guid = require("./utils").guid,
         config = require("./config"),
-        log = require("./log");
+        log = require("./log"),
+        mongo = require("mongodb"); 
     
     app.dynamicHelpers({
         base: function () {
@@ -40,6 +41,23 @@
             path: "static/index.html"
         });
     });
+
+    app.get('/messageChart', function(req, res){
+        var mongodb = require('mongodb');
+        var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
+        var mongoDb = new mongodb.Db(config.mongodb.logDb, mongoServer, {});
+        mongoDb.open(function (error, client) {        
+            var collection = new mongodb.Collection(client, config.mongodb.logCollection);
+            var messageJSON;
+            res.escapeMarkup = false;
+            collection.find({}).toArray(function(err, docs) {
+                messageJSON = docs;
+                res.render('messageChart', {            
+                    messageJSON: JSON.stringify(messageJSON)
+                }); 
+            });
+        });
+    });  
     
     // import in the room-based actions
     require("./rooms/actions")(app);
@@ -75,7 +93,7 @@
             }
             return;
         }
-        
+        log.store({"action": "messageSent", "time": Date.now().toString()});
         room.send(message, clientId, callback || function () {});
     };
     
