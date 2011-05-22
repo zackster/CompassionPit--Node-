@@ -50,6 +50,14 @@
         res.redirect("/about-us", 301);
     });
     
+    app.get("/privacy-policy", function (req, res) {
+        res.render('privacy-policy');
+    });
+    
+    app.get("/privacypolicy.html", function (req, res) {
+        res.redirect("/privacy-policy", 301);
+    });
+    
     app.get('/messageChart', function(req, res){
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
