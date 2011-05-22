@@ -33,27 +33,37 @@
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     
+    // / just serves up static/index.html
+    // Might want to change this to a jade template later, since some dynamic data is on the page
     app.get("/", function (req, res, next) {
         connect.static.send(req, res, next, {
             path: "static/index.html"
         });
     });
     
+    // import in the room-based actions
     require("./rooms/actions")(app);
+    
+    // add the log-based actions
     log.addActions(app);
     
     if (!module.parent) {
         require('sys').puts("Server started on port " + config.port);
         app.listen(config.port);
     }
-
+    
+    // let nowjs hook into the existing app
     var everyone = nowjs.initialize(app, {
         port: config.nowjsPort,
         host: config.nowjsHost
     });
-
+    
+    // a simple hash of clientId to roomId
     var clientIdToRoomId = Object.create(null);
-
+    
+    /**
+     * Send a chat message to the room the client is current in.
+     */
     everyone.now.sendMessage = function (message, callback) {
         var clientId = this.user.clientId;
         var roomId = clientIdToRoomId[clientId];
@@ -68,7 +78,10 @@
         
         room.send(message, clientId, callback || function () {});
     };
-
+    
+    /**
+     * Send a message saying that the client has joined
+     */
     everyone.now.join = function (type, callback) {
         var opposite;
         if (type === "venter") {
@@ -98,6 +111,9 @@
         callback(true);
     };
     
+    /**
+     * Send a "ping" to let the server know the client is still active
+     */
     everyone.now.ping = function (callback) {
         var clientId = this.user.clientId;
 
@@ -115,6 +131,9 @@
         }
     };
     
+    /**
+     * Request the current position the client is in the queue for
+     */
     everyone.now.getQueuePosition = function (callback) {
         var clientId = this.user.clientId;
 
@@ -129,7 +148,8 @@
         
         callback(room.getQueuePosition(clientId));
     };
-
+    
+    // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
     everyone.disconnected(function () {
         var clientId = this.user.clientId;
         var roomId = clientIdToRoomId[clientId];
