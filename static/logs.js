@@ -10,6 +10,10 @@
     var has = Object.prototype.hasOwnProperty;
 
     $(function () {
+        if ($("#log-tbody").length === 0) {
+            return;
+        }
+        
         var currentTab = "info";
         
         var addFilter;
