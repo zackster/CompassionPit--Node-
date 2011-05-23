@@ -1,6 +1,8 @@
 (function () {
     "use strict";
     
+    /*global setTimeout: false */
+    
     /**
      * Generate a 4-character random hex string
      */
@@ -38,4 +40,50 @@
         }
         return hash;
     };
+    
+    /**
+     * Force a lag to occur based on the configuration setting forceLatency.
+     * This is for testing purposes only and the time should be set to 0 in production
+     * to provide as fast an experience as possible.
+     *
+     * @param {Function} callback The callback to run after the faked latency.
+     */
+    exports.forceLatency = (function () {
+        var LATENCY_TIME = require("./config").forceLatency;
+        if (LATENCY_TIME <= 0) {
+            return function (callback) {
+                callback();
+            };
+        } else {
+            return function (callback) {
+                setTimeout(callback, LATENCY_TIME);
+            };
+        }
+    }());
+    
+    /**
+     * Wrap a function to execute only after a latency based on the configuration
+     * setting forceLatency.
+     * This is for testing purposes only and the time should be set to 0 in production
+     * to provide as fast an experience as possible.
+     *
+     * @param {Function} callback The callback to wrap.
+     */
+    exports.latencyWrap = (function () {
+        var LATENCY_TIME = require("./config").forceLatency;
+        if (LATENCY_TIME <= 0) {
+            return function (callback) {
+                return callback;
+            };
+        } else {
+            return function (callback) {
+                return function () {
+                    var args = Array.prototype.slice.call(arguments, 0);
+                    setTimeout(function () {
+                        callback.apply(undefined, args);
+                    }, LATENCY_TIME);
+                };
+            };
+        }
+    }());
 }());

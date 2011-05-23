@@ -7,10 +7,12 @@
     
     var app = module.exports = express.createServer(),
         sys = require("sys"),
-        nowjs = require("now"),
+        socketIO = require("socket.io"),
         connect = require("connect"),
         Room = require("./rooms/models").Room,
         guid = require("./utils").guid,
+        forceLatency = require("./utils").forceLatency,
+        latencyWrap = require("./utils").latencyWrap,
         config = require("./config"),
         log = require("./log"),
         mongo = require("mongodb"); 
@@ -94,7 +96,7 @@
         res.redirect("/", 301);
     });
     
-    app.get('/messageChart', function(req, res){
+    app.get('/messageChart', function (req, res) {
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
         var mongoDb = new mongodb.Db(config.mongodb.logDb, mongoServer, {});
@@ -102,7 +104,7 @@
             var collection = new mongodb.Collection(client, config.mongodb.logCollection);
             var messageJSON;
             res.escapeMarkup = false;
-            collection.find({}).toArray(function(err, docs) {
+            collection.find({}).toArray(function (err, docs) {
                 messageJSON = docs;
                 res.render('messageChart', {            
                     messageJSON: JSON.stringify(messageJSON)
@@ -122,90 +124,63 @@
         app.listen(config.port);
     }
     
-    // let nowjs hook into the existing app
-    var everyone = nowjs.initialize(app, {
-        port: config.nowjsPort,
-        host: config.nowjsHost
-    });
+    // let socket.io hook into the existing app
+    var socket = app.socket = socketIO.listen(app);
     
     // a simple hash of clientId to roomId
     var clientIdToRoomId = Object.create(null);
     
-    /**
-     * Send a chat message to the room the client is current in.
-     */
-    everyone.now.sendMessage = function (message, callback) {
-        var clientId = this.user.clientId;
-        var roomId = clientIdToRoomId[clientId];
-        
-        var room = roomId && Room.get(roomId);
-        if (!room) {
-            if (callback) {
-                callback(null);
-            }
-            return;
-        }
-        log.store({"action": "messageSent", "time": Date.now().toString()});
-        room.send(message, clientId, callback || function () {});
-    };
+    var socketHandlers = Object.create(null);
     
-    /**
-     * Send a message saying that the client has joined
-     */
-    everyone.now.join = function (type, callback) {
-        var opposite;
-        if (type === "venter") {
-            opposite = "listener";
-        } else {
-            type = "listener";
-            opposite = "venter";
-        }
-
-        var clientId = this.user.clientId;
-
-        // disconnect from old room if rejoining
-        var oldRoomId = clientIdToRoomId[clientId];
-        var room;
-        if (oldRoomId) {
-            room = Room.get(oldRoomId);
-            if (room) {
-                room.removeUser(clientId);
+    socket.on('connection', function (client) {
+        client.on('message', latencyWrap(function (data) {
+            var type = data.t;
+            if (type) {
+                var handler = socketHandlers[type];
+                if (handler) {
+                    handler(client, data.d, function (result) {
+                        var message = {i: data.i};
+                        if (result !== null && result !== undefined) {
+                            message.d = result;
+                        }
+                        forceLatency(function () {
+                            client.send(message);
+                        });
+                    });
+                } else {
+                    console.log("Received message with unknown handler: " + data.t);
+                }
+            } else {
+                console.log("Received improper message", data);
             }
-        }
-        delete clientIdToRoomId[clientId];
-
-        room = Room.findOrCreate(type, oldRoomId);
+        }));
         
-        clientIdToRoomId[clientId] = room.id;
-        room.addUser(clientId, type);
-        callback(true);
-    };
-    
-    /**
-     * Send a "ping" to let the server know the client is still active
-     */
-    everyone.now.ping = function (callback) {
-        var clientId = this.user.clientId;
+        // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
+        client.on('disconnect', latencyWrap(function () {
+            var clientId = client.sessionId;
+            var roomId = clientIdToRoomId[clientId];
+            if (roomId) {
+                delete clientIdToRoomId[clientId];
 
-        var roomId = clientIdToRoomId[clientId];
-        var room;
-        if (roomId) {
-            room = Room.get(roomId);
-            if (room) {
-                room.poke(clientId);
+                var room = Room.get(roomId);
+                if (room) {
+                    room.removeUser(clientId);
+                }
             }
-        }
-        
-        if (callback) {
-            callback("pong");
-        }
-    };
+
+            log.info({
+                event: "Disconnected",
+                client: clientId,
+                room: roomId || null
+            });
+        }));
+    });
     
     /**
      * Request the current position the client is in the queue for
      */
-    everyone.now.getQueuePosition = function (callback) {
-        var clientId = this.user.clientId;
+    socketHandlers.queue = function (client, _, callback) {
+        var clientId = client.sessionId;
 
         var roomId = clientIdToRoomId[clientId];
         var room;
@@ -219,25 +194,74 @@
         callback(room.getQueuePosition(clientId));
     };
     
-    // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
-    everyone.disconnected(function () {
-        var clientId = this.user.clientId;
-        var roomId = clientIdToRoomId[clientId];
-        if (roomId) {
-            delete clientIdToRoomId[clientId];
-        
-            var room = Room.get(roomId);
+    /**
+     * Request to join a channel based on the provided type
+     */
+    socketHandlers.join = function (client, type, callback) {
+        var opposite;
+        if (type === "venter") {
+            opposite = "listener";
+        } else {
+            type = "listener";
+            opposite = "venter";
+        }
+
+        var clientId = client.sessionId;
+
+        // disconnect from old room if rejoining
+        var oldRoomId = clientIdToRoomId[clientId];
+        var room;
+        if (oldRoomId) {
+            room = Room.get(oldRoomId);
             if (room) {
                 room.removeUser(clientId);
             }
         }
+        delete clientIdToRoomId[clientId];
 
-        log.info({
-            event: "Disconnected",
-            client: clientId,
-            room: roomId || null
-        });
-    });
+        room = Room.findOrCreate(type, oldRoomId);
+
+        clientIdToRoomId[clientId] = room.id;
+        room.addUser(clientId, type);
+        
+        callback(true);
+    };
+    
+    /**
+     * Send a chat message to the room the client is current in.
+     */
+    socketHandlers.msg = function (client, message, callback) {
+        var clientId = client.sessionId;
+        var roomId = clientIdToRoomId[clientId];
+        
+        var room = roomId && Room.get(roomId);
+        if (!room) {
+            callback(false);
+            return;
+        }
+        log.store({"action": "messageSent", "time": Date.now().toString()});
+        room.receiveMessage(clientId, message, callback);
+    };
+    
+    /**
+     * Send a "ping" to let the server know the client is still active
+     */
+    socketHandlers.ping = function (client, _, callback) {
+        var clientId = this.user.clientId;
+
+        var roomId = clientIdToRoomId[clientId];
+        var room;
+        if (roomId) {
+            room = Room.get(roomId);
+            if (room) {
+                room.poke(clientId);
+            }
+        }
+
+        if (callback) {
+            callback("pong");
+        }
+    };
     
     process.on('uncaughtException', function (err) {
         log.error({

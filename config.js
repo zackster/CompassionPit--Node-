@@ -13,7 +13,8 @@ var config = {
             info: 1000,
             warn: 1000,
             error: 1000
-        }
+        },
+        forceLatency: 1000,
     },
     production: {
         port: 8000,
@@ -29,7 +30,8 @@ var config = {
             info: 1000,
             warn: 1000,
             error: 1000
-        }
+        },
+        forceLatency: 0,
     }
 };
 

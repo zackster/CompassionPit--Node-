@@ -3,10 +3,10 @@
 (function () {
     "use strict";
     
-    var nowjs = require("now"),
-        log = require("../log"),
+    var log = require("../log"),
         guid = require("../utils").guid,
-        createHash = require("../utils").createHash;
+        createHash = require("../utils").createHash,
+        forceLatency = require("../utils").forceLatency;
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -49,7 +49,7 @@
         id = String(id);
         this.id = id;
         this.sessionTime = this.lastAccessTime = Date.now();
-        this.group = nowjs.getGroup(id);
+        this.socket = require("../app").socket;
         this.clients = createHash();
         this.types = createHash({
             venter: 0,
@@ -65,15 +65,6 @@
         log.info({
             event: "New room",
             room: id
-        });
-        
-        var room = this;
-        this.group.on('connect', function (clientId) {
-            room.onConnect(this, clientId);
-        });
-
-        this.group.on('disconnect', function (clientId) {
-            room.onDisconnect(this, clientId);
         });
     };
     
@@ -181,50 +172,6 @@
     };
     
     /**
-     * Handle when a client connects to the room.
-     * 
-     * @param {Object} client A nowjs client
-     * @param {String} clientId The unique identifier of the client.
-     */
-    Room.prototype.onConnect = function (client, clientId) {
-        if (!this.clients[clientId]) {
-            this.clients[clientId] = 'unknown';
-        }
-        
-        // let the new client know about the other clients in the room.
-        for (var otherClientId in this.clients) {
-            if (otherClientId !== clientId) {
-                var otherClientType = this.clients[otherClientId];
-                if (VALID_TYPES[otherClientType]) {
-                    client.now.receive([
-                        {
-                            action: 'join',
-                            type: otherClientType
-                        }
-                    ]);
-                }
-            }
-        }
-    };
-    
-    /**
-     * Handle when a client disconnects from the room.
-     *
-     * @param {Object} client A nowjs client
-     * @param {String} clientId The unique identifier of the client.
-     */
-    Room.prototype.onDisconnect = function (client, clientId) {
-        var clients = this.clients;
-        delete clients[clientId];
-        for (var key in clients) {
-            // have at least one still in.
-            return;
-        }
-        // didn't find any clients
-        this.delete();
-    };
-    
-    /**
      * Update the lastAccessTime of the Room.
      */
     Room.prototype.poke = function () {
@@ -300,13 +247,38 @@
     };
     
     /**
+     * Send a raw message to the provided client. Any parameters after type are included in the message.
+     *
+     * @param {String} clientId the unique identifier of the client
+     * @param {String} type the message type
+     */
+    Room.prototype.sendToClient = function (clientId, type) {
+        var client = this.socket.clients[clientId];
+        if (!client) {
+            return;
+        }
+        
+        var message = {t: type};
+        if (arguments.length > 2) {
+            if (arguments.length === 3) {
+                message.d = arguments[2];
+            } else {
+                message.d = Array.prototype.slice.call(arguments, 2);
+            }
+        }
+        forceLatency(function () {
+            client.send(message);
+        });
+    };
+    
+    /**
      * Receive a message from the client
      * 
      * @param {String} message The chat message
      * @param {String} clientId The unique identifier of the client
      * @param {Function} callback The callback to inform the client of success.
      */
-    Room.prototype.send = function (message, clientId, callback) {
+    Room.prototype.receiveMessage = function (clientId, message, callback) {
         this.poke();
         
         var clientType = this.clients[clientId];
@@ -321,11 +293,11 @@
             room: this.id,
             type: clientType
         });
-        this.group.now.receive([{
-            action: "message",
-            type: clientType,
-            data: message
-        }]);
+        for (var otherClientId in this.clients) {
+            if (otherClientId !== clientId) {
+                this.sendToClient(otherClientId, "msg", clientType, message);
+            }
+        }
         
         callback(true);
     };
@@ -347,18 +319,23 @@
             room: this.id,
             type: type
         });
-        if (this.hasAnyClients()) {
-            this.group.now.receive([
-                {
-                    action: 'join',
-                    type: type
-                }
-            ]);
-        }
+        
         this.sessionTime = Date.now();
         this.clients[clientId] = type;
         this.types[type] += 1;
-        this.group.addUser(clientId);
+
+        // let the new client know about the other clients in the room.
+        for (var otherClientId in this.clients) {
+            if (otherClientId !== clientId) {
+                // let the old client know that the new one has joined
+                this.sendToClient(otherClientId, "join", type);
+                var otherClientType = this.clients[otherClientId];
+                if (VALID_TYPES[otherClientType]) {
+                    // let the new client know about the existing old clients
+                    this.sendToClient(clientId, "join", otherClientType);
+                }
+            }
+        }
         
         var queue = type === "venter" ? venterRoomQueue : listenerRoomQueue;
         
@@ -388,18 +365,19 @@
         }
         
         this.sessionTime = Date.now();
-        this.group.removeUser(clientId);
+        
+        var clients = this.clients;
+        delete clients[clientId];
         if (this.hasAnyClients()) {
-            this.group.now.receive([
-                {
-                    type: clientType || 'unknown',
-                    action: 'disconnect'
-                }
-            ]);
+            for (var otherClientId in this.clients) {
+                this.sendToClient(otherClientId, "part", clientType || 'unknown');
+            }
             var queue = clientType === "venter" ? venterRoomQueue : listenerRoomQueue;
             if (queue.indexOf(this) === -1) {
                 queue.push(this);
             }
+        } else {
+            this.delete();
         }
     };
 }());
