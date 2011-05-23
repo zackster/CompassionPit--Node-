@@ -1,7 +1,11 @@
 (function ($, undefined) {
     var log = function (data) {
-        if (console && console.log) {
-            console.log(data);
+        try {
+            if (console && console.log) {
+                console.log(data);
+            }
+        } catch (err) {
+            // do nothing
         }
     };
     
