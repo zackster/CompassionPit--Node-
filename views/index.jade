@@ -1,0 +1,100 @@
+script
+  function utmx_section(){}function utmx(){}
+  (function(){var k='0837955242',d=document,l=d.location,c=d.cookie;function f(n){
+  if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
+  length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
+  d.write('<sc'+'ript src="'+
+  'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com'
+  +'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
+  +new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
+  '" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
+
+script
+  function updateCounts() {
+    $.get('/counts', function (data) {
+      var listeners = data.listeners;
+      var venters = data.venters;
+
+      $('#listener-count').text(listeners);
+      $('#venter-count').text(venters);
+
+      $('#counts').hide();
+      $('#need-listeners').hide();
+      $('#need-venters').hide();
+      $('#need-anyone').hide();
+
+      if (listeners || venters) {
+        $('#counts').show();
+        if (listeners > venters) {
+          $('#need-venters').show();
+        }
+        else if (venters > listeners) {
+          $('#need-listeners').show();
+        }
+      }
+      else {
+        $('#need-anyone').show();
+      }
+    });
+    setTimeout(updateCounts, 10 * 1000);
+  }
+
+  $(document).ready(
+    function() {
+      updateCounts();
+    }
+  );
+
+#tagline
+  script utmx_section("Tagline")
+  h1 Chat with an anonymous stranger who won't judge you
+  </noscript>
+
+#main
+  #column_left
+    script utmx_section("Subheader")
+    h2 Connect with someone who will listen
+    </noscript>
+    
+    p You want to share your feelings, but you can't talk to somebody you know - because let's face it, they might judge you for it or use it against you in the future. CompassionPit is the solution to this: get anonymously connected to another compassionate human from around the world.
+    p
+      b Pick an option to the right, and then you will be randomly connected to a chat with an anonymous partner.
+    
+    p#counts(style="display:none")
+      #{"There are "}
+      span#listener-count 0
+      #{" listeners and "}
+      span#venter-count 0
+      #{" venters."}
+    
+    p#need-listeners(style="display:none")
+      b There are venters who need someone to talk to -- please join as a listener.
+    p#need-venters(style="display:none")
+      b If you join as a listener and aren't immediately paired up with a venter, your computer will play a sound when a venter joins your chat.
+    p#need-anyone(style="display:none")
+      b Nobody's online right now, please join in and keep things going!
+    
+    p
+      #{"*"}
+      strong(style="color:red") NEW
+      #{"* "}
+      a(href="/forum/", target="_blank") The CompassionPit forum
+      #{"!"}
+    
+    br.clear
+  
+  .separator
+  
+  #column_right
+    #buttons1
+      ul
+        script utmx_section("Calls To Action")
+        li
+          a(href="/vent") Share your troubles
+        li
+          a(href="/listen") Participate as a listener
+        </noscript>
+      
+      iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:450px; height:35px;", allowTransparency="true")
+  
+  br.clear

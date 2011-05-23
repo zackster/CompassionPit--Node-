@@ -1,0 +1,30 @@
+script(src="/jquery.jplayer.min.js")
+script(src="/socket.io.min.js")
+script
+  window.CLIENT_TYPE = !{JSON.stringify(type)};
+script(src="/chat.js?ver=2")
+
+#audioPlayer
+#tagline
+  h1
+    #status
+#main
+  #column_left_chat
+    table#chatWindow(width="100%")
+      tr
+        td
+    br.clear
+  
+  #column_right_chat
+    #buttons1
+      ul
+        li
+          a(href="#", id="newPartner") Find a new partner
+        li(style="font-family:Arial, Helvetica, sans-serif;font-size:.8em")
+          label
+            input(type="checkbox", id="enable_sound")
+            #{"Enable sound"}
+        li(style="display:none")
+          a(href="#") Report ABUSE
+  
+  br.clear

@@ -1,22 +1,83 @@
 (function ($, undefined) {
-    $.extend({
-    	getUrlVars: function(){
-    		var vars = [], hash;
-    		var hashes = window.location.href.split('#')[0].slice(window.location.href.indexOf('?') + 1).split('&');
-    		for(var i = 0; i < hashes.length; i++)
-    		{
-    			hash = hashes[i].split('=');
-    			vars.push(hash[0]);
-    			vars[hash[0]] = hash[1];
-    		}
-    		return vars;
-    	},
-    	getUrlVar: function(name){
-    		return $.getUrlVars()[name];
-    	}
-    });
+    var log = function (data) {
+        if (console && console.log) {
+            console.log(data);
+        }
+    };
     
-    var CLIENT_TYPE = $.getUrlVar('type') === 'listener' ? 'listener' : 'venter';
+    var CLIENT_TYPE = window.CLIENT_TYPE;
+    var OTHER_CLIENT_TYPE = (CLIENT_TYPE == 'listener') ? 'venter' : 'listener';
+    
+    var isArray = Array.isArray || function (item) {
+        return Object.prototype.toString.call(item) === "[object Array]";
+    };
+
+    var socket = new io.Socket();
+    var firstConnect = true;
+    var hasPartner = false;
+    socket.on('connect', function () {
+        log("connect");
+        if (firstConnect) {
+            firstConnect = false;
+        	addMessage('System', 'Connected');
+        } else {
+    		addMessage('System', 'Reconnected');
+        }
+        requestNewChatChannel();
+    });
+    socket.on('disconnect', function () {
+        log("disconnect");
+		addMessage('System', 'You have been disconnected. Trying to reconnect...');
+		info("Reconnecting...");
+		hasPartner = false;
+    });
+    var requests = {};
+    var socketHandlers = {};
+    var arrayify = function (item) {
+        if (item == null) { // undefined or null
+            return [];
+        } else if (isArray(item)) {
+            return item;
+        } else {
+            return [item];
+        }
+    }
+    socket.on('message', function (data) {
+        if (data.i) {
+            var request = Object.prototype.hasOwnProperty.call(requests, data.i) && requests[data.i];
+            if (request) {
+                delete requests[data.i];
+                request.apply(undefined, arrayify(data.d));
+            }
+        } else if (data.t) {
+            var handler = Object.prototype.hasOwnProperty.call(socketHandlers, data.t) && socketHandlers[data.t];
+            if (handler) {
+                handler.apply(undefined, arrayify(data.d));
+            } else {
+                log("Unhandled message: " + data.t);
+            }
+        } else {
+            log("Unknown message");
+        }
+    });
+    socket.connect();
+    
+    var makeId = (function () {
+        var i = 0;
+        return function () {
+            i += 1;
+            return i;
+        };
+    }());
+    var socketRequest = function (type, data, callback) {
+        var id = makeId();
+        var chunk = {t: type, i: id};
+        if (data != null) { // null or undefined
+            chunk.d = data;
+        }
+        requests[id] = callback;
+        socket.send(chunk);
+    };
 
     function info(msg) {
     	status(msg, 'infoMessage');
@@ -35,7 +96,7 @@
         if (!checkingQueue) {
             return;
         }
-        now.getQueuePosition(function (position) {
+        socketRequest("queue", null, function (position) {
             if (checkingQueue) {
                 if (position < 0) {
                     $('#status').text(checkingQueue);
@@ -79,15 +140,11 @@
         queryQueuePosition();
     }
 
-    var other;
-    var initialized = false;
-    var hasPartner = false;
-
-    function newPartner() {
+    function requestNewChatPartner() {
     	if (hasPartner) {
     		hasPartner = false;
     		addMessage('System', 'Please wait while we find you a new chat partner.');
-    		getPartner();
+    		requestNewChatChannel();
     	}
     }
 
@@ -101,53 +158,41 @@
     });
 
     $(document).ready(function() {
-        now.ready(function () {
-    		$('#enable_sound').attr('checked', true);
-    		info('Initializing');
+		$('#enable_sound').attr('checked', true);
+		info('Initializing');
 
-    		try {
-    			function audioReady() {
-    				this.element.jPlayer('setFile', '/shortgong.mp3');
-    			}
-    			$('#audioPlayer').jPlayer({
-    				ready: audioReady,
-    				swfPath: '/',
-    				reload: 'auto'
-    			});
-    		} catch(e) {
-    		}
+		try {
+			function audioReady() {
+				this.element.jPlayer('setFile', '/shortgong.mp3');
+			}
+			$('#audioPlayer').jPlayer({
+				ready: audioReady,
+				swfPath: '/',
+				reload: 'auto'
+			});
+		} catch(e) {
+		}
+		
+		$('#newPartner').click(function() {
+	        requestNewChatPartner();
+	        return false;
+	    });
+	    
+        window.onbeforeunload = function(event) {
+            return hasPartner ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
+        };
+    });
 
-    		$('#newPartner').click(
-    				function() {
-    					newPartner();
-    				}
-    			);
-
-            window.onbeforeunload = function(event) {
-                return hasPartner ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
-            }
-
-    		other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
-
-    		getPartner();
-    		
-            setInterval(function () {
-                now.ping();
-            }, 30000);
-        })});
-
-
-    function getPartner() {
+    function requestNewChatChannel() {
         hasPartner = false;
-
-        now.join(CLIENT_TYPE, function(data) {
-        	//console.log('joined?');
-        	initialized = true;
+        
+        socketRequest("join", CLIENT_TYPE, function () {
         	if (!hasPartner) {
                 infoWithQueue('Waiting for a chat partner... ');
             }
         });
         info('Waiting for a chat partner... ');
+        addMessage("System", "Searching for a chat partner...");
     }
 
     function gong() {
@@ -195,58 +240,44 @@
     		document.title = 'CompassionPit | Chat';
     	}
     }
-
-    function handleMessages(messages) {
-	for(mesg in messages) {
-		message = messages[mesg]; // sloppy and ugly code, but before we were doing messages.foreach(function(message) {    --- and that wasn't cross-browser compatible
-    		switch (message.action) {
-    			case "join":
-    			    if (message.type !== CLIENT_TYPE) {
-        				info(false);
-        				addMessage('System', 'A new chat partner has entered your chat');
-        				hasPartner = true;
-    				}
-    				break;
-    			case "message":
-    		                if (message.type != CLIENT_TYPE) {
-            			        addMessage(message.type, message.data);
-    	                        }
-    		    		break;
-    			case "disconnect":
-    				addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
-    				hasPartner = false;
-    				infoWithQueue('Waiting for a chat partner... ');
-    				break;
-    			default:
-				alert("An error has an occurred. Please send an email to zackster@gmail.com so I can look into it. Thank you!!");
-    				//console.log("Unhandled message", message);
-    		}
-    	}
-    }
-
-    function sendMessage(msg) {
-        if (msg == '' || !initialized)
-    	    return;
-        info('Sending message...')
     
-        now.sendMessage(msg, 
-    	     function (data) {
-    		 if(data == true) {
-    		     addMessage('Me', msg);
-    		     info(false);
-    		     $('#chatInput').val('')
-    		 } else {
-    		     error('Failed to send message.')
-    		 }
-    	     });
+    function sendMessage(msg) {
+        if (msg == '' || !hasPartner) {
+    	    return;
+	    }
+	    
+        addMessage('Me', msg);
+		info(false);
+	    $('#chatInput').val('');
+        
+        socketRequest("msg", msg, function (data) {
+            if (data !== true) {
+     		    addMessage('System', 'Failed to send message.')
+            }
+        });
     }
-
-    // this function gets called by the server
-    now.receive = function (data, callback) {
-        var callback = callback || function () {};
-        handleMessages(data);
-        callback();
-    }
+    
+    socketHandlers.sysmsg = function (message) {
+        addMessage("System", message);
+    };
+    socketHandlers.msg = function (type, message) {
+        if (type != CLIENT_TYPE) {
+            addMessage(type, message);
+        }
+    };
+    socketHandlers.join = function (type) {
+	    if (type !== CLIENT_TYPE) {
+			hasPartner = true;
+			info(false);
+			addMessage('System', 'A new chat partner has entered your chat');
+		}
+    };
+    socketHandlers.part = function (type) {
+        var other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
+		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
+		hasPartner = false;
+		infoWithQueue('Waiting for a chat partner... ');
+    };
 
     function capitalize(text) {
         return text.charAt(0).toUpperCase() + text.substring(1);

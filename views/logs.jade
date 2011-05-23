@@ -1,48 +1,53 @@
 script(src="/logs.js")
-style
-  ul > li {
-    display: inline-block;
-    padding-right: 5px;
-  }
-  caption {
-    font-size: 140%;
-  }
-  table {
-    margin-bottom: 40px;
-  }
 
-button(id="refresh") Refresh
+#tagline
+  h1 Logs
+#main
+  #column_full
+    style
+      ul > li {
+        display: inline-block;
+        padding-right: 5px;
+      }
+      caption {
+        font-size: 140%;
+      }
+      table {
+        margin-bottom: 40px;
+      }
 
-table(style="width:100%")
-  caption Log counts
-  thead
-    tr
-      th Severity
-      th Event
-      th Count
-  tbody(id="counts-tbody")
+    button(id="refresh") Refresh
 
-table(style="width:100%")
-  caption Rooms
-  thead
-    tr
-      th ID
-      th Time
-      th Listeners
-      th Venters
-  tbody(id="rooms-tbody")
+    table(style="width:100%")
+      caption Log counts
+      thead
+        tr
+          th Severity
+          th Event
+          th Count
+      tbody(id="counts-tbody")
 
-#filters
+    table(style="width:100%")
+      caption Rooms
+      thead
+        tr
+          th ID
+          th Time
+          th Listeners
+          th Venters
+      tbody(id="rooms-tbody")
 
-#severity-tabs
-  - each severity in logTypes
-    button(id="severity-tab-" + severity, class="severity-tab", data-severity=severity) #{severity}
+    #filters
 
-table(style="width:100%")
-  caption Log entries
-  thead
-    tr
-      th Time
-      th Event
-      th Info
-  tbody(id="log-tbody")
+    #severity-tabs
+      - each severity in logTypes
+        button(id="severity-tab-" + severity, class="severity-tab", data-severity=severity) #{severity}
+
+    table(style="width:100%")
+      caption Log entries
+      thead
+        tr
+          th Time
+          th Event
+          th Info
+      tbody(id="log-tbody")

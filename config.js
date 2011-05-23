@@ -13,7 +13,9 @@ var config = {
             info: 1000,
             warn: 1000,
             error: 1000
-        }
+        },
+        forceLatency: 1000,
+        systemPassword: "password",
     },
     production: {
         port: 8000,
@@ -29,8 +31,10 @@ var config = {
             info: 1000,
             warn: 1000,
             error: 1000
-        }
+        },
+        forceLatency: 0,
+        systemPassword: "password",
     }
 };
 
-module.exports = config[process.env.NODE_ENV || "production"];
+module.exports = config[process.env.NODE_ENV || "development"];
