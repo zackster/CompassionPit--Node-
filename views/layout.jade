@@ -2,12 +2,19 @@
 html
   head
     title Compassion Pit
-    link(rel="stylesheet", href="/css/reset.css", type="text/css")
-    link(rel="stylesheet", href="/css/style.css", type="text/css")
+    - if (config.serveMerged)
+      link(rel="stylesheet", href="/style.min.css?" + cssHash, type="text/css")
+    - else
+      - each style in config.styles
+        link(rel="stylesheet", href="/" + style, type="text/css")
     meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="description", content="Feeling down? CompassionPit makes it easy to find an anonymous friend to share your troubles with, without fear of being blackmailed later on.")
-    script(src="/jquery-1.5.min.js")
+    - if (config.serveMerged)
+      script(src="/script.min.js?" + jsHash)
+    - else
+      - each script in config.scripts
+        script(src="/" + script)
     script
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-17971348-1']);
