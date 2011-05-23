@@ -9,42 +9,6 @@ script
   +new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
   '" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
 
-script
-  function updateCounts() {
-    $.get('/counts', function (data) {
-      var listeners = data.listeners;
-      var venters = data.venters;
-
-      $('#listener-count').text(listeners);
-      $('#venter-count').text(venters);
-
-      $('#counts').hide();
-      $('#need-listeners').hide();
-      $('#need-venters').hide();
-      $('#need-anyone').hide();
-
-      if (listeners || venters) {
-        $('#counts').show();
-        if (listeners > venters) {
-          $('#need-venters').show();
-        }
-        else if (venters > listeners) {
-          $('#need-listeners').show();
-        }
-      }
-      else {
-        $('#need-anyone').show();
-      }
-    });
-    setTimeout(updateCounts, 10 * 1000);
-  }
-
-  $(document).ready(
-    function() {
-      updateCounts();
-    }
-  );
-
 #tagline
   script utmx_section("Tagline")
   h1 Chat with an anonymous stranger who won't judge you

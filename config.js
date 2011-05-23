@@ -48,6 +48,7 @@ module.exports.scripts = [
     "socket.io.js",
     "comm.js",
     "chat.js",
+    "index.js",
     "logs.js"
 ];
 module.exports.styles = [
