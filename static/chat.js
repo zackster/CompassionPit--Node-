@@ -1,21 +1,4 @@
 (function ($, undefined) {
-    $.extend({
-    	getUrlVars: function(){
-    		var vars = [], hash;
-    		var hashes = window.location.href.split('#')[0].slice(window.location.href.indexOf('?') + 1).split('&');
-    		for(var i = 0; i < hashes.length; i++)
-    		{
-    			hash = hashes[i].split('=');
-    			vars.push(hash[0]);
-    			vars[hash[0]] = hash[1];
-    		}
-    		return vars;
-    	},
-    	getUrlVar: function(name){
-    		return $.getUrlVars()[name];
-    	}
-    });
-    
     var log = function (data) {
         if (console && console.log) {
             console.log(data);
@@ -274,8 +257,11 @@
         });
     }
     
+    socketHandlers.sysmsg = function (message) {
+        addMessage("System", message);
+    };
     socketHandlers.msg = function (type, message) {
-        if (message.type != CLIENT_TYPE) {
+        if (type != CLIENT_TYPE) {
             addMessage(type, message);
         }
     };

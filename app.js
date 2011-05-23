@@ -30,11 +30,14 @@
     
     app.configure(function () {
         app.use(express.static(__dirname + '/static'));
+        app.use(express.bodyParser());
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
     
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
+    
+    var socket;
     
     // / just serves up static/index.html
     // Might want to change this to a jade template later, since some dynamic data is on the page
@@ -96,6 +99,27 @@
         res.redirect("/", 301);
     });
     
+    app.get("/system", function (req, res) {
+        res.render("system");
+    });
+    
+    app.post("/system", function (req, res) {
+        if (req.body.password !== config.systemPassword) {
+            res.send("Wrong password");
+        } else if (!req.body.message) {
+            res.send("No message provided");
+        } else {
+            var message = req.body.message;
+            forceLatency(function () {
+                socket.broadcast({
+                    t: "sysmsg",
+                    d: message
+                });        
+            });
+            res.send("Sucessfully sent " + JSON.stringify(message));
+        }
+    });
+    
     app.get('/messageChart', function (req, res) {
         var mongodb = require('mongodb');
         var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
@@ -125,7 +149,7 @@
     }
     
     // let socket.io hook into the existing app
-    var socket = app.socket = socketIO.listen(app);
+    socket = app.socket = socketIO.listen(app);
     
     // a simple hash of clientId to roomId
     var clientIdToRoomId = Object.create(null);
