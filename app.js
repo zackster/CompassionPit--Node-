@@ -309,5 +309,17 @@
                 callback("pong");
             }
         };
+        
+        socketHandlers.counts = function (client, _, callback) {
+            var numListeners = 0;
+            var numVenters = 0;
+
+            Room.forEach(function (room, id) {
+                numListeners += room.getNumClientsOfType("listener");
+                numVenters += room.getNumClientsOfType("venter");
+            });
+            
+            callback({l: numListeners, v: numVenters});
+        };
     });
 }());

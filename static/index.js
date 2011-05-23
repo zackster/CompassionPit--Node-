@@ -4,11 +4,16 @@
             return;
         }
         
-        function updateCounts() {
-            $.get('/counts', function (data) {
-                var listeners = data.listeners;
-                var venters = data.venters;
-
+        var comm = Comm.create();
+        comm.start();
+        
+        var updateCounts = function() {
+            console.log("request counts");
+            comm.request("counts", null, function (data) {
+                console.log(data);
+                var listeners = data.l;
+                var venters = data.v;
+                
                 $('#listener-count').text(listeners);
                 $('#venter-count').text(venters);
 
