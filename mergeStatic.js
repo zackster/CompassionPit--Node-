@@ -16,10 +16,22 @@
         var remaining = 0;
         var handleFinish = function () {
             var mergedJavascript = scriptResults.join(";\n\n\n");
-            var minifiedJavascript = uglify(mergedJavascript);
+            var minifiedJavascript;
+            try {
+                minifiedJavascript = uglify(mergedJavascript);
+            } catch (err) {
+                console.warn(err);
+                minifiedJavascript = mergedJavascript;
+            }
             
             var mergedCss = styleResults.join("\n\n\n");
-            var minifiedCss = sqwish.minify(mergedCss);
+            var minifiedCss;
+            try {
+                minifiedCss = sqwish.minify(mergedCss);
+            } catch (err) {
+                console.warn(err);
+                minifiedCss = mergedCss;
+            }
             
             fs.writeFile(__dirname + "/static/script.min.js", minifiedJavascript, function () {
                 fs.writeFile(__dirname + "/static/style.min.css", minifiedCss, function () {
