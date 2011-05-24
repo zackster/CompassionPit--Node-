@@ -20,6 +20,19 @@
     }));
     var LogEntry = exports.LogEntry = mongoose.model('LogEntry');
     
+    /**
+     * Represents a single LogEntry that will be stored in MongoDB
+     */
+    mongoose.model('ClientError', new Schema({
+        message: { type: String },
+        locationUrl: { type: String },
+        userAgent: { type: String },
+        errorUrl: { type: String },
+        lineNumber: { type: Number },
+        time: { type: Date, default: Date.now }
+    }));
+    var ClientError = exports.ClientError = mongoose.model('ClientError');
+    
     var logEntries = {};
     var logCounts = {};
     
@@ -71,12 +84,38 @@
         });
         
         app.get("/logs.json", function (req, res) {
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({
-                entries: logEntries,
-                counts: logCounts,
-                rooms: require('./rooms/models').Room.dumpData()
-            }));
+            ClientError.find({}, null, { sort: { time: -1 }, limit: 1000 }, function (err, errors) {
+                if (err) {
+                    throw err;
+                }
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({
+                    entries: logEntries,
+                    counts: logCounts,
+                    rooms: require('./rooms/models').Room.dumpData(),
+                    errors: errors
+                }));
+            });
+        });
+        
+        app.post("/log-error", function (req, res) {
+            var error = new ClientError({
+                message: req.body.errorMsg,
+                locationUrl: req.body.location,
+                userAgent: req.headers['user-agent'],
+                errorUrl: req.body.url,
+                lineNumber: req.body.lineNumber,
+            });
+            error.save(function (err) {
+                if (err) {
+                    exports.error({
+                        event: "Cannot save ClientError",
+                        error: err.toString(),
+                        body: JSON.stringify(req.body)
+                    });
+                }
+            });
+            res.send("");
         });
     };
     

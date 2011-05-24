@@ -6,6 +6,7 @@
     var logEntries = null;
     var logCounts = null;
     var rooms = null;
+    var clientErrors = null;
     
     var has = Object.prototype.hasOwnProperty;
 
@@ -113,6 +114,7 @@
             });
             
             var $roomsTbody = $("#rooms-tbody");
+            $roomsTbody.empty();
             rooms.forEach(function (room) {
                 var listeners = [];
                 var venters = [];
@@ -140,6 +142,23 @@
                             .text(listeners.join(", ")))
                         .append($("<td>")
                             .text(venters.join(", "))));
+            });
+
+            var $clientErrorTbody = $("#client-error-tbody");
+            $clientErrorTbody.empty();
+            clientErrors.forEach(function (error) {
+                $clientErrorTbody
+                    .append($("<tr>")
+                        .append($("<td>")
+                            .text(error.time ? new Date(error.time).toString() : ""))
+                        .append($("<td>")
+                            .text(error.locationUrl || ""))
+                        .append($("<td>")
+                            .text(error.userAgent || ""))
+                        .append($("<td>")
+                            .text(error.message || ""))
+                        .append($("<td>")
+                            .text(error.errorUrl + ":" + error.lineNumber)));
             });
             
             refreshDisplayedEntries();
@@ -177,6 +196,7 @@
                 logEntries = data.entries;
                 logCounts = data.counts;
                 rooms = data.rooms;
+                clientErrors = data.errors;
                 
                 for (var i = 0, len = logTypes.length; i < len; i += 1) {
                     var severity = logTypes[i];

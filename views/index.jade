@@ -8,6 +8,8 @@ script
   +'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
   +new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
   '" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
+script
+  window.startingRoomCounts = !{JSON.stringify(roomCounts)};
 
 #tagline
   script utmx_section("Tagline")

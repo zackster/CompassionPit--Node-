@@ -43,10 +43,22 @@
     
     var socket;
     
-    // / just serves up static/index.html
-    // Might want to change this to a jade template later, since some dynamic data is on the page
+    var getRoomCounts = function () {
+        var numListeners = 0;
+        var numVenters = 0;
+
+        Room.forEach(function (room, id) {
+            numListeners += room.getNumClientsOfType("listener");
+            numVenters += room.getNumClientsOfType("venter");
+        });
+        
+        return {l: numListeners, v: numVenters};
+    };
+    
     app.get("/", function (req, res, next) {
-        res.render('index');
+        res.render('index', {
+            roomCounts: getRoomCounts()
+        });
     });
     
     app.get("/index.html", function (req, res) {
@@ -307,15 +319,7 @@
         };
         
         socketHandlers.counts = function (client, _, callback) {
-            var numListeners = 0;
-            var numVenters = 0;
-
-            Room.forEach(function (room, id) {
-                numListeners += room.getNumClientsOfType("listener");
-                numVenters += room.getNumClientsOfType("venter");
-            });
-            
-            callback({l: numListeners, v: numVenters});
+            callback(getRoomCounts());
         };
     });
 }());

@@ -7,36 +7,40 @@
         var comm = Comm.create();
         comm.start();
         
-        var updateCounts = function() {
-            console.log("request counts");
-            comm.request("counts", null, function (data) {
-                console.log(data);
-                var listeners = data.l;
-                var venters = data.v;
-                
-                $('#listener-count').text(listeners);
-                $('#venter-count').text(venters);
+        var updateCounts = function(data) {
+            var listeners = data.l;
+            var venters = data.v;
+            
+            $('#listener-count').text(listeners);
+            $('#venter-count').text(venters);
 
-                $('#counts').hide();
-                $('#need-listeners').hide();
-                $('#need-venters').hide();
-                $('#need-anyone').hide();
+            $('#counts').hide();
+            $('#need-listeners').hide();
+            $('#need-venters').hide();
+            $('#need-anyone').hide();
 
-                if (listeners || venters) {
-                    $('#counts').show();
-                    if (listeners > venters) {
-                        $('#need-venters').show();
-                    }
-                    else if (venters > listeners) {
-                        $('#need-listeners').show();
-                    }
+            if (listeners || venters) {
+                $('#counts').show();
+                if (listeners > venters) {
+                    $('#need-venters').show();
                 }
-                else {
-                    $('#need-anyone').show();
+                else if (venters > listeners) {
+                    $('#need-listeners').show();
                 }
-            });
-            setTimeout(updateCounts, 10 * 1000);
+            }
+            else {
+                $('#need-anyone').show();
+            }
+        };
+        if (window.startingRoomCounts) {
+            updateCounts(window.startingRoomCounts);
+            delete window.startingRoomCounts;
         }
-        updateCounts();
+        
+        var requestCounts = function() {
+            comm.request("counts", null, updateCounts);
+            setTimeout(requestCounts, 10 * 1000);
+        }
+        requestCounts();
     });
 }(jQuery));
