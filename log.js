@@ -4,7 +4,21 @@
     /*global console: false*/
     
     var config = require('./config');
-    var mongodb = require('mongodb');
+    
+    var mongoose = require('mongoose'),
+        Schema = mongoose.Schema,
+        ObjectId = Schema.ObjectId;
+    
+    mongoose.connect(config.mongodb.uri);
+    
+    /**
+     * Represents a single LogEntry that will be stored in MongoDB
+     */
+    mongoose.model('LogEntry', new Schema({
+        action: { type: String, "enum": ["messageSent"] },
+        time: { type: Date, default: Date.now }
+    }));
+    var LogEntry = exports.LogEntry = mongoose.model('LogEntry');
     
     var logEntries = {};
     var logCounts = {};
@@ -29,31 +43,22 @@
             }
         };
     };
-
-    var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
-    var mongoDb = new mongodb.Db(config.mongodb.logDb, mongoServer, {});
-    
     
     exports.info = makeLogFunction("info");
     exports.warn = makeLogFunction("warn");
     exports.error = makeLogFunction("error");
 
-    exports.store = function(obj) { 
-        mongoDb.open(function (error, client) {
-            if (error) {
-                console.warn("Could not connect to mongoDB @" + config.mongodb.host + ":" + config.mongodb.port + ". Error: " + error.message);
-                return;
+    exports.store = function (action) {
+        var entry = new LogEntry({
+            action: action
+        });
+        entry.save(function (err) {
+            if (err) {
+                exports.error({
+                    event: "Cannot save LogEntry",
+                    error: err.toString()
+                });
             }
-            var collection = new mongodb.Collection(client, config.mongodb.logCollection);
-            collection.insert(obj, {safe:true}, function(err, objects) {
-                if (err) { 
-                    console.warn(err.message);
-                }
-                if (err && err.message.indexOf('E11000 ') !== -1) {
-                    console.warn("Entry was already entered int the db");   
-                }
-                mongoDb.close();
-             });                       
         });
     };
     

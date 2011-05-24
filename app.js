@@ -15,7 +15,6 @@
         latencyWrap = require("./utils").latencyWrap,
         config = require("./config"),
         log = require("./log"),
-        mongo = require("mongodb"),
         mergeStatic = require("./mergeStatic");
     
     app.dynamicHelpers({
@@ -126,18 +125,15 @@
     });
     
     app.get('/messageChart', function (req, res) {
-        var mongodb = require('mongodb');
-        var mongoServer = new mongodb.Server(config.mongodb.host, config.mongodb.port, {});
-        var mongoDb = new mongodb.Db(config.mongodb.logDb, mongoServer, {});
-        mongoDb.open(function (error, client) {        
-            var collection = new mongodb.Collection(client, config.mongodb.logCollection);
-            var messageJSON;
-            res.escapeMarkup = false;
-            collection.find({}).toArray(function (err, docs) {
-                messageJSON = docs;
-                res.render('messageChart', {            
-                    messageJSON: JSON.stringify(messageJSON)
-                }); 
+        log.LogEntry.find({}, function (err, docs) {
+            var messages = docs.filter(function (doc) {
+                return doc.action === "messageSent";
+            }).map(function (doc) {
+                return +new Date(doc.time);
+            });
+            messages.sort();
+            res.render('messageChart', {
+                messages: messages
             });
         });
     });  
@@ -286,7 +282,7 @@
                 callback(false);
                 return;
             }
-            log.store({"action": "messageSent", "time": Date.now().toString()});
+            log.store("messageSent");
             room.receiveMessage(clientId, message, callback);
         };
     
