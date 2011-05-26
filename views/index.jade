@@ -1,6 +1,7 @@
+//- Google Website Optimizer Control Script
 script
   function utmx_section(){}function utmx(){}
-  (function(){var k='0837955242',d=document,l=d.location,c=d.cookie;function f(n){
+  (function(){var k='4007739858',d=document,l=d.location,c=d.cookie;function f(n){
   if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
   length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
   d.write('<sc'+'ript src="'+
@@ -8,6 +9,18 @@ script
   +'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
   +new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
   '" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
+
+//- Google Website Optimizer Tracking Script
+script
+  var _gaq = _gaq || [];
+  _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
+  _gaq.push(['gwo._trackPageview', '/4007739858/test']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  
 script
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
 
@@ -19,7 +32,7 @@ script
 #main
   #column_left
     script utmx_section("Subheader")
-    h2 Connect with someone who will listen
+    h2 Connect with someone
     </noscript>
     
     p You want to share your feelings, but you can't talk to somebody you know - because let's face it, they might judge you for it or use it against you in the future. CompassionPit is the solution to this: get anonymously connected to another compassionate human from around the world.
