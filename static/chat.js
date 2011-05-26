@@ -205,11 +205,11 @@
                 addMessage(type, message);
             }
         });
-        comm.handler("join", function (type) {
+        comm.handler("join", function (type, geoInfo) {
     	    if (type !== CLIENT_TYPE) {
     			hasPartner = true;
     			info(false);
-    			addMessage('System', 'A new chat partner has entered your chat');
+    			addMessage('System', geoInfo ? 'A new chat partner has entered your chat from ' + geoInfo : 'A new chat partner has entered your chat');
     		}
         });
         comm.handler("part", function (type) {

@@ -6,7 +6,8 @@
     var log = require("../log"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
-        forceLatency = require("../utils").forceLatency;
+        forceLatency = require("../utils").forceLatency,
+        geoip = require('geoip');
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -334,6 +335,61 @@
     };
     
     /**
+     * Return the IP Address of the provided clientId
+     *
+     * @param {String} clientId The IP Address of the client
+     * @return {String} The IP Address or null
+     */
+    Room.prototype.getClientIPAddress = function (clientId) {
+        var client = this.socket.clients[clientId];
+        if (!client) {
+            return null;
+        }
+        
+        var ipAddress = client.request.headers['x-forwarded-for'] || client.connection.remoteAddress || null;
+        if (ipAddress) {
+            var comma = ipAddress.indexOf(",");
+            if (comma !== -1) {
+                ipAddress = ipAddress.substring(0, comma);
+            }
+        }
+        return ipAddress;
+    };
+    
+    var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
+    
+    Room.prototype.lookupClientGeoIP = function (clientId, callback) {
+        var ipAddress = this.getClientIPAddress(clientId);
+        if (!ipAddress || ipAddress === "127.0.0.1") {
+            callback(null);
+        } else {
+            geoipCity.lookup(function (err, data) {
+                if (err) {
+                    log.error({
+                        event: "GeoIP",
+                        error: String(err.message),
+                        stack: String(err.stack),
+                        ipAddress: ipAddress
+                    });
+                    callback(null);
+                    return;
+                }
+                
+                var parts = [
+                    data.city,
+                    data.region,
+                    data.country_name
+                ];
+                var result = parts.filter(function (x) {
+                    return !!x;
+                }).join(", ");
+                
+                callback(result);
+            });
+        }
+    };
+    
+    /**
      * Send a raw message to the provided client. Any parameters after type are included in the message.
      *
      * @param {String} clientId the unique identifier of the client
@@ -424,21 +480,27 @@
         this.clients[clientId] = type;
         this.types[type] += 1;
 
+        var self = this;
+        
         // let the new client know about the other clients in the room.
-        for (var otherClientId in this.clients) {
+        Object.keys(this.clients).forEach(function (otherClientId) {
             if (otherClientId !== clientId) {
                 // let the old client know that the new one has joined
-                this.sendToClient(otherClientId, "join", type);
-                var otherClientType = this.clients[otherClientId];
+                self.lookupClientGeoIP(clientId, function (geoInfo) {
+                    self.sendToClient(otherClientId, "join", type, geoInfo);
+                });
+                var otherClientType = self.clients[otherClientId];
                 if (VALID_TYPES[otherClientType]) {
                     // let the new client know about the existing old clients
-                    this.sendToClient(clientId, "join", otherClientType);
+                    self.lookupClientGeoIP(otherClientId, function (geoInfo) {
+                        self.sendToClient(clientId, "join", otherClientType, geoInfo);
+                    });
                 }
                 
                 (clientInteractions[clientId] || (clientInteractions[clientId] = [])).push(otherClientId);
                 (clientInteractions[otherClientId] || (clientInteractions[otherClientId] = [])).push(clientId);
             }
-        }
+        });
         
         Room.removeClientFromQueue(clientId);
     };
