@@ -89,10 +89,13 @@
                     throw err;
                 }
                 res.writeHead(200, { "Content-Type": "application/json" });
+                var roomData = require('./rooms/models').Room.dumpData();
                 res.end(JSON.stringify({
                     entries: logEntries,
                     counts: logCounts,
-                    rooms: require('./rooms/models').Room.dumpData(),
+                    rooms: roomData.rooms,
+                    listenerQueue: roomData.listenerQueue,
+                    venterQueue: roomData.venterQueue,
                     errors: errors
                 }));
             });

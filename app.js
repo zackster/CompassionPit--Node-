@@ -44,15 +44,9 @@
     var socket;
     
     var getRoomCounts = function () {
-        var numListeners = 0;
-        var numVenters = 0;
-
-        Room.forEach(function (room, id) {
-            numListeners += room.getNumClientsOfType("listener");
-            numVenters += room.getNumClientsOfType("venter");
-        });
+        var result = Room.calculateCounts();
         
-        return {l: numListeners, v: numVenters};
+        return {l: result[0], v: result[1]};
     };
     
     app.get("/", function (req, res, next) {
@@ -182,9 +176,6 @@
         // let socket.io hook into the existing app
         socket = app.socket = socketIO.listen(app);
     
-        // a simple hash of clientId to roomId
-        var clientIdToRoomId = Object.create(null);
-    
         var socketHandlers = Object.create(null);
     
         socket.on('connection', function (client) {
@@ -213,20 +204,17 @@
             // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
             client.on('disconnect', latencyWrap(function () {
                 var clientId = client.sessionId;
-                var roomId = clientIdToRoomId[clientId];
-                if (roomId) {
-                    delete clientIdToRoomId[clientId];
-
-                    var room = Room.get(roomId);
-                    if (room) {
-                        room.removeUser(clientId);
-                    }
+                var room = Room.getByClientId(clientId);
+                if (room) {
+                    room.removeUser(clientId);
+                } else {
+                    Room.removeClientFromQueue(clientId);
                 }
 
                 log.info({
                     event: "Disconnected",
                     client: clientId,
-                    room: roomId || null
+                    room: room ? room.id : null
                 });
             }));
         });
@@ -237,47 +225,24 @@
         socketHandlers.queue = function (client, _, callback) {
             var clientId = client.sessionId;
 
-            var roomId = clientIdToRoomId[clientId];
-            var room;
-            if (roomId) {
-                room = Room.get(roomId);
-                if (room) {
-                    room.poke(clientId);
-                }
-            }
-        
-            callback(room.getQueuePosition(clientId));
+            callback(Room.getQueuePosition(clientId));
         };
     
         /**
          * Request to join a channel based on the provided type
          */
         socketHandlers.join = function (client, type, callback) {
-            var opposite;
-            if (type === "venter") {
-                opposite = "listener";
-            } else {
+            if (type !== "venter") {
                 type = "listener";
-                opposite = "venter";
             }
 
             var clientId = client.sessionId;
-
-            // disconnect from old room if rejoining
-            var oldRoomId = clientIdToRoomId[clientId];
-            var room;
-            if (oldRoomId) {
-                room = Room.get(oldRoomId);
-                if (room) {
-                    room.removeUser(clientId);
-                }
+            
+            var room = Room.getByClientId(clientId);
+            if (room) {
+                room.removeUser(clientId);
             }
-            delete clientIdToRoomId[clientId];
-
-            room = Room.findOrCreate(type, oldRoomId);
-
-            clientIdToRoomId[clientId] = room.id;
-            room.addUser(clientId, type);
+            Room.addClientToQueue(clientId, type);
         
             callback(true);
         };
@@ -287,9 +252,8 @@
          */
         socketHandlers.msg = function (client, message, callback) {
             var clientId = client.sessionId;
-            var roomId = clientIdToRoomId[clientId];
-        
-            var room = roomId && Room.get(roomId);
+            
+            var room = Room.getByClientId(clientId);
             if (!room) {
                 callback(false);
                 return;
@@ -304,13 +268,9 @@
         socketHandlers.ping = function (client, _, callback) {
             var clientId = this.user.clientId;
 
-            var roomId = clientIdToRoomId[clientId];
-            var room;
-            if (roomId) {
-                room = Room.get(roomId);
-                if (room) {
-                    room.poke(clientId);
-                }
+            var room = Room.getByClientId(clientId);
+            if (room) {
+                room.poke(clientId);
             }
 
             if (callback) {

@@ -6,6 +6,8 @@
     var logEntries = null;
     var logCounts = null;
     var rooms = null;
+    var listenerQueue = null;
+    var venterQueue = null;
     var clientErrors = null;
     
     var has = Object.prototype.hasOwnProperty;
@@ -143,6 +145,25 @@
                         .append($("<td>")
                             .text(venters.join(", "))));
             });
+            
+            var $queueTbody = $("#queue-tbody");
+            $queueTbody.empty();
+            listenerQueue.forEach(function (clientId) {
+                $queueTbody
+                    .append($("<tr>")
+                        .append($("<td>")
+                            .text(clientId))
+                        .append($("<td>")
+                            .text("Listener")));
+            });
+            venterQueue.forEach(function (clientId) {
+                $queueTbody
+                    .append($("<tr>")
+                        .append($("<td>")
+                            .text(clientId))
+                        .append($("<td>")
+                            .text("Venter")));
+            });
 
             var $clientErrorTbody = $("#client-error-tbody");
             $clientErrorTbody.empty();
@@ -196,6 +217,8 @@
                 logEntries = data.entries;
                 logCounts = data.counts;
                 rooms = data.rooms;
+                listenerQueue = data.listenerQueue;
+                venterQueue = data.venterQueue;
                 clientErrors = data.errors;
                 
                 for (var i = 0, len = logTypes.length; i < len; i += 1) {

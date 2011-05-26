@@ -29,13 +29,23 @@
     }, true);
     
     /**
-     * The queue of rooms that need a listener to join.
+     * The queue of listener clientIDs that are waiting for a partner.
      */
-    var listenerRoomQueue = [];
+    var listenerQueue = [];
     /**
-     * The queue of rooms that need a venter to join.
+     * The queue of venter clientIDs that are waiting for a partner.
      */
-    var venterRoomQueue = [];
+    var venterQueue = [];
+    
+    /**
+     * a simple hash of clientId to roomId
+     */
+    var clientIdToRoomId = createHash();
+    /**
+     * A hash of clientId to other clientIds that there has been an interaction with, to prevent talking to the same
+     * person.
+     */
+    var clientInteractions = createHash();
     
     /**
      * Create a Room object
@@ -57,10 +67,6 @@
         });
         
         rooms[id] = this;
-        // add the current room to both the listener and venter queue
-        // very soon after Room creation, a user will be added to one of these.
-        listenerRoomQueue.push(this);
-        venterRoomQueue.push(this);
         
         log.info({
             event: "New room",
@@ -69,7 +75,7 @@
     };
     
     /**
-     * Loop throuh all existing rooms
+     * Loop through all existing rooms
      *
      * @param {Function} callback A function that takes the Room and its id. If it returns false, exit early.
      */
@@ -79,6 +85,23 @@
                 return;
             }
         }
+    };
+    
+    /**
+     * Calculate the number of listeners and venters in the system
+     *
+     * @return {Array} an array containing [numListeners, numVenters]
+     */
+    Room.calculateCounts = function () {
+        var numListeners = listenerQueue.length;
+        var numVenters = venterQueue.length;
+
+        Room.forEach(function (room, id) {
+            numListeners += room.getNumClientsOfType("listener");
+            numVenters += room.getNumClientsOfType("venter");
+        });
+        
+        return [numListeners, numVenters];
     };
     
     /**
@@ -92,30 +115,90 @@
     };
     
     /**
-     * Find a new Room to enter based on the type needed.
-     * If oldRoomId is provided, the client will not be placed back into that same room.
-     * 
+     * Add the provided clientId to the queue of its type
+     *
+     * @param {String} clientId The unique client identifier
      * @param {String} type The client type, either "venter" or "listener"
-     * @param {String} oldRoomId The last room the client was in.
      */
-    Room.findOrCreate = function (type, oldRoomId) {
-        if (!VALID_TYPES[type]) {
+    Room.addClientToQueue = function (clientId, type) {
+        if (!clientId) {
+            throw new Error("Improper clientId");
+        } else if (!VALID_TYPES[type]) {
             throw new Error("Unknown type: " + type);
         }
         
-        var queue = type === "venter" ? venterRoomQueue : listenerRoomQueue;
-        
-        for (var i = 0, len = queue.length; i < len; i += 1) {
-            var room = queue[i];
-            if (oldRoomId && room.id === oldRoomId) {
-                // if they were in an old Room, don't place them back in the same one.
-                continue;
-            }
-            return room;
+        if (clientIdToRoomId[clientId]) {
+            // in a room already
+            return;
         }
         
-        // couldn't find an existing Room, make a new one.
-        return new Room(guid());
+        if (venterQueue.indexOf(clientId) !== -1 || listenerQueue.indexOf(clientId) !== -1) {
+            // in a queue already
+            return;
+        }
+        
+        var queue = type === "venter" ? venterQueue : listenerQueue;
+        queue.push(clientId);
+         
+        Room.checkQueues();
+    };
+    
+    /**
+     * Remove the provided clientId from all queues
+      *
+      * @param {String} clientId The unique client identifier
+     */
+    Room.removeClientFromQueue = function (clientId) { 
+        var index = venterQueue.indexOf(clientId);
+        if (index !== -1) {
+            venterQueue.splice(index, 1);
+        }
+        index = listenerQueue.indexOf(clientId);
+        if (index !== -1) {
+            listenerQueue.splice(index, 1);
+        }
+    };
+    
+    /**
+     * Check the queues and create rooms if necessary
+     */
+    Room.checkQueues = function () {
+        if (venterQueue.length === 0 || listenerQueue.length === 0) {
+            // at least one is empty, nothing to do.
+            return;
+        }
+        
+        for (var i = 0, lenI = venterQueue.length; i < lenI; i += 1) {
+            var venterId = venterQueue[i];
+            for (var j = 0, lenJ = listenerQueue.length; j < lenJ; j += 1) {
+                var listenerId = listenerQueue[j];
+                
+                if (!clientInteractions[venterId] || clientInteractions[venterId].indexOf(listenerId) === -1) {
+                    // the venter is either new (and can be paired with anyone) or has not talked with the listener
+                    // before
+                    var room = new Room(guid());
+                    room.addUser(venterId, "venter");
+                    room.addUser(listenerId, "listener");
+                    
+                    return Room.checkQueues();
+                }
+            }
+        }
+    };
+    
+    /**
+     * Get the Room with the provided clientId in it.
+     *
+      * @param {String} clientId The unique identifier of the client.
+      * @return the Room or null.
+     */
+    Room.getByClientId = function (clientId) {
+        var roomId = clientIdToRoomId[clientId];
+        if (!roomId) {
+            return null;
+        }
+        
+        return Room.get(roomId);
     };
     
     /**
@@ -133,27 +216,29 @@
                 time: room.lastAccessTime
             });
         }
-        return result;
+        return {
+            rooms: result,
+            listenerQueue: listenerQueue,
+            venterQueue: venterQueue
+        };
     };
     
     /**
-     * Calculate the current queue position of the current room for the provided client.
+     * Calculate the current queue position of the provided client.
      *
      * @param {String} clientId the clientId to check for its type.
      * @return {Number} The index in the queue. 0-based. If -1 is returned, not in a queue.
      */
-    Room.prototype.getQueuePosition = function (clientId) {
-        var type = this.clients[clientId];
-        if (!VALID_TYPES[type]) {
-            return -1;
+    Room.getQueuePosition = function (clientId) {
+        var index = venterQueue.indexOf(clientId);
+        if (index === -1) {
+            index = listenerQueue.indexOf(clientId);
         }
-        
-        var queue = type !== "venter" ? venterRoomQueue : listenerRoomQueue;
-        return queue.indexOf(this);
+        return index;
     };
     
     /**
-     * Delete the current room, removing it from all queues.
+     * Delete the current room. Adds any current users to their appropriate queues.
      */
     Room.prototype.delete = function () {
         log.info({
@@ -161,13 +246,15 @@
             room: this.id
         });
         delete rooms[this.id];
-        var index = venterRoomQueue.indexOf(this);
-        if (index !== -1) {
-            venterRoomQueue.splice(index, 1);
-        }
-        index = listenerRoomQueue.indexOf(this);
-        if (index !== -1) {
-            listenerRoomQueue.splice(index, 1);
+        
+        var clients = this.clients;
+        for (var clientId in clients) {
+            var clientType = clients[clientId];
+            if (clientIdToRoomId[clientId] === this.id) {
+                delete clientIdToRoomId[clientId];
+            }
+            
+            Room.addClientToQueue(clientId, clientType);
         }
     };
     
@@ -313,6 +400,18 @@
             throw new Error("Unknown type: " + type);
         }
         
+        var oldRoomId = clientIdToRoomId[clientId];
+        if (oldRoomId) {
+            if (oldRoomId === this.id) {
+                return;
+            }
+            delete clientIdToRoomId[clientId];
+            var oldRoom = Room.get(oldRoomId);
+            if (oldRoom) {
+                oldRoom.removeUser(clientId);
+            }
+        }
+        
         log.info({
             event: "Add user",
             client: clientId,
@@ -320,6 +419,7 @@
             type: type
         });
         
+        clientIdToRoomId[clientId] = this.id;
         this.sessionTime = Date.now();
         this.clients[clientId] = type;
         this.types[type] += 1;
@@ -334,15 +434,13 @@
                     // let the new client know about the existing old clients
                     this.sendToClient(clientId, "join", otherClientType);
                 }
+                
+                (clientInteractions[clientId] || (clientInteractions[clientId] = [])).push(otherClientId);
+                (clientInteractions[otherClientId] || (clientInteractions[otherClientId] = [])).push(clientId);
             }
         }
         
-        var queue = type === "venter" ? venterRoomQueue : listenerRoomQueue;
-        
-        var index = queue.indexOf(this);
-        if (index !== -1) {
-            queue.splice(index, 1);
-        }
+        Room.removeClientFromQueue(clientId);
     };
     
     /**
@@ -368,16 +466,12 @@
         
         var clients = this.clients;
         delete clients[clientId];
+        delete clientIdToRoomId[clientId];
         if (this.hasAnyClients()) {
-            for (var otherClientId in this.clients) {
+            for (var otherClientId in clients) {
                 this.sendToClient(otherClientId, "part", clientType || 'unknown');
             }
-            var queue = clientType === "venter" ? venterRoomQueue : listenerRoomQueue;
-            if (queue.indexOf(this) === -1) {
-                queue.push(this);
-            }
-        } else {
-            this.delete();
         }
+        this.delete();
     };
 }());
