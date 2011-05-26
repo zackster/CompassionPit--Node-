@@ -346,14 +346,22 @@
             return null;
         }
         
-        var ipAddress = client.request.headers['x-forwarded-for'] || client.connection.remoteAddress || null;
-        if (ipAddress) {
-            var comma = ipAddress.indexOf(",");
-            if (comma !== -1) {
-                ipAddress = ipAddress.substring(0, comma);
+        var ipAddress;
+        
+        var request = client.request;
+        if (request) {
+            var headers = request.headers;
+            if (headers) {
+                ipAddress = headers['x-forwarded-for'];
             }
         }
-        return ipAddress;
+        if (!ipAddress) {
+            var connection = client.connection;
+            if (connection) {
+                ipAddress = connection.remoteAddress;
+            }
+        }
+        return ipAddress || null;
     };
     
     var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
