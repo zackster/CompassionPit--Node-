@@ -354,6 +354,8 @@
             if (headers) {
                 ipAddress = headers['x-forwarded-for'];
             }
+        } else {
+            console.log('wtf');
         }
         if (!ipAddress) {
             var connection = client.connection;
@@ -371,7 +373,7 @@
         if (!ipAddress || ipAddress === "127.0.0.1") {
             callback(null);
         } else {
-            geoipCity.lookup(function (err, data) {
+            geoipCity.lookup(ipAddress, function (err, data) {
                 if (err) {
                     log.error({
                         event: "GeoIP",
