@@ -211,6 +211,11 @@
     			info(false);
     			addMessage('System', geoInfo ? 'A new chat partner has entered your chat from ' + geoInfo : 'A new chat partner has entered your chat');
     		}
+		if(geoInfo) {
+				// sets for slot 1, scope 2 - session scope
+			_gaq.push(['_setCustomVar', 1, 'Show Partner Geo Information?', 'Yes', 2]);
+		}
+
         });
         comm.handler("part", function (type) {
             var other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
