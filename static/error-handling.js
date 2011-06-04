@@ -6,6 +6,6 @@
             location: location.toString(),
             lineNumber: lineNumber
         });
-        return false;
+        return true;
     };
 }(jQuery));
