@@ -62,10 +62,18 @@
 
     exports.create = function () {
         var socket = new io.Socket();
-
-        var connectCallbacks = [],
-            disconnectCallbacks = [],
-            versionIssueCallbacks = [];
+        
+        var events = {};
+        
+        var emit = function (event) {
+            var callbacks = has.call(events, event) && events[event];
+            if (callbacks) {
+                for (var i = 0, len = callbacks.length; i < len; i += 1) {
+                    var callback = callbacks[i];
+                    callback();
+                }
+            }
+        };
 
         var makeId = (function () {
             var i = 0;
@@ -148,9 +156,7 @@
                     
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
-                        for (i = 0, len = connectCallbacks.length; i < len; i += 1) {
-                            connectCallbacks[i](firstConnect);
-                        }
+                        emit('connect');
                     }
                     firstConnect = false;
                 }
@@ -184,9 +190,7 @@
             log("unregister");
             if (sentConnectedEvents) {
                 sentConnectedEvents = false;
-                for (var i = 0, len = disconnectCallbacks.length; i < len; i += 1) {
-                    disconnectCallbacks[i]();
-                }
+                emit('disconnect');
             }
             sendQueue.length = 0;
             sendBacklog.length = 0;
@@ -227,14 +231,11 @@
         };
 
         return {
-            versionIssue: function (callback) {
-                versionIssueCallbacks.push(callback);
-            },
-            connect: function (callback) {
-                connectCallbacks.push(callback);
-            },
-            disconnect: function (callback) {
-                disconnectCallbacks.push(callback);
+            on: function (event, callback) {
+                if (!has.call(events, event)) {
+                    events[event] = [];
+                }
+                events[event].push(callback);
             },
             request: function (type, data, callback) {
                 var id = makeId();

@@ -35,11 +35,11 @@
         };
         setHasPartner(false);
         
-        comm.connect(function (first) {
+        comm.on('connect', function (first) {
     	    addMessage('System', first ? 'Connected' : 'Reconnected');
     	    requestNewChatChannel();
         });
-        comm.disconnect(function () {
+        comm.on('disconnect', function () {
     		addMessage('System', 'You have been disconnected. Trying to reconnect...');
     		info("Reconnecting...");
     		setHasPartner(false);
