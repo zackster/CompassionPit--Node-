@@ -44,6 +44,20 @@
     		info("Reconnecting...");
     		setHasPartner(false);
         });
+        comm.on('reconnectFailed', function () {
+            var $a = $("<a>")
+                .attr("href", "")
+                .text('Unable to reconnect. Click to reconnect.')
+                .click(function () {
+                    $a.replaceWith($("<span>")
+                        .text('Unable to reconnect. Click to reconnect.'));
+                    addMessage('System', "Reconnecting...");
+                    comm.reconnect();
+                    return false;
+                });
+            addMessage('System', $a);
+            info('Connection error');
+        });
 
         function info(msg) {
         	status(msg, 'infoMessage');
@@ -169,11 +183,16 @@
         var i = 0;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg) {
+            var $td = $("<td>");
+            if (msg instanceof $) {
+                $td.append(msg);
+            } else {
+                $td.text(capitalize(from) + ": " + msg);
+            }
         	var row = $('#chatWindow > tbody:last')
                 .append($("<tr>")
             	    .addClass(from === 'Me' ? 'blue-row' : 'white-row')
-            	    .append($("<td>")
-            	        .text(capitalize(from) + ": " + msg)));
+            	    .append($td));
         	var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
         	scrollDiv.scrollTop = scrollDiv.scrollHeight;
         	if(!hasFocus && !titleCurrentlyChanging) {

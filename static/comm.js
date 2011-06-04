@@ -61,7 +61,9 @@
     }());
 
     exports.create = function () {
-        var socket = new io.Socket();
+        var socket = new io.Socket(null, {
+            maxReconnectionAttempts: 5
+        });
         
         var events = {};
         
@@ -126,6 +128,14 @@
                     unregister();
                 }, DISCONNECT_LEEWAY);
             }
+        });
+        
+        socket.on('reconnecting', function (x, y) {
+            log('reconnecting. Delay: ' + x + '. Attempts: ' + y);
+        });
+        
+        socket.on('reconnect_failed', function () {
+            emit('reconnectFailed');
         });
 
         var checkSend;
@@ -252,8 +262,9 @@
             start: function () {
                 socket.connect();
             },
-            forceReconnect: function () {
-                socket.disconnect(true);
+            reconnect: function () {
+                socket.disconnect();
+                socket.onReconnect();
             }
         };
     };
