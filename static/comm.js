@@ -190,7 +190,7 @@
                         log("Unhandled message: " + data.t);
                     }
                 } else {
-                    log("Unknown message");
+                    log("Unknown message: " + JSON.stringify(data));
                 }
             }
         });
