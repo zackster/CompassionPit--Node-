@@ -1,8 +1,11 @@
 /*jshint eqnull: true browser: true*/
 /*global io: false*/
 
-(function (exports) {
+(function (exports, $, undefined) {
     "use strict";
+    
+    var VERSION = window.COMPASSION_PIT_VERSION;
+    delete window.COMPASSION_PIT_VERSION;
 
     var log = function (data) {
         try {
@@ -35,12 +38,34 @@
     };
 
     var has = Object.prototype.hasOwnProperty;
+    
+    
+    var versionIssue = (function () {
+        var showedVersionBar = false;
+        return function () {
+            if (showedVersionBar) {
+                return;
+            }
+            showedVersionBar = true;
+            $("body")
+                .prepend($("<div>")
+                    .attr("id", "version-bar")
+                    .append($("<a>")
+                        .attr("href", "")
+                        .click(function () {
+                            window.showBrowserCloseMessage = false;
+                        })
+                        .append($("<p>")
+                            .text("A new version of CompassionPit is available. Click here to Refresh."))));
+        };
+    }());
 
     exports.create = function () {
         var socket = new io.Socket();
 
         var connectCallbacks = [],
-            disconnectCallbacks = [];
+            disconnectCallbacks = [],
+            versionIssueCallbacks = [];
 
         var makeId = (function () {
             var i = 0;
@@ -64,7 +89,8 @@
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
-                t: "register"
+                t: "register",
+                v: VERSION
             };
             if (userId) {
                 registerMessage.d = {
@@ -102,9 +128,14 @@
                 if (data.t === "register") {
                     var message = arrayify(data.d);
                     var oldUserId = userId;
-                    userId = message[0];
-                    publicUserId = message[1];
-                    var lastReceivedMessage = message[2];
+                    var serverVersion = message[0];
+                    var i, len;
+                    if (serverVersion !== VERSION) {
+                        versionIssue();
+                    }
+                    userId = message[1];
+                    publicUserId = message[2];
+                    var lastReceivedMessage = message[3];
                     
                     if (oldUserId && userId !== oldUserId) {
                         unregister();
@@ -117,7 +148,7 @@
                     
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
-                        for (var i = 0, len = connectCallbacks.length; i < len; i += 1) {
+                        for (i = 0, len = connectCallbacks.length; i < len; i += 1) {
                             connectCallbacks[i](firstConnect);
                         }
                     }
@@ -196,6 +227,9 @@
         };
 
         return {
+            versionIssue: function (callback) {
+                versionIssueCallbacks.push(callback);
+            },
             connect: function (callback) {
                 connectCallbacks.push(callback);
             },
@@ -222,4 +256,4 @@
             }
         };
     };
-}(window.Comm = {}));
+}(window.Comm = {}, jQuery));

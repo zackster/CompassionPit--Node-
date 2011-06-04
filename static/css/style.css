@@ -348,3 +348,24 @@ ul#links a:hover {
 .infoMessage {
 	color: blue;
 }
+
+#version-bar a, #version-bar a:link, #version-bar a:visited, #version-bar a:active {
+  display: block;
+  color:#000;
+  background:#ffffe1;
+  border-bottom:1px outset;
+  text-decoration:none;
+  font-family:Verdana,Arial,Helvetica,sans-serif;
+}
+
+#version-bar a:hover {
+  color: #fff;
+  background: #3169b6;
+}
+
+#version-bar p {
+  margin: 0;
+  padding: 3px 10px;
+  font-size: 11px;
+  text-align: center;
+}

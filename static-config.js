@@ -23,4 +23,14 @@ module.exports = function (config) {
         "jquery-ui-1.8.13.custom.css",
         "jquery.ui.datetime.css"
     ];
+    config.version = 0;
+    require('child_process').exec("git log -1 --format=format:%H", {
+        cwd: __dirname
+    }, function (err, stdout, stderr) {
+        if (err) {
+            console.warn(err);
+        } else {
+            config.version = stdout.replace(/\s+/, "");
+        }
+    });
 };

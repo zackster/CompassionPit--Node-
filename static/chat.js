@@ -7,7 +7,15 @@
         var CLIENT_TYPE = window.CLIENT_TYPE;
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
         var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
+        
+        window.showBrowserCloseMessage = true;
+        window.onbeforeunload = function(event) {
+            if (window.showBrowserCloseMessage) {
+                return hasPartner ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
+            }
+        };
 
+        
         var comm = Comm.create();
         window.comm = comm;
         var hasPartner = false;
@@ -134,10 +142,6 @@
 	        requestNewChatPartner();
 	        return false;
 	    });
-
-        window.onbeforeunload = function(event) {
-            return hasPartner ? 'Did you really mean to leave? Your partner will be disconnected.' : 'Did you really mean to leave?';
-        };
 
         function requestNewChatChannel() {
             setHasPartner(false);
