@@ -236,6 +236,11 @@
                 }
                 Room.checkQueues();
             }));
+            
+            log.info({
+                event: "Connected",
+                client: client.sessionId
+            });
         });
         setInterval(function () {
             User.cleanup();
