@@ -1,4 +1,5 @@
 /*jshint devel: true */
+/*global setInterval: false */
 
 (function () {
     "use strict";
@@ -10,6 +11,7 @@
         socketIO = require("socket.io"),
         connect = require("connect"),
         Room = require("./rooms/models").Room,
+        User = require("./users/models").User,
         guid = require("./utils").guid,
         forceLatency = require("./utils").forceLatency,
         latencyWrap = require("./utils").latencyWrap,
@@ -124,7 +126,7 @@
                 socket.broadcast({
                     t: "sysmsg",
                     d: message
-                });        
+                });
             });
             res.send("Sucessfully sent " + JSON.stringify(message));
         }
@@ -142,7 +144,7 @@
                 messages: messages
             });
         });
-    });  
+    });
     
     // import in the room-based actions
     require("./rooms/actions")(app);
@@ -151,6 +153,7 @@
     log.addActions(app);
     
     process.on('uncaughtException', function (err) {
+        console.error(err);
         log.error({
             event: "Uncaught exception",
             error: String(err.message),
@@ -184,15 +187,32 @@
                 if (type) {
                     var handler = socketHandlers[type];
                     if (handler) {
-                        handler(client, data.d, function (result) {
-                            var message = {i: data.i};
-                            if (result !== null && result !== undefined) {
-                                message.d = result;
+                        var user = User.getBySocketIOId(client.sessionId);
+                        if (type !== "register" && !user) {
+                            console.log("Received message from unregistered user: " + client.sessionId + ": " + JSON.stringify(data));
+                        } else {
+                            if (user && data.i && user.lastReceivedMessageIndex < data.i) {
+                                user.lastReceivedMessageIndex = data.i;
                             }
-                            forceLatency(function () {
-                                client.send(message);
+                            handler(client, user, data.d, function (result) {
+                                var message;
+                                if (type === "register") {
+                                    message = {t: "register"};
+                                } else {
+                                    message = {i: data.i};
+                                }
+                                if (result !== null && result !== undefined) {
+                                    message.d = result;
+                                }
+                                forceLatency(function () {
+                                    if (type !== "register") {
+                                        user.send(message);
+                                    } else {
+                                        client.send(message);
+                                    }
+                                });
                             });
-                        });
+                        }
                     } else {
                         console.log("Received message with unknown handler: " + data.t);
                     }
@@ -204,45 +224,89 @@
             // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
             client.on('disconnect', latencyWrap(function () {
                 var clientId = client.sessionId;
-                var room = Room.getByClientId(clientId);
-                if (room) {
-                    room.removeUser(clientId);
-                } else {
-                    Room.removeClientFromQueue(clientId);
-                }
-
+                
+                var user = User.getBySocketIOId(clientId);
                 log.info({
                     event: "Disconnected",
                     client: clientId,
-                    room: room ? room.id : null
+                    user: user ? user.id : null
                 });
+                if (user) {
+                    user.setSocketIOId(null);
+                }
+                Room.checkQueues();
             }));
         });
-    
+        setInterval(function () {
+            User.cleanup();
+        }, 5000);
+        
+        /**
+         * Register the client with the server
+         */
+        socketHandlers.register = function (client, _, data, callback) {
+            if (!data) {
+                data = {};
+            }
+            var userId = data.u || null,
+                lastMessageReceived = data.n || 0;
+            var clientId = client.sessionId;
+            
+            var user = userId && User.getById(userId);
+            if (!user) {
+                user = new User(clientId);
+                user.disconnect(function () {
+                    var room = Room.getByUserId(user.id);
+                    if (room) {
+                        room.removeUser(user.id);
+                    } else {
+                        Room.removeUserFromQueue(user.id);
+                    }
+                    log.info({
+                        event: "Delete user",
+                        user: user.id,
+                    });
+                });
+                log.info({
+                    event: "New user",
+                    client: clientId,
+                    user: user.id
+                });
+            } else {
+                user.setSocketIOId(client.sessionId, lastMessageReceived);
+                log.info({
+                    event: "Reconnected",
+                    client: clientId,
+                    user: user.id
+                });
+            }
+            
+            callback([user.id, user.lastReceivedMessageIndex]);
+            Room.checkQueues();
+        };
+        
         /**
          * Request the current position the client is in the queue for
          */
-        socketHandlers.queue = function (client, _, callback) {
-            var clientId = client.sessionId;
-
-            callback(Room.getQueuePosition(clientId));
+        socketHandlers.queue = function (client, user, _, callback) {
+            callback(Room.getQueuePosition(user.id));
         };
     
         /**
          * Request to join a channel based on the provided type
          */
-        socketHandlers.join = function (client, type, callback) {
+        socketHandlers.join = function (client, user, type, callback) {
             if (type !== "venter") {
                 type = "listener";
             }
 
-            var clientId = client.sessionId;
+            var userId = user.id;
             
-            var room = Room.getByClientId(clientId);
+            var room = Room.getByUserId(userId);
             if (room) {
-                room.removeUser(clientId);
+                room.removeUser(userId);
             }
-            Room.addClientToQueue(clientId, type);
+            Room.addUserToQueue(userId, type);
         
             callback(true);
         };
@@ -250,27 +314,27 @@
         /**
          * Send a chat message to the room the client is current in.
          */
-        socketHandlers.msg = function (client, message, callback) {
-            var clientId = client.sessionId;
+        socketHandlers.msg = function (client, user, message, callback) {
+            var userId = user.id;
             
-            var room = Room.getByClientId(clientId);
+            var room = Room.getByUserId(userId);
             if (!room) {
                 callback(false);
                 return;
             }
             log.store("messageSent");
-            room.receiveMessage(clientId, message, callback);
+            room.receiveMessage(userId, message, callback);
         };
     
         /**
          * Send a "ping" to let the server know the client is still active
          */
-        socketHandlers.ping = function (client, _, callback) {
-            var clientId = this.user.clientId;
+        socketHandlers.ping = function (client, user, _, callback) {
+            var userId = user.id;
 
-            var room = Room.getByClientId(clientId);
+            var room = Room.getByUserId(userId);
             if (room) {
-                room.poke(clientId);
+                room.poke(userId);
             }
 
             if (callback) {
@@ -278,7 +342,7 @@
             }
         };
         
-        socketHandlers.counts = function (client, _, callback) {
+        socketHandlers.counts = function (client, user, _, callback) {
             callback(getRoomCounts());
         };
     });

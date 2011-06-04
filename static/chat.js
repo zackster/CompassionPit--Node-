@@ -8,6 +8,7 @@
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
 
         var comm = Comm.create();
+        window.comm = comm;
         var hasPartner = false;
         comm.connect(function (first) {
     	    addMessage('System', first ? 'Connected' : 'Reconnected');

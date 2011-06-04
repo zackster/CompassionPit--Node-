@@ -1,4 +1,4 @@
-/*jshint devel: true */
+/*jshint devel: true, forin: false */
 
 (function () {
     "use strict";
@@ -7,7 +7,7 @@
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
         forceLatency = require("../utils").forceLatency,
-        geoip = require('geoip');
+        User = require("../users/models").User;
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -30,23 +30,23 @@
     }, true);
     
     /**
-     * The queue of listener clientIDs that are waiting for a partner.
+     * The queue of listener userIDs that are waiting for a partner.
      */
     var listenerQueue = [];
     /**
-     * The queue of venter clientIDs that are waiting for a partner.
+     * The queue of venter userIDs that are waiting for a partner.
      */
     var venterQueue = [];
     
     /**
-     * a simple hash of clientId to roomId
+     * a simple hash of userId to roomId
      */
-    var clientIdToRoomId = createHash();
+    var userIdToRoomId = createHash();
     /**
-     * A hash of clientId to other clientIds that there has been an interaction with, to prevent talking to the same
+     * A hash of userId to other userIds that there has been an interaction with, to prevent talking to the same
      * person.
      */
-    var clientInteractions = createHash();
+    var userInteractions = createHash();
     
     /**
      * Create a Room object
@@ -60,8 +60,7 @@
         id = String(id);
         this.id = id;
         this.sessionTime = this.lastAccessTime = Date.now();
-        this.socket = require("../app").socket;
-        this.clients = createHash();
+        this.users = createHash();
         this.types = createHash({
             venter: 0,
             listener: 0
@@ -98,8 +97,8 @@
         var numVenters = venterQueue.length;
 
         Room.forEach(function (room, id) {
-            numListeners += room.getNumClientsOfType("listener");
-            numVenters += room.getNumClientsOfType("venter");
+            numListeners += room.getNumUsersOfType("listener");
+            numVenters += room.getNumUsersOfType("venter");
         });
         
         return [numListeners, numVenters];
@@ -107,7 +106,7 @@
     
     /**
      * Get the Room identified by the provided id
-     * 
+     *
      * @param {String} id The identifier of the Room.
      * @return the Room or null.
      */
@@ -116,45 +115,45 @@
     };
     
     /**
-     * Add the provided clientId to the queue of its type
+     * Add the provided userId to the queue of its type
      *
-     * @param {String} clientId The unique client identifier
+     * @param {String} userId The unique user identifier
      * @param {String} type The client type, either "venter" or "listener"
      */
-    Room.addClientToQueue = function (clientId, type) {
-        if (!clientId) {
-            throw new Error("Improper clientId");
+    Room.addUserToQueue = function (userId, type) {
+        if (!userId) {
+            throw new Error("Improper userId");
         } else if (!VALID_TYPES[type]) {
             throw new Error("Unknown type: " + type);
         }
         
-        if (clientIdToRoomId[clientId]) {
+        if (userIdToRoomId[userId]) {
             // in a room already
             return;
         }
         
-        if (venterQueue.indexOf(clientId) !== -1 || listenerQueue.indexOf(clientId) !== -1) {
+        if (venterQueue.indexOf(userId) !== -1 || listenerQueue.indexOf(userId) !== -1) {
             // in a queue already
             return;
         }
         
         var queue = type === "venter" ? venterQueue : listenerQueue;
-        queue.push(clientId);
+        queue.push(userId);
          
         Room.checkQueues();
     };
     
     /**
-     * Remove the provided clientId from all queues
+     * Remove the provided userId from all queues
       *
-      * @param {String} clientId The unique client identifier
+      * @param {String} userId The unique user identifier
      */
-    Room.removeClientFromQueue = function (clientId) { 
-        var index = venterQueue.indexOf(clientId);
+    Room.removeUserFromQueue = function (userId) {
+        var index = venterQueue.indexOf(userId);
         if (index !== -1) {
             venterQueue.splice(index, 1);
         }
-        index = listenerQueue.indexOf(clientId);
+        index = listenerQueue.indexOf(userId);
         if (index !== -1) {
             listenerQueue.splice(index, 1);
         }
@@ -171,30 +170,37 @@
         
         for (var i = 0, lenI = venterQueue.length; i < lenI; i += 1) {
             var venterId = venterQueue[i];
-            for (var j = 0, lenJ = listenerQueue.length; j < lenJ; j += 1) {
-                var listenerId = listenerQueue[j];
+            var venter = User.getById(venterId);
+            if (venter && venter.isClientConnected()) {
+                // venter exists and the client is still connected
+                for (var j = 0, lenJ = listenerQueue.length; j < lenJ; j += 1) {
+                    var listenerId = listenerQueue[j];
+                    var listener = User.getById(listenerId);
+                    if (listener && listener.isClientConnected()) {
+                        // listener exists and the client is still connected
+                        if (!userInteractions[venterId] || userInteractions[venterId].indexOf(listenerId) === -1) {
+                            // the venter is either new (and can be paired with anyone) or has not talked with the listener
+                            // before
+                            var room = new Room(guid());
+                            room.addUser(venterId, "venter");
+                            room.addUser(listenerId, "listener");
                 
-                if (!clientInteractions[venterId] || clientInteractions[venterId].indexOf(listenerId) === -1) {
-                    // the venter is either new (and can be paired with anyone) or has not talked with the listener
-                    // before
-                    var room = new Room(guid());
-                    room.addUser(venterId, "venter");
-                    room.addUser(listenerId, "listener");
-                    
-                    return Room.checkQueues();
+                            return Room.checkQueues();
+                        }
+                    }
                 }
             }
         }
     };
     
     /**
-     * Get the Room with the provided clientId in it.
+     * Get the Room with the provided userId in it.
      *
-      * @param {String} clientId The unique identifier of the client.
+      * @param {String} userId The unique identifier of the user.
       * @return the Room or null.
      */
-    Room.getByClientId = function (clientId) {
-        var roomId = clientIdToRoomId[clientId];
+    Room.getByUserId = function (userId) {
+        var roomId = userIdToRoomId[userId];
         if (!roomId) {
             return null;
         }
@@ -205,7 +211,7 @@
     /**
      * Dump debug data of all the current Rooms.
      *
-     * @return {Array} An Array of Objects with the form {id: "roomId", clients: [{"clientId": "venter", "otherClientId": "listener"}, time: 123456789]}
+     * @return {Array} An Array of Objects with the form {id: "roomId", users: [{"clientId": "venter", "otherClientId": "listener"}, time: 123456789]}
      */
     Room.dumpData = function () {
         var result = [];
@@ -213,7 +219,7 @@
             var room = rooms[roomId];
             result.push({
                 id: roomId,
-                clients: room.clients,
+                clients: room.users,
                 time: room.lastAccessTime
             });
         }
@@ -225,15 +231,15 @@
     };
     
     /**
-     * Calculate the current queue position of the provided client.
+     * Calculate the current queue position of the provided user.
      *
-     * @param {String} clientId the clientId to check for its type.
+     * @param {String} userId the userId to check for its type.
      * @return {Number} The index in the queue. 0-based. If -1 is returned, not in a queue.
      */
-    Room.getQueuePosition = function (clientId) {
-        var index = venterQueue.indexOf(clientId);
+    Room.getQueuePosition = function (userId) {
+        var index = venterQueue.indexOf(userId);
         if (index === -1) {
-            index = listenerQueue.indexOf(clientId);
+            index = listenerQueue.indexOf(userId);
         }
         return index;
     };
@@ -248,14 +254,14 @@
         });
         delete rooms[this.id];
         
-        var clients = this.clients;
-        for (var clientId in clients) {
-            var clientType = clients[clientId];
-            if (clientIdToRoomId[clientId] === this.id) {
-                delete clientIdToRoomId[clientId];
+        var users = this.users;
+        for (var userId in users) {
+            var clientType = users[userId];
+            if (userIdToRoomId[userId] === this.id) {
+                delete userIdToRoomId[userId];
             }
             
-            Room.addClientToQueue(clientId, clientType);
+            Room.addUserToQueue(userId, clientType);
         }
     };
     
@@ -296,30 +302,30 @@
      * @param {String} type The client type. Either "venter" or "listener"
      * @return {Number} The number of clients. Should always be 0 or 1.
      */
-    Room.prototype.getNumClientsOfType = function (type) {
+    Room.prototype.getNumUsersOfType = function (type) {
         return this.types[type] || 0;
     };
     
     /**
-     * Return whether at least 1 client is present in the Room.
+     * Return whether at least 1 user is present in the Room.
      *
-     * @return {Boolean} Whether the Room has at least 1 client.
+     * @return {Boolean} Whether the Room has at least 1 user.
      */
-    Room.prototype.hasAnyClients = function () {
-        for (var clientId in this.clients) {
+    Room.prototype.hasAnyUsers = function () {
+        for (var userId in this.users) {
             return true;
         }
         return false;
     };
     
     /**
-     * Return the number of clients present in the Room.
+     * Return the number of users present in the Room.
      *
-     * @return {Number} The number of clients. Should be 0, 1, or 2.
+     * @return {Number} The number of users. Should be 0, 1, or 2.
      */
-    Room.prototype.getNumClients = function () {
+    Room.prototype.getNumUsers = function () {
         var count = 0;
-        for (var clientId in this.clients) {
+        for (var userId in this.users) {
             count += 1;
         }
         return count;
@@ -335,79 +341,14 @@
     };
     
     /**
-     * Return the IP Address of the provided clientId
+     * Send a raw message to the provided user. Any parameters after type are included in the message.
      *
-     * @param {String} clientId The IP Address of the client
-     * @return {String} The IP Address or null
-     */
-    Room.prototype.getClientIPAddress = function (clientId) {
-        var client = this.socket.clients[clientId];
-        if (!client) {
-            return null;
-        }
-        
-        var ipAddress;
-        
-        var request = client.request;
-        if (request) {
-            var headers = request.headers;
-            if (headers) {
-                ipAddress = headers['x-forwarded-for'];
-            }
-        } else {
-            console.log('wtf');
-        }
-        if (!ipAddress) {
-            var connection = client.connection;
-            if (connection) {
-                ipAddress = connection.remoteAddress;
-            }
-        }
-        return ipAddress || null;
-    };
-    
-    var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
-    
-    Room.prototype.lookupClientGeoIP = function (clientId, callback) {
-        var ipAddress = this.getClientIPAddress(clientId);
-        if (!ipAddress || ipAddress === "127.0.0.1") {
-            callback(null);
-        } else {
-            geoipCity.lookup(ipAddress, function (err, data) {
-                if (err) {
-                    log.error({
-                        event: "GeoIP",
-                        error: String(err.message),
-                        stack: String(err.stack),
-                        ipAddress: ipAddress
-                    });
-                    callback(null);
-                    return;
-                }
-                
-                var parts = [
-                    data.city,
-                    data.region,
-                    data.country_name
-                ];
-                var result = parts.filter(function (x) {
-                    return !!x;
-                }).join(", ");
-                
-                callback(result);
-            });
-        }
-    };
-    
-    /**
-     * Send a raw message to the provided client. Any parameters after type are included in the message.
-     *
-     * @param {String} clientId the unique identifier of the client
+     * @param {String} userId the unique identifier of the user
      * @param {String} type the message type
      */
-    Room.prototype.sendToClient = function (clientId, type) {
-        var client = this.socket.clients[clientId];
-        if (!client) {
+    Room.prototype.sendToUser = function (userId, type) {
+        var user = User.getById(userId);
+        if (!user) {
             return;
         }
         
@@ -419,22 +360,20 @@
                 message.d = Array.prototype.slice.call(arguments, 2);
             }
         }
-        forceLatency(function () {
-            client.send(message);
-        });
+        user.send(message);
     };
     
     /**
-     * Receive a message from the client
-     * 
+     * Receive a message from the user
+     *
      * @param {String} message The chat message
-     * @param {String} clientId The unique identifier of the client
-     * @param {Function} callback The callback to inform the client of success.
+     * @param {String} userId The unique identifier of the user
+     * @param {Function} callback The callback to inform the user of success.
      */
-    Room.prototype.receiveMessage = function (clientId, message, callback) {
+    Room.prototype.receiveMessage = function (userId, message, callback) {
         this.poke();
         
-        var clientType = this.clients[clientId];
+        var clientType = this.users[userId];
         if (!clientType || !VALID_TYPES[clientType]) {
             callback(false);
             return;
@@ -442,90 +381,100 @@
         
         log.info({
             event: "Chat",
-            client: clientId,
+            user: userId,
             room: this.id,
             type: clientType
         });
-        for (var otherClientId in this.clients) {
-            if (otherClientId !== clientId) {
-                this.sendToClient(otherClientId, "msg", clientType, message);
+        for (var otherUserId in this.users) {
+            if (otherUserId !== userId) {
+                this.sendToUser(otherUserId, "msg", clientType, message);
             }
         }
         
         callback(true);
     };
     
+    Room.prototype.lookupUserGeoIP = function (userId, callback) {
+        var user = User.getById(userId);
+        if (!user) {
+            callback(null);
+        } else {
+            user.lookupGeoIP(callback);
+        }
+    };
+    
     /**
-     * Add the provided client to the Room.
+     * Add the provided user to the Room.
      *
-     * @param {String} clientId The client's unique identifier.
+     * @param {String} userId The user's unique identifier.
      * @param {String} type The client type, either "venter" or "listener".
      */
-    Room.prototype.addUser = function (clientId, type) {
+    Room.prototype.addUser = function (userId, type) {
         if (!VALID_TYPES[type]) {
             throw new Error("Unknown type: " + type);
         }
         
-        var oldRoomId = clientIdToRoomId[clientId];
+        var oldRoomId = userIdToRoomId[userId];
         if (oldRoomId) {
             if (oldRoomId === this.id) {
                 return;
             }
-            delete clientIdToRoomId[clientId];
+            delete userIdToRoomId[userId];
             var oldRoom = Room.get(oldRoomId);
             if (oldRoom) {
-                oldRoom.removeUser(clientId);
+                oldRoom.removeUser(userId);
             }
         }
         
         log.info({
             event: "Add user",
-            client: clientId,
+            user: userId,
             room: this.id,
             type: type
         });
         
-        clientIdToRoomId[clientId] = this.id;
+        userIdToRoomId[userId] = this.id;
         this.sessionTime = Date.now();
-        this.clients[clientId] = type;
+        this.users[userId] = type;
         this.types[type] += 1;
 
         var self = this;
         
-        // let the new client know about the other clients in the room.
-        Object.keys(this.clients).forEach(function (otherClientId) {
-            if (otherClientId !== clientId) {
-                // let the old client know that the new one has joined
-                self.lookupClientGeoIP(clientId, function (geoInfo) {
-                    self.sendToClient(otherClientId, "join", type, geoInfo);
+        // let the new user know about the other users in the room.
+        Object.keys(this.users).forEach(function (otherUserId) {
+            if (otherUserId !== userId) {
+                // let the old user know that the new one has joined
+                var user = User.getById(userId);
+                self.lookupUserGeoIP(userId, function (geoInfo) {
+                    self.sendToUser(otherUserId, "join", type, geoInfo);
                 });
-                var otherClientType = self.clients[otherClientId];
+                var otherClientType = self.users[otherUserId];
                 if (VALID_TYPES[otherClientType]) {
-                    // let the new client know about the existing old clients
-                    self.lookupClientGeoIP(otherClientId, function (geoInfo) {
-                        self.sendToClient(clientId, "join", otherClientType, geoInfo);
+                    // let the new user know about the existing old users
+                    self.lookupUserGeoIP(otherUserId, function (geoInfo) {
+                        self.sendToUser(userId, "join", otherClientType, geoInfo);
                     });
                 }
                 
-                (clientInteractions[clientId] || (clientInteractions[clientId] = [])).push(otherClientId);
-                (clientInteractions[otherClientId] || (clientInteractions[otherClientId] = [])).push(clientId);
+                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
+                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
             }
         });
         
-        Room.removeClientFromQueue(clientId);
+        Room.removeUserFromQueue(userId);
     };
     
     /**
-     * Remove the provided client from the Room.
+     * Remove the provided user from the Room.
      *
-     * @param {String} clientId The unique identifer of the client to remove.
+     * @param {String} userId The unique identifer of the user to remove.
      */
-    Room.prototype.removeUser = function (clientId) {
-        var clientType = this.clients[clientId];
+    Room.prototype.removeUser = function (userId) {
+        var clientType = this.users[userId];
         if (clientType) {
             log.info({
                 event: "Remove user",
-                client: clientId,
+                user: userId,
                 room: this.id,
                 type: clientType || 'unknown'
             });
@@ -536,12 +485,12 @@
         
         this.sessionTime = Date.now();
         
-        var clients = this.clients;
-        delete clients[clientId];
-        delete clientIdToRoomId[clientId];
-        if (this.hasAnyClients()) {
-            for (var otherClientId in clients) {
-                this.sendToClient(otherClientId, "part", clientType || 'unknown');
+        var users = this.users;
+        delete users[userId];
+        delete userIdToRoomId[userId];
+        if (this.hasAnyUsers()) {
+            for (var otherUserId in users) {
+                this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
         }
         this.delete();
