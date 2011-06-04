@@ -258,9 +258,11 @@
     	    if (type !== CLIENT_TYPE) {
     	        var oldUserId = lastPartnerId;
     			setHasPartner(otherUserId);
-    			if (console && console.log) {
-    			    console.log("join " + otherUserId);
-			    }
+    			try {
+        			if (console && console.log) {
+        			    console.log("join " + otherUserId);
+    			    }
+			    } catch (err) {}
     			info(false);
     			
     			var message;

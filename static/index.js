@@ -10,7 +10,6 @@
         var hasFocus = true;
         
         var updateCounts = function(data) {
-            console.log(data);
             var listeners = data.l;
             var venters = data.v;
             
