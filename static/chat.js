@@ -279,6 +279,11 @@
     			}
     			addMessage('System', message);
     		}
+		if(geoInfo) {
+				// sets for slot 1, scope 2 - session scope
+			_gaq.push(['_setCustomVar', 1, 'Show Partner Geo Information?', 'Yes', 2]);
+		}
+
         });
         comm.handler("part", function (type) {
     		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + OTHER_CLIENT_TYPE + ".");
