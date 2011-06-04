@@ -223,16 +223,18 @@
                 addMessage(type, message);
             }
         });
-        comm.handler("join", function (type, geoInfo) {
+        comm.handler("join", function (otherUserId, type, geoInfo) {
     	    if (type !== CLIENT_TYPE) {
     			setHasPartner(true);
+    			if (console && console.log) {
+    			    console.log("join " + otherUserId);
+			    }
     			info(false);
-    			addMessage('System', geoInfo ? 'A new chat partner has entered your chat from ' + geoInfo : 'A new chat partner has entered your chat');
+    			addMessage('System', geoInfo ? 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo : 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat');
     		}
         });
         comm.handler("part", function (type) {
-            var other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
-    		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
+    		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + OTHER_CLIENT_TYPE + ".");
     		setHasPartner(false);
     		infoWithQueue('Waiting for a chat partner... ');
         });

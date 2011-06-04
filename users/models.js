@@ -20,6 +20,7 @@
             throw new Error("Must be called with new");
         }
         var id = this.id = guid();
+        this.publicId = guid();
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];

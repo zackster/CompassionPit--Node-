@@ -281,7 +281,7 @@
                 });
             }
             
-            callback([user.id, user.lastReceivedMessageIndex]);
+            callback([user.id, user.publicId, user.lastReceivedMessageIndex]);
             Room.checkQueues();
         };
         

@@ -444,15 +444,16 @@
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
                 // let the old user know that the new one has joined
-                var user = User.getById(userId);
                 self.lookupUserGeoIP(userId, function (geoInfo) {
-                    self.sendToUser(otherUserId, "join", type, geoInfo);
+                    var user = User.getById(userId);
+                    self.sendToUser(otherUserId, "join", user && user.publicId, type, geoInfo);
                 });
                 var otherClientType = self.users[otherUserId];
                 if (VALID_TYPES[otherClientType]) {
                     // let the new user know about the existing old users
                     self.lookupUserGeoIP(otherUserId, function (geoInfo) {
-                        self.sendToUser(userId, "join", otherClientType, geoInfo);
+                        var otherUser = User.getById(otherUserId);
+                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
                     });
                 }
                 

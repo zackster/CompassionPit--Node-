@@ -53,6 +53,7 @@
         var firstConnect = true;
         var isRegistered = false;
         var userId = null;
+        var publicUserId = null;
         var lastMessageReceived = 0;
         var currentConnectIndex = 0;
         var sentConnectedEvents = false;
@@ -68,6 +69,7 @@
             if (userId) {
                 registerMessage.d = {
                     u: userId,
+                    p: publicUserId,
                     n: lastMessageReceived
                 };
             }
@@ -101,7 +103,8 @@
                     var message = arrayify(data.d);
                     var oldUserId = userId;
                     userId = message[0];
-                    var lastReceivedMessage = message[1];
+                    publicUserId = message[1];
+                    var lastReceivedMessage = message[2];
                     
                     if (oldUserId && userId !== oldUserId) {
                         unregister();
