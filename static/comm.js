@@ -70,9 +70,10 @@
         var emit = function (event) {
             var callbacks = has.call(events, event) && events[event];
             if (callbacks) {
+                var args = Array.prototype.slice.call(arguments, 1);
                 for (var i = 0, len = callbacks.length; i < len; i += 1) {
                     var callback = callbacks[i];
-                    callback();
+                    callback.apply(undefined, args);
                 }
             }
         };
@@ -166,7 +167,7 @@
                     
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
-                        emit('connect');
+                        emit('connect', firstConnect);
                     }
                     firstConnect = false;
                 }
