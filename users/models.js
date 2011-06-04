@@ -224,8 +224,8 @@
                 backlog.splice(0, backlog.length - config.messageBacklogPerUser);
             }
             
-            if (wholeMessage.length > 0) {
-                client.send(wholeMessage);
+            for (i = 0, len = wholeMessage.length; i < len; i += 1) {
+                client.send(wholeMessage[i]);
             }
         });
     };
