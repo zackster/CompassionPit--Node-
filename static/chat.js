@@ -19,8 +19,10 @@
         var comm = Comm.create();
         window.comm = comm;
         var hasPartner = false;
+        var lastPartnerId = null;
+        var currentPartnerId = null;
         var setHasPartner = function (value) {
-            hasPartner = value;
+            hasPartner = !!value;
             if (value) {
                 setTimeout(function () {
                     if (hasPartner) {
@@ -28,16 +30,19 @@
                             .removeClass("disabled");
                     }
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
+                lastPartnerId = value;
+                currentPartnerId = value;
             } else {
                 $("#newPartner")
                     .addClass("disabled");
+                currentPartnerId = null;
             }
         };
         setHasPartner(false);
         
         comm.on('connect', function (first) {
     	    addMessage('System', first ? 'Connected' : 'Reconnected');
-    	    requestNewChatChannel();
+    	    requestNewChatChannel(false);
         });
         comm.on('disconnect', function () {
     		addMessage('System', 'You have been disconnected. Trying to reconnect...');
@@ -124,7 +129,7 @@
         	if (hasPartner) {
         		setHasPartner(false);
         		addMessage('System', 'Please wait while we find you a new chat partner.');
-        		requestNewChatChannel();
+        		requestNewChatChannel(true);
         	}
         }
 
@@ -157,10 +162,13 @@
 	        return false;
 	    });
 
-        function requestNewChatChannel() {
+        function requestNewChatChannel(forceNewPartner) {
             setHasPartner(false);
-
-            comm.request("join", CLIENT_TYPE, function () {
+            
+            comm.request("join", {
+                type: CLIENT_TYPE,
+                partnerId: (!forceNewPartner && lastPartnerId) || undefined
+            }, function () {
             	if (!hasPartner) {
                     infoWithQueue('Waiting for a chat partner... ');
                 }
@@ -248,12 +256,28 @@
         });
         comm.handler("join", function (otherUserId, type, geoInfo) {
     	    if (type !== CLIENT_TYPE) {
-    			setHasPartner(true);
+    	        var oldUserId = lastPartnerId;
+    			setHasPartner(otherUserId);
     			if (console && console.log) {
     			    console.log("join " + otherUserId);
 			    }
     			info(false);
-    			addMessage('System', geoInfo ? 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo : 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat');
+    			
+    			var message;
+    			if (otherUserId === oldUserId) {
+    			    // we were properly reconnected!
+    			    // don't need to show geoinfo, since it's the same partner as before.
+    			    message = 'You were reconnected with your previous ' + OTHER_CLIENT_TYPE;
+    			} else {
+    			    // new partner
+    			    if (geoInfo) {
+    			        // we have geolocation info.
+    			        message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo;
+    			    } else {
+    			        message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
+    			    }
+    			}
+    			addMessage('System', message);
     		}
         });
         comm.handler("part", function (type) {

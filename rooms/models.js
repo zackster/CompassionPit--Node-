@@ -16,6 +16,8 @@
      */
     var EXPIRY_TIME = 60 * 1000; // 60 secs
     
+    var REQUESTED_PARTNER_TIMEOUT = 10 * 1000; // 10 secs
+    
     /**
      * A hash of roomId to Room
      */
@@ -37,6 +39,11 @@
      * The queue of venter userIDs that are waiting for a partner.
      */
     var venterQueue = [];
+    
+    /**
+     * A hash of userId to requested partner public userId.
+     */
+    var queueRequestedPartners = createHash();
     
     /**
      * a simple hash of userId to roomId
@@ -119,8 +126,9 @@
      *
      * @param {String} userId The unique user identifier
      * @param {String} type The client type, either "venter" or "listener"
+     * @param {String} requestedPartnerId The public unique identifier of the requested partner. Optional.
      */
-    Room.addUserToQueue = function (userId, type) {
+    Room.addUserToQueue = function (userId, type, requestedPartnerId) {
         if (!userId) {
             throw new Error("Improper userId");
         } else if (!VALID_TYPES[type]) {
@@ -139,6 +147,12 @@
         
         var queue = type === "venter" ? venterQueue : listenerQueue;
         queue.push(userId);
+        if (requestedPartnerId) {
+            queueRequestedPartners[userId] = {
+                timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
+                partnerId: requestedPartnerId
+            };
+        }
          
         Room.checkQueues();
     };
@@ -157,6 +171,7 @@
         if (index !== -1) {
             listenerQueue.splice(index, 1);
         }
+        delete queueRequestedPartners[userId];
     };
     
     /**
@@ -168,19 +183,48 @@
             return;
         }
         
+        var now = Date.now();
+        
         for (var i = 0, lenI = venterQueue.length; i < lenI; i += 1) {
             var venterId = venterQueue[i];
             var venter = User.getById(venterId);
             if (venter && venter.isClientConnected()) {
                 // venter exists and the client is still connected
+                
+                var venterRequestedPartner = queueRequestedPartners[venterId];
+                if (venterRequestedPartner) {
+                    if (venterRequestedPartner.timeout < now) {
+                        delete queueRequestedPartners[venterId];
+                        venterRequestedPartner = undefined;
+                    }
+                }
+                
                 for (var j = 0, lenJ = listenerQueue.length; j < lenJ; j += 1) {
                     var listenerId = listenerQueue[j];
                     var listener = User.getById(listenerId);
                     if (listener && listener.isClientConnected()) {
                         // listener exists and the client is still connected
+                        
+                        var listenerRequestedPartner = queueRequestedPartners[listenerId];
+                        if (listenerRequestedPartner) {
+                            if (listenerRequestedPartner.timeout < now) {
+                                delete queueRequestedPartners[listenerId];
+                                listenerRequestedPartner = undefined;
+                            }
+                        }
+                        
                         if (!userInteractions[venterId] || userInteractions[venterId].indexOf(listenerId) === -1) {
                             // the venter is either new (and can be paired with anyone) or has not talked with the listener
                             // before
+                            
+                            if (venterRequestedPartner && User.getByPublicId(venterRequestedPartner.partnerId) !== listener) {
+                                // the venter wants a partner, this is not the right listener.
+                                continue;
+                            } else if (listenerRequestedPartner && User.getByPublicId(listenerRequestedPartner.partnerId) !== venter) {
+                                // the listener wants a partner, this is not the right venter.
+                                continue;
+                            }
+                            
                             var room = new Room(guid());
                             room.addUser(venterId, "venter");
                             room.addUser(listenerId, "listener");

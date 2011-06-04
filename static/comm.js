@@ -152,16 +152,17 @@
                     if (serverVersion !== VERSION) {
                         versionIssue();
                     }
-                    userId = message[1];
-                    publicUserId = message[2];
-                    var lastReceivedMessage = message[3];
+                    var isNewUser = message[1];
+                    userId = message[2];
+                    publicUserId = message[3];
+                    var lastReceivedMessage = message[4];
                     
-                    if (oldUserId && userId !== oldUserId) {
+                    if (oldUserId && (isNewUser || userId !== oldUserId)) {
                         unregister();
                     }
                     
                     isRegistered = true;
-                    log("registered " + JSON.stringify(message));
+                    log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
                     
                     checkSend(lastReceivedMessage);
                     

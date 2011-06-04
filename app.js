@@ -249,12 +249,18 @@
                 data = {};
             }
             var userId = data.u || null,
+                publicUserId = data.p || null,
                 lastMessageReceived = data.n || 0;
             var clientId = client.sessionId;
             
             var user = userId && User.getById(userId);
-            if (!user) {
-                user = new User(clientId);
+            var isNewUser = !user;
+            if (isNewUser) {
+                if (userId && publicUserId) {
+                    user = new User(clientId, userId, publicUserId);
+                } else {
+                    user = new User(clientId);
+                }
                 user.disconnect(function () {
                     var room = Room.getByUserId(user.id);
                     if (room) {
@@ -281,7 +287,7 @@
                 });
             }
             
-            callback([config.version, user.id, user.publicId, user.lastReceivedMessageIndex]);
+            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex]);
             Room.checkQueues();
         };
         
@@ -295,7 +301,8 @@
         /**
          * Request to join a channel based on the provided type
          */
-        socketHandlers.join = function (client, user, type, callback) {
+        socketHandlers.join = function (client, user, data, callback) {
+            var type = data.type;
             if (type !== "venter") {
                 type = "listener";
             }
@@ -306,7 +313,7 @@
             if (room) {
                 room.removeUser(userId);
             }
-            Room.addUserToQueue(userId, type);
+            Room.addUserToQueue(userId, data.type, data.partnerId);
         
             callback(true);
         };

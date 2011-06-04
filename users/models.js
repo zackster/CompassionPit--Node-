@@ -11,24 +11,26 @@
         geoip = require('geoip');
     
     var userIdToUser = createHash();
+    var userPublicIdToUserId = createHash();
     var userIdToSocketIOId = createHash();
     var socketIOIdToUserId = createHash();
     var userIdsWithoutSocketIOClient = createHash();
     
-    var User = exports.User = function (socketIOId, clientType) {
+    var User = exports.User = function (socketIOId, id, publicId) {
         if (!(this instanceof User)) {
             throw new Error("Must be called with new");
         }
-        var id = this.id = guid();
-        this.publicId = guid();
+        this.id = id = id || guid();
+        this.publicId = publicId = publicId || guid();
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];
         this.messageQueue = [];
         this.socketIOId = socketIOId;
         socketIOIdToUserId[socketIOId] = id;
-        this.clientType = clientType;
+        
         userIdToUser[id] = this;
+        userPublicIdToUserId[publicId] = id;
         this.disconnectCallbacks = [];
         this.lastSentMessageIndex = 0;
         this.lastReceivedMessageIndex = 0;
@@ -38,8 +40,15 @@
         return userIdToUser[id] || null;
     };
     
-    User.getBySocketIOId = function (id) {
-        var userId = socketIOIdToUserId[id];
+    User.getByPublicId = function (publicId) {
+        var id = userPublicIdToUserId[publicId];
+        return id ?
+            User.getById(id) :
+            null;
+    };
+    
+    User.getBySocketIOId = function (socketIOId) {
+        var userId = socketIOIdToUserId[socketIOId];
         return userId ?
             User.getById(userId) :
             null;
@@ -95,6 +104,9 @@
         
         var id = this.id;
         delete userIdsWithoutSocketIOClient[id];
+        if (userPublicIdToUserId[this.publicId] === id) {
+            delete userPublicIdToUserId[this.publicId];
+        }
         var socketIOId = userIdToSocketIOId[id];
         if (socketIOId) {
             delete userIdToSocketIOId[id];
