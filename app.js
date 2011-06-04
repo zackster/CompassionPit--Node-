@@ -204,13 +204,13 @@
                                 if (result !== null && result !== undefined) {
                                     message.d = result;
                                 }
-                                forceLatency(function () {
-                                    if (type !== "register") {
-                                        user.send(message);
-                                    } else {
+                                if (type !== "register") {
+                                    user.send(message);
+                                } else {
+                                    forceLatency(function () {
                                         client.send(message);
-                                    }
-                                });
+                                    });
+                                }
                             });
                         }
                     } else {
