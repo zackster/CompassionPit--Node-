@@ -8,7 +8,7 @@
         if (dates === undefined) {
             return;
         }
-        delete window.dates;
+        window.dates = undefined;
         
         var has = Object.prototype.hasOwnProperty;
         

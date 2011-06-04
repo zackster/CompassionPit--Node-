@@ -5,7 +5,7 @@
     "use strict";
     
     var VERSION = window.COMPASSION_PIT_VERSION;
-    delete window.COMPASSION_PIT_VERSION;
+    window.COMPASSION_PIT_VERSION = undefined;
 
     var log = function (data) {
         try {

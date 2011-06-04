@@ -36,7 +36,7 @@
         };
         if (window.startingRoomCounts) {
             updateCounts(window.startingRoomCounts);
-            delete window.startingRoomCounts;
+            window.startingRoomCounts = undefined;
         }
         
         var timeoutId = null;
