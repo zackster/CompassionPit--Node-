@@ -163,6 +163,11 @@ p {
 	padding: 8px 0 0 10px;
 }
 
+#buttons1 li a.disabled:link, #buttons1 li a.disabled:visited, a.disabled:hover {
+	background:url(/img/menu1-disabled.png);
+	cursor:default;
+}
+
 /*- Buttons 2--------------------------- */
 	
 #buttons2 {

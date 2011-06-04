@@ -6,10 +6,27 @@
 
         var CLIENT_TYPE = window.CLIENT_TYPE;
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
+        var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
 
         var comm = Comm.create();
         window.comm = comm;
         var hasPartner = false;
+        var setHasPartner = function (value) {
+            hasPartner = value;
+            if (value) {
+                setTimeout(function () {
+                    if (hasPartner) {
+                        $("#newPartner")
+                            .removeClass("disabled");
+                    }
+                }, NEW_PARTNER_BUTTON_TIMEOUT);
+            } else {
+                $("#newPartner")
+                    .addClass("disabled");
+            }
+        };
+        setHasPartner(false);
+        
         comm.connect(function (first) {
     	    addMessage('System', first ? 'Connected' : 'Reconnected');
     	    requestNewChatChannel();
@@ -17,7 +34,7 @@
         comm.disconnect(function () {
     		addMessage('System', 'You have been disconnected. Trying to reconnect...');
     		info("Reconnecting...");
-    		hasPartner = false;
+    		setHasPartner(false);
         });
 
         function info(msg) {
@@ -83,7 +100,7 @@
 
         function requestNewChatPartner() {
         	if (hasPartner) {
-        		hasPartner = false;
+        		setHasPartner(false);
         		addMessage('System', 'Please wait while we find you a new chat partner.');
         		requestNewChatChannel();
         	}
@@ -123,7 +140,7 @@
         };
 
         function requestNewChatChannel() {
-            hasPartner = false;
+            setHasPartner(false);
 
             comm.request("join", CLIENT_TYPE, function () {
             	if (!hasPartner) {
@@ -208,7 +225,7 @@
         });
         comm.handler("join", function (type, geoInfo) {
     	    if (type !== CLIENT_TYPE) {
-    			hasPartner = true;
+    			setHasPartner(true);
     			info(false);
     			addMessage('System', geoInfo ? 'A new chat partner has entered your chat from ' + geoInfo : 'A new chat partner has entered your chat');
     		}
@@ -216,7 +233,7 @@
         comm.handler("part", function (type) {
             var other = (CLIENT_TYPE == 'listener') ? 'Venter' : 'Listener';
     		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + other + ".");
-    		hasPartner = false;
+    		setHasPartner(false);
     		infoWithQueue('Waiting for a chat partner... ');
         });
         
