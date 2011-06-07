@@ -14,7 +14,13 @@ var config = {
         },
         forceLatency: 1000,
         systemPassword: "password",
-        serveMerged: true
+        serveMerged: false,
+        disconnectLeeway: 10000,
+        messageBacklogPerUser: 100,
+        geoLocationParts: [
+            "region",
+            "country_name"
+        ]
     },
     production: {
         port: 8000,
@@ -31,7 +37,13 @@ var config = {
         },
         forceLatency: 0,
         systemPassword: "password",
-        serveMerged: true
+        serveMerged: true,
+        disconnectLeeway: 10000,
+        messageBacklogPerUser: 100,
+        geoLocationParts: [
+            "region",
+            "country_name"
+        ]
     }
 };
 

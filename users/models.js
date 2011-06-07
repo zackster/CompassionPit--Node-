@@ -152,6 +152,7 @@
     };
     
     var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
+    var configGeoParts = config.geoLocationParts || [];
     
     User.prototype.lookupGeoIP = function (callback) {
         var ipAddress = this.getIPAddress();
@@ -170,16 +171,15 @@
                     return;
                 }
                 
-                var parts = [
-                    data.city,
-                    data.region,
-                    data.country_name
-                ];
-                var result = parts.filter(function (x) {
-                    return !!x;
-                }).join(", ");
+                var parts = [];
+                for (var i = 0, len = configGeoParts.length; i < len; i += 1) {
+                    var part = data[configGeoParts[i]];
+                    if (part && isNaN(Number(part, 10))) {
+                        parts.push(part);
+                    }
+                }
                 
-                callback(result);
+                callback(parts.join(", ") || null);
             });
         }
     };
