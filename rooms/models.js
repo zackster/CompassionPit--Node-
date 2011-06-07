@@ -66,12 +66,13 @@
         }
         id = String(id);
         this.id = id;
-        this.sessionTime = this.lastAccessTime = Date.now();
+        this.startTime = this.lastAccessTime = Date.now();
         this.users = createHash();
         this.types = createHash({
             venter: 0,
             listener: 0
         });
+        this.numMessages = 0;
         
         rooms[id] = this;
         
@@ -264,7 +265,9 @@
             result.push({
                 id: roomId,
                 clients: room.users,
-                time: room.lastAccessTime
+                time: room.lastAccessTime,
+                startTime: room.startTime,
+                numMessages: room.numMessages
             });
         }
         return {
@@ -429,6 +432,7 @@
             room: this.id,
             type: clientType
         });
+        this.numMessages += 1;
         for (var otherUserId in this.users) {
             if (otherUserId !== userId) {
                 this.sendToUser(otherUserId, "msg", clientType, message);
@@ -478,7 +482,6 @@
         });
         
         userIdToRoomId[userId] = this.id;
-        this.sessionTime = Date.now();
         this.users[userId] = type;
         this.types[type] += 1;
 
@@ -527,8 +530,6 @@
                 this.types[clientType] -= 1;
             }
         }
-        
-        this.sessionTime = Date.now();
         
         var users = this.users;
         delete users[userId];

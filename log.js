@@ -84,20 +84,21 @@
         });
         
         app.get("/logs.json", function (req, res) {
+            var roomData = require('./rooms/models').Room.dumpData();
+            var result = {
+                entries: logEntries,
+                counts: logCounts,
+                rooms: roomData.rooms,
+                listenerQueue: roomData.listenerQueue,
+                venterQueue: roomData.venterQueue
+            };
             ClientError.find({}, null, { sort: { time: -1 }, limit: 1000 }, function (err, errors) {
                 if (err) {
                     throw err;
                 }
+                result.errors = errors
                 res.writeHead(200, { "Content-Type": "application/json" });
-                var roomData = require('./rooms/models').Room.dumpData();
-                res.end(JSON.stringify({
-                    entries: logEntries,
-                    counts: logCounts,
-                    rooms: roomData.rooms,
-                    listenerQueue: roomData.listenerQueue,
-                    venterQueue: roomData.venterQueue,
-                    errors: errors
-                }));
+                res.end(JSON.stringify(result));
             });
         });
         

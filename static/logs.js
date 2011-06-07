@@ -139,11 +139,15 @@
                         .append($("<td>")
                             .text(room.id))
                         .append($("<td>")
+                            .text(new Date(room.startTime).toString()))
+                        .append($("<td>")
                             .text(new Date(room.time).toString()))
                         .append($("<td>")
                             .text(listeners.join(", ")))
                         .append($("<td>")
-                            .text(venters.join(", "))));
+                            .text(venters.join(", ")))
+                        .append($("<td>")
+                            .text(room.numMessages)));
             });
             
             var $queueTbody = $("#queue-tbody");
