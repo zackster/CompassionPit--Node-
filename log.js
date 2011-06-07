@@ -11,17 +11,19 @@
     
     mongoose.connect(config.mongodb.uri);
     
+    // TODO: write some merging app that will merge the LogEntries
     /**
      * Represents a single LogEntry that will be stored in MongoDB
      */
     mongoose.model('LogEntry', new Schema({
         action: { type: String, "enum": ["messageSent"] },
-        time: { type: Date, default: Date.now }
+        time: { type: Date, default: Date.now },
+        count: { type: Number, default: 1 }
     }));
     var LogEntry = exports.LogEntry = mongoose.model('LogEntry');
     
     /**
-     * Represents a single LogEntry that will be stored in MongoDB
+     * Represents a single ClientError that will be stored in MongoDB
      */
     mongoose.model('ClientError', new Schema({
         message: { type: String },

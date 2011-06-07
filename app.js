@@ -133,13 +133,16 @@
     });
     
     app.get('/messageChart', function (req, res) {
-        log.LogEntry.find({}, function (err, docs) {
-            var messages = docs.filter(function (doc) {
-                return doc.action === "messageSent";
-            }).map(function (doc) {
-                return +new Date(doc.time);
+        log.LogEntry.find({}, null, { sort: { time: 1 } }, function (err, docs) {
+            var messages = [];
+            docs.forEach(function (doc) {
+                if (doc.action === "messageSent") {
+                    var count = doc.count || 1;
+                    for (var i = 0; i < count; i += 1) {
+                        messages.push(+new Date(doc.time));
+                    }
+                }
             });
-            messages.sort();
             res.render('messageChart', {
                 messages: messages
             });
