@@ -1,0 +1,56 @@
+CompassionPit--Node- notes:
+-------------
+> forked the project in github and cloned it to have a local version to work on.
+  $ git clone git@github.com:<username>/CompassionPit--Node-.git
+
+--------
+To get project to run:
+> git ignores config.js. got the file from zack.
+
+> install GeoIP lib:
+    wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.7.tar.gz
+    tar -xvzf GeoIP-1.4.7.tar.gz
+    cd GeoIP-1.4.7
+    ./configure
+    make 
+    sudo make install 
+
+> npm install geoip.
+
+> cd node_modules/hashlib
+  node-waf configure build
+
+> sudo node app.js
+--------
+
+Discoveries:
+> url of 'venter' or 'listener' renders views/chat.jade
+
+> i didn't know what 'use strict' means or does, so i looked it up:
+  It catches some common coding bloopers, throwing exceptions.
+  It prevents, or throws errors, when relatively "unsafe" actions are taken 
+    (such as gaining access to the global object).
+  It disables features that are confusing or poorly thought out.
+  "not in Firefox 3.6, Safari 5, Chrome 7 and Opera 10.6 (all Mac). 
+  Didn't test in IE9 though ;) – Nov 10 '10	  
+  Firefox 4 has complete support for strict mode, and as far as I can tell, no other browser does.
+  Safari and Chrome have "partial" support, but I don't really know what that means."
+
+> took a few minutes to figure out that socketHanders class is not defined somewhere;
+  it is created on the fly in mergeServers() in app.js.
+  
+> not seeing how button was implemented in chat.jade until i realized it is in static/chat.js.
+
+> finally dawned that 'type' in chat.jade line 'window.CLIENT_TYPE = !{JSON.stringify(type)};'
+  is passed in with the render() call.
+  
+> Rooms class defined in rooms/models.js. The queues for venters/listeners are there.
+
+> <User>.lookupGeoIP(callback) is called to get geo info.
+> <User>.send(message) is called to have message displayed in users chat window.
+ 
+Not Understood:
+> what is the config item 'serveMerged' mean? it is set 'true' in config.
+> what are hashes and where created? referenced in 'mergeStatic(function (jsHash, cssHash){}'.
+> so chat.jade is source for html, but no header tag or linking of js files or css file?
+  how does jade know to use static/chat.js and static/css/style.css? is that a feature of jade?
