@@ -447,7 +447,11 @@
         if (!user) {
             callback(null);
         } else {
-            user.lookupGeoIP(callback);
+            var utype = this.users[userId];
+            if(utype=='listener')
+                user.lookupGeoIP(callback);
+            else
+                callback(null);
         }
     };
     
@@ -461,7 +465,6 @@
         if (!VALID_TYPES[type]) {
             throw new Error("Unknown type: " + type);
         }
-        
         var oldRoomId = userIdToRoomId[userId];
         if (oldRoomId) {
             if (oldRoomId === this.id) {
@@ -486,7 +489,6 @@
         this.types[type] += 1;
 
         var self = this;
-        
         // let the new user know about the other users in the room.
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
