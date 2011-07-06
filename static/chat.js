@@ -179,6 +179,9 @@
     		});
 
 		$('#newPartner').click(function() {
+		    if ($(this).hasClass("disabled")) {
+		        return false;
+		    }
 	        requestNewChatPartner();
         	refocusInformInput();
 	        return false;
