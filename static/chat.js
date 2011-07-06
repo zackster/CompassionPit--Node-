@@ -102,12 +102,11 @@
         	$status.removeClass('errorMessage infoMessage');
         	$status.addClass(cssClass);
         	if(msgform) {
-        	    var $chatInput;
         	    $status
         	        .empty()        	        
         	        .append($("<form>")
-        	            .append($chatInput = $("<input>")
-        	                .attr("id","inform")
+        	            .append($("<input>")
+        	                .attr("id", "inform")
         	                .attr("type", "text")
         	                .attr("autocomplete", "off")
         	                .attr("size", "90"))
@@ -115,11 +114,10 @@
         	                .attr("type", "submit")
         	                .attr("value", "Send Chat"))
         	            .submit(function () {
-        	                sendMessage($chatInput.val());
+        	                sendMessage($("#inform").val());
         	                return false;
         	            }));
-        	    $chatInput.focus();
-        	    document.getElementById("inform").focus();
+        	    $("#inform").focus();
         	} else {
             	$status.text(msg);
         	}
@@ -141,7 +139,7 @@
         });
         $(window).bind("focus", function() {
         	hasFocus = true;
-        	document.getElementById("inform").focus();
+        	$("#inform").focus();
         	document.title = 'CompassionPit | Chat';
         });
 
@@ -162,7 +160,7 @@
 
 		$('#newPartner').click(function() {
 	        requestNewChatPartner();
-	        document.getElementById("form").focus();
+	        $("#inform").focus();
 	        return false;
 	    });
 
