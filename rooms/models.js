@@ -444,14 +444,10 @@
     
     Room.prototype.lookupUserGeoIP = function (userId, callback) {
         var user = User.getById(userId);
-        if (!user) {
+        if (!user || this.users[userId] !== "listener") {
             callback(null);
         } else {
-            var utype = this.users[userId];
-            if(utype=='listener')
-                user.lookupGeoIP(callback);
-            else
-                callback(null);
+            user.lookupGeoIP(callback);
         }
     };
     
