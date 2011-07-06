@@ -247,6 +247,7 @@
         });
         setInterval(function () {
             User.cleanup();
+            Room.checkQueues();
         }, 5000);
         
         /**
