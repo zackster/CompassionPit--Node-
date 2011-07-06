@@ -15,6 +15,16 @@
             }
         };
 
+        var log = function (data) {
+            try {
+                var console = window.console;
+                if (console && console.log) {
+                    console.log(data);
+                }
+            } catch (err) {
+                // do nothing
+            }
+        };
         
         var comm = Comm.create();
         window.comm = comm;
@@ -198,6 +208,11 @@
         	}
         }
         window.gong = gong;
+        
+        var scrollToBottomOfChat = function () {
+            var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
+            scrollDiv.scrollTop = scrollDiv.scrollHeight;
+        }
 
         var count = 0;
         var i = 0;
@@ -213,8 +228,7 @@
                 .append($("<tr>")
             	    .addClass(from === 'Me' ? 'blue-row' : 'white-row')
             	    .append($td));
-        	var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
-        	scrollDiv.scrollTop = scrollDiv.scrollHeight;
+            scrollToBottomOfChat();
         	if(!hasFocus && !titleCurrentlyChanging) {
         		changeTitle();
         		if($("#enable_sound").is(':checked')) {
@@ -270,11 +284,7 @@
     	    if (type !== CLIENT_TYPE) {
     	        var oldUserId = lastPartnerId;
     			setHasPartner(otherUserId);
-    			try {
-        			if (console && console.log) {
-        			    console.log("join " + otherUserId);
-    			    }
-			    } catch (err) {}
+    			log("join " + otherUserId);
     			info(false);
     			
     			var message;
@@ -300,9 +310,27 @@
 
         });
         
+        var includeWufooEmbedScript = function () {
+            $('#chatWindow > tbody:last')
+                .append($("<tr>")
+                    .append($("<td>")
+                        .append($("<iframe>", {
+                            allowTransparency: "true",
+                            frameborder: 0,
+                            scrolling: "no",
+                            style: "width:100%;height:270px;border:none",
+                            src: "http://awesomenessreminders.wufoo.com/embed/r7x3q1/"
+                        }))));
+            scrollToBottomOfChat();
+        };
         comm.handler("part", function (type) {
     		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + OTHER_CLIENT_TYPE + ".");
     		setHasPartner(false);
+    		
+    		if (CLIENT_TYPE === "venter") {
+    		    includeWufooEmbedScript();
+    		}
+            
     		infoWithQueue('Waiting for a chat partner... ');
         });
         
