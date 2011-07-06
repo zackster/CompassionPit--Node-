@@ -104,9 +104,10 @@
         	if(msgform) {
         	    var $chatInput;
         	    $status
-        	        .empty()
+        	        .empty()        	        
         	        .append($("<form>")
         	            .append($chatInput = $("<input>")
+        	                .attr("id","inform")
         	                .attr("type", "text")
         	                .attr("autocomplete", "off")
         	                .attr("size", "90"))
@@ -118,6 +119,7 @@
         	                return false;
         	            }));
         	    $chatInput.focus();
+        	    document.getElementById("inform").focus();
         	} else {
             	$status.text(msg);
         	}
@@ -139,6 +141,7 @@
         });
         $(window).bind("focus", function() {
         	hasFocus = true;
+        	document.getElementById("inform").focus();
         	document.title = 'CompassionPit | Chat';
         });
 
@@ -159,6 +162,7 @@
 
 		$('#newPartner').click(function() {
 	        requestNewChatPartner();
+	        document.getElementById("form").focus();
 	        return false;
 	    });
 

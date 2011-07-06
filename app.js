@@ -278,7 +278,7 @@
                     }
                     log.info({
                         event: "Delete user",
-                        user: user.id,
+                        user: user.id
                     });
                 });
                 log.info({
@@ -286,6 +286,7 @@
                     client: clientId,
                     user: user.id
                 });
+                user.setSocketIOId(client.sessionId, lastMessageReceived);
             } else {
                 user.setSocketIOId(client.sessionId, lastMessageReceived);
                 log.info({

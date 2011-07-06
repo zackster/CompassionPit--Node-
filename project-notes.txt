@@ -21,6 +21,10 @@ To get project to run:
   node-waf configure build
 
 > sudo node app.js
+
+> cloud9 will run the project but i had trouble setting and hitting a breakpoint.
+  needs more exploration.
+
 --------
 
 Discoveries:
@@ -46,11 +50,24 @@ Discoveries:
   
 > Rooms class defined in rooms/models.js. The queues for venters/listeners are there.
 
+> When a user is added to room, 'Room.addUser()' is called;
+  which sends both users a 'join' message with geoInfo;
+  which pushes message to queue and flushes queue;
+  which sends message to client using id from app.socket.clients[].
+
 > <User>.lookupGeoIP(callback) is called to get geo info.
 > <User>.send(message) is called to have message displayed in users chat window.
+
+> added an id to the status text input and focus on it when window is activated.
+  i'm not sure if that fixes the problem of having the field be in focus after clicking the
+  'find new partner' button.
+
  
 Not Understood:
 > what is the config item 'serveMerged' mean? it is set 'true' in config.
-> what are hashes and where created? referenced in 'mergeStatic(function (jsHash, cssHash){}'.
+> whole calls 'mergeStatic(function())'.
 > so chat.jade is source for html, but no header tag or linking of js files or css file?
   how does jade know to use static/chat.js and static/css/style.css? is that a feature of jade?
+> where are calls to socketHandlers.register()?
+> i am still having trouble seeing where some messages originate.
+
