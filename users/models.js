@@ -68,6 +68,9 @@
 
     User.prototype.setSocketIOId = function (newId, lastMessageClientReceived) {
         var oldId = this.socketIOId;
+        if (oldId === newId) {
+            return;
+        }
         delete socketIOIdToUserId[oldId];
         if (newId) {
             userIdToSocketIOId[this.id] = this.socketIOId = newId;
