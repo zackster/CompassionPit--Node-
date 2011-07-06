@@ -93,6 +93,15 @@
                 }
             });
         };
+        
+        var refocusInformInput = function () {
+            setTimeout(function () {
+            	if ($("#inform").length > 0 && !$("#inform").is(":focus")) {
+            	    $("#inform").focus();
+            	}
+        	}, 0);
+        };
+        
         function status(msg, cssClass, checkQueue) {
             checkingQueue = checkQueue && msg;
 
@@ -115,9 +124,10 @@
         	                .attr("value", "Send Chat"))
         	            .submit(function () {
         	                sendMessage($("#inform").val());
+        	                refocusInformInput();
         	                return false;
         	            }));
-        	    $("#inform").focus();
+        	    refocusInformInput();
         	} else {
             	$status.text(msg);
         	}
@@ -139,8 +149,8 @@
         });
         $(window).bind("focus", function() {
         	hasFocus = true;
-        	$("#inform").focus();
         	document.title = 'CompassionPit | Chat';
+        	refocusInformInput();
         });
 
 		$('#enable_sound').attr('checked', true);
@@ -160,7 +170,7 @@
 
 		$('#newPartner').click(function() {
 	        requestNewChatPartner();
-	        $("#inform").focus();
+        	refocusInformInput();
 	        return false;
 	    });
 
@@ -289,6 +299,7 @@
 		}
 
         });
+        
         comm.handler("part", function (type) {
     		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + OTHER_CLIENT_TYPE + ".");
     		setHasPartner(false);
