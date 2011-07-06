@@ -65,9 +65,15 @@ Discoveries:
  
 Not Understood:
 > what is the config item 'serveMerged' mean? it is set 'true' in config.
+  - If serveMerged is true, it will merge and minify the JS and CSS files and serve the merged version rather than a
+    series of individual ones. In production, it makes sense to merge them, in development, it'd be an undue burden.
 > whole calls 'mergeStatic(function())'.
+  - This is asynchronous javascript in action, the callback specified will be called after the merging and minification
+    of the JS and CSS.
 > so chat.jade is source for html, but no header tag or linking of js files or css file?
   how does jade know to use static/chat.js and static/css/style.css? is that a feature of jade?
+  - layout.jade handles this.
 > where are calls to socketHandlers.register()?
+  - when the client sends a message with the "register" type, it calls socketHandlers[type](...)
 > i am still having trouble seeing where some messages originate.
 
