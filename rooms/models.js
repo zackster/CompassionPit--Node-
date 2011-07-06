@@ -285,9 +285,47 @@
      */
     Room.getQueuePosition = function (userId) {
         var index = venterQueue.indexOf(userId);
-        if (index === -1) {
+        var queue;
+        var otherQueue;
+        if (index !== -1) {
+            // venter
+            queue = venterQueue;
+            otherQueue = listenerQueue;
+        } else {
             index = listenerQueue.indexOf(userId);
+            if (index === -1) {
+                return -1;
+            }
+            // listener
+            queue = listenerQueue;
+            otherQueue = venterQueue;
         }
+        
+        var result = index;
+        for (var i = 0; i < index; i += 1) {
+            var competitorId = queue[i];
+
+            if (queueRequestedPartners[competitorId]) {
+                // this person doesn't really count in the queue, they're waiting for someone
+                index -= 1;
+            } else {
+                for (var j = 0, len = otherQueue.length; j < len; j += 1) {
+                    var otherId = otherQueue[j];
+                    
+                    if (userInteractions[otherId] && userInteractions[otherId].indexOf(competitorId) !== -1 && userInteractions[otherId].indexOf(userId) === -1) {
+                        // competitor can't queue with this person, already conversed with them, but the user we're
+                        // checking has not yet, so they are potentially available, allowing the user to skip over this
+                        // competitor.
+                        index -= 1;
+                        break;
+                    }
+                }
+            }
+        }
+        if (index < 0) {
+            index = 0;
+        }
+        
         return index;
     };
     
