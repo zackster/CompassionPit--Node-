@@ -158,7 +158,7 @@
     log.addActions(app);
     
     process.on('uncaughtException', function (err) {
-        console.error(err);
+        console.error(JSON.stringify(err));
         log.error({
             event: "Uncaught exception",
             error: String(err.message),
@@ -185,72 +185,85 @@
         socket = app.socket = socketIO.listen(app);
     
         var socketHandlers = Object.create(null);
-    
-        socket.on('connection', function (client) {
-            client.on('message', latencyWrap(function (data) {
-                var type = data.t;
-                if (type) {
-                    var handler = socketHandlers[type];
-                    if (handler) {
-                        var user = User.getBySocketIOId(client.sessionId);
-                        if (type !== "register" && !user) {
-                            console.log("Received message from unregistered user: " + client.sessionId + ": " + JSON.stringify(data));
-                        } else {
-                            if (user && data.i && user.lastReceivedMessageIndex < data.i) {
-                                user.lastReceivedMessageIndex = data.i;
+        
+        socket.configure(function () {
+            socket.set('authorization', function (handshakeData, callback) {
+                var headers = handshakeData.headers;
+                if (headers) {
+                    var ipAddress = headers['x-forwarded-for'];
+                    if (ipAddress) {
+                        handshakeData.address.address = ipAddress;
+                    }
+                }
+                callback(null, true);
+            });
+            
+            socket.sockets.on('connection', function (client) {
+                client.on('message', latencyWrap(function (data) {
+                    var type = data.t;
+                    if (type) {
+                        var handler = socketHandlers[type];
+                        if (handler) {
+                            var user = User.getBySocketIOId(client.id);
+                            if (type !== "register" && !user) {
+                                console.log("Received message from unregistered user: " + client.id + ": " + JSON.stringify(data));
+                            } else {
+                                if (user && data.i && user.lastReceivedMessageIndex < data.i) {
+                                    user.lastReceivedMessageIndex = data.i;
+                                }
+                                handler(client, user, data.d, function (result) {
+                                    var message;
+                                    if (type === "register") {
+                                        message = {t: "register"};
+                                    } else {
+                                        message = {i: data.i};
+                                    }
+                                    if (result !== null && result !== undefined) {
+                                        message.d = result;
+                                    }
+                                    if (type !== "register") {
+                                        user.send(message);
+                                    } else {
+                                        forceLatency(function () {
+                                            client.json.send(message);
+                                        });
+                                    }
+                                });
                             }
-                            handler(client, user, data.d, function (result) {
-                                var message;
-                                if (type === "register") {
-                                    message = {t: "register"};
-                                } else {
-                                    message = {i: data.i};
-                                }
-                                if (result !== null && result !== undefined) {
-                                    message.d = result;
-                                }
-                                if (type !== "register") {
-                                    user.send(message);
-                                } else {
-                                    forceLatency(function () {
-                                        client.send(message);
-                                    });
-                                }
-                            });
+                        } else {
+                            console.log("Received message with unknown handler: " + data.t);
                         }
                     } else {
-                        console.log("Received message with unknown handler: " + data.t);
+                        console.log("Received improper message", JSON.stringify(data));
                     }
-                } else {
-                    console.log("Received improper message", data);
-                }
-            }));
-        
-            // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
-            client.on('disconnect', latencyWrap(function () {
-                var clientId = client.sessionId;
-                
-                var user = User.getBySocketIOId(clientId);
+                }));
+
+                // on disconnect, we want to clean up the user and inform the room they are in of the disconnect
+                client.on('disconnect', latencyWrap(function () {
+                    var clientId = client.id;
+
+                    var user = User.getBySocketIOId(clientId);
+                    log.info({
+                        event: "Disconnected",
+                        client: clientId,
+                        user: user ? user.id : null
+                    });
+                    if (user) {
+                        user.setSocketIOId(null);
+                    }
+                    Room.checkQueues();
+                }));
+
                 log.info({
-                    event: "Disconnected",
-                    client: clientId,
-                    user: user ? user.id : null
+                    event: "Connected",
+                    client: client.id
                 });
-                if (user) {
-                    user.setSocketIOId(null);
-                }
-                Room.checkQueues();
-            }));
-            
-            log.info({
-                event: "Connected",
-                client: client.sessionId
             });
+            setInterval(function () {
+                User.cleanup();
+                Room.checkQueues();
+            }, 5000);
         });
-        setInterval(function () {
-            User.cleanup();
-            Room.checkQueues();
-        }, 5000);
         
         /**
          * Register the client with the server
@@ -263,7 +276,7 @@
                 publicUserId = data.p || null,
                 lastMessageReceived = data.n || 0,
                 userAgent = data.a || null;
-            var clientId = client.sessionId;
+            var clientId = client.id;
             
             var user = userId && User.getById(userId);
             var isNewUser = !user;
@@ -292,9 +305,9 @@
                     client: clientId,
                     user: user.id
                 });
-                user.setSocketIOId(client.sessionId, lastMessageReceived);
+                user.setSocketIOId(client.id, lastMessageReceived);
             } else {
-                user.setSocketIOId(client.sessionId, lastMessageReceived);
+                user.setSocketIOId(client.id, lastMessageReceived);
                 log.info({
                     event: "Reconnected",
                     client: clientId,

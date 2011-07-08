@@ -10,7 +10,7 @@ module.exports = function (config) {
         "jquery.ui.widget.js",
         "jquery.ui.datepicker.js",
         "jquery.ui.datetime.src.js",
-        "socket.io.js",
+        "socket.io/socket.io.js",
         "comm.js",
         "chat.js",
         "index.js",

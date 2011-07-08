@@ -27,6 +27,7 @@
         this.messageBacklog = [];
         this.messageQueue = [];
         this.socketIOId = socketIOId;
+        userIdToSocketIOId[id] = socketIOId;
         socketIOIdToUserId[socketIOId] = id;
         
         userIdToUser[id] = this;
@@ -93,8 +94,7 @@
             return false;
         }
         
-        var client = this.socket.clients[clientId];
-        return !!client;
+        return !!this.socket.connected[clientId];
     };
     
     User.prototype.disconnect = function (callback) {
@@ -136,27 +136,15 @@
         if (!socketIOId) {
             return null;
         }
-        var client = this.socket.clients[socketIOId];
+        if (!this.socket.connected[socketIOId]) {
+            return null;
+        }
+        var client = this.socket.of('').socket(socketIOId);
         if (!client) {
             return null;
         }
         
-        var ipAddress;
-        
-        var request = client.request;
-        if (request) {
-            var headers = request.headers;
-            if (headers) {
-                ipAddress = headers['x-forwarded-for'];
-            }
-        }
-        if (!ipAddress) {
-            var connection = client.connection;
-            if (connection) {
-                ipAddress = connection.remoteAddress;
-            }
-        }
-        return (this.ipAddress = ipAddress || null);
+        return (this.ipAddress = client.handshake.address.address);
     };
     
     var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
@@ -198,10 +186,11 @@
             return;
         }
         
-        var client = this.socket.clients[clientId];
-        if (!client) {
+        if (!this.socket.connected[clientId]) {
             return;
         }
+        
+        var client = this.socket.of('').socket(clientId);
         
         var backlog = this.messageBacklog,
             queue = this.messageQueue;
@@ -233,7 +222,7 @@
             }
             
             for (i = 0, len = wholeMessage.length; i < len; i += 1) {
-                client.send(wholeMessage[i]);
+                client.json.send(wholeMessage[i]);
             }
         });
     };

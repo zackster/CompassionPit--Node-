@@ -61,8 +61,8 @@
     }());
 
     exports.create = function () {
-        var socket = new io.Socket(null, {
-            maxReconnectionAttempts: 5
+        var socket = io.connect(null, {
+            'max reconnection attempts': 5
         });
         
         var events = {};
@@ -111,7 +111,7 @@
                 registerMessage.d.p = publicUserId;
                 registerMessage.d.n = lastMessageReceived;
             }
-            socket.send(registerMessage);
+            socket.json.send(registerMessage);
         });
         
         var unregister;
@@ -224,12 +224,16 @@
                 }
                 if (backlogMessages.length > 0) {
                     log("Sent " + backlogMessages.length + " backlogged messages");
-                    socket.send(backlogMessages);
+                    for (var j = 0, len = backlogMessages.length; j < len; j += 1) {
+                        socket.json.send(backlogMessages[j]);
+                    }
                 }
             }
             
             if (sendQueue.length > 0) {
-                socket.send(sendQueue);
+                for (var k = 0, len = sendQueue.length; k < len; k += 1) {
+                    socket.json.send(sendQueue[k]);
+                }
                 sendBacklog.push.apply(sendBacklog, sendQueue);
                 sendQueue.length = 0;
                 if (sendBacklog.length > BACKLOG_SIZE) {
@@ -263,11 +267,11 @@
                 handlers[type] = callback;
             },
             start: function () {
-                socket.connect();
+                socket.socket.reconnect();
             },
             reconnect: function () {
-                socket.disconnect();
-                socket.onReconnect();
+                socket.socket.disconnect();
+                socket.socket.reconnect();
             }
         };
     };
