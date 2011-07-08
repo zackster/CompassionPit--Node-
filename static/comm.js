@@ -61,7 +61,7 @@
     }());
 
     exports.create = function () {
-        var socket = io.connect(null, {
+        var socket = io.connect(document.domain === "compassionpit.com" ? "compassionpit.com:8000" : null, {
             'max reconnection attempts': 5
         });
         
