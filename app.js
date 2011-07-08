@@ -122,6 +122,8 @@
             res.send("Wrong password");
         } else if (!req.body.message) {
             res.send("No message provided");
+        } else if (req.body.restart && isNaN(parseInt(req.body.restartTime, 10))) {
+            res.send("Bad restart time specified");
         } else {
             var message = req.body.message;
             forceLatency(function () {
@@ -130,7 +132,12 @@
                     d: message
                 });
             });
-            res.send("Sucessfully sent " + JSON.stringify(message));
+            if (req.body.restart) {
+                setTimeout(function () {
+                    require('child_process').spawn('forever', ['restart', __filename]);
+                }, parseInt(req.body.restartTime, 10) * 1000);
+            }
+            res.send("Successfully sent " + JSON.stringify(message));
         }
     });
     

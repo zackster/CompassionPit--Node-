@@ -10,6 +10,14 @@
       p
         label
           #{"Message: "}
-          input(type="text", name="message")
+          input(type="text", name="message", size="120")
+      p
+        label
+          input(type="checkbox", name="restart", value="y")
+          #{" Restart?"}
+      p
+        label
+          #{"Restart time in seconds: "}
+          input(type="text", name="restartTime", value="60")
       p
         input(type="submit")
