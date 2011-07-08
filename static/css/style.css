@@ -324,11 +324,19 @@ ul#links a:hover {
 }
 
 .white-row {
-	background-color:#fff; /* this probably isn't necessary... */
+  background-color:#fff; /* this probably isn't necessary... */
+}
+
+.off-white-row {
+  background-color:#f7f7f7;
 }
 
 .blue-row {
 	background-color:#add8e6;
+}
+
+.yellow-row {
+	background-color:#faec87;
 }
 
 #status {

@@ -55,7 +55,7 @@
     	    requestNewChatChannel(false);
         });
         comm.on('disconnect', function () {
-    		addMessage('System', 'You have been disconnected. Trying to reconnect...');
+    		addMessage('System', 'You have been disconnected. Trying to reconnect...', 'yellow-row');
     		info("Reconnecting...");
     		setHasPartner(false);
         });
@@ -220,7 +220,7 @@
         var count = 0;
         var i = 0;
         var titleCurrentlyChanging = false;
-        function addMessage(from, msg) {
+        function addMessage(from, msg, cssClass) {
             var $td = $("<td>");
             if (msg instanceof $) {
                 $td.append(msg);
@@ -229,7 +229,7 @@
             }
         	var row = $('#chatWindow > tbody:last')
                 .append($("<tr>")
-            	    .addClass(from === 'Me' ? 'blue-row' : 'white-row')
+            	    .addClass(cssClass || (from === 'Me' ? 'blue-row' : from === 'System' ? 'off-white-row' : 'white-row'))
             	    .append($td));
             scrollToBottomOfChat();
         	if(!hasFocus && !titleCurrentlyChanging) {
@@ -270,13 +270,13 @@
 
             comm.request("msg", msg, function (data) {
                 if (data !== true) {
-         		    addMessage('System', 'Failed to send message.')
+         		    addMessage('System', 'Failed to send message.', 'yellow-row')
                 }
             });
         }
 
         comm.handler("sysmsg", function (message) {
-            addMessage("System", message);
+            addMessage("System", message, 'yellow-row');
         });
         comm.handler("msg", function (type, message) {
             if (type != CLIENT_TYPE) {
