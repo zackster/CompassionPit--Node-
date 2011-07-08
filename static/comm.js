@@ -112,6 +112,7 @@
                 registerMessage.d.n = lastMessageReceived;
             }
             socket.json.send(registerMessage);
+            log("Sent register message: " + JSON.stringify(registerMessage));
         });
         
         var unregister;
