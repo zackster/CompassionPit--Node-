@@ -127,7 +127,7 @@
         } else {
             var message = req.body.message;
             forceLatency(function () {
-                socket.broadcast({
+                socket.sockets.json.send({
                     t: "sysmsg",
                     d: message
                 });
