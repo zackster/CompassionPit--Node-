@@ -19,6 +19,8 @@
         log = require("./log"),
         mergeStatic = require("./mergeStatic");
     
+    app.sessionId = guid();
+    
     app.dynamicHelpers({
         base: function () {
             // return the app's mount-point
@@ -259,7 +261,8 @@
             }
             var userId = data.u || null,
                 publicUserId = data.p || null,
-                lastMessageReceived = data.n || 0;
+                lastMessageReceived = data.n || 0,
+                userAgent = data.a || null;
             var clientId = client.sessionId;
             
             var user = userId && User.getById(userId);
@@ -270,10 +273,12 @@
                 } else {
                     user = new User(clientId);
                 }
+                user.getIPAddress();
+                user.userAgent = userAgent || "";
                 user.disconnect(function () {
                     var room = Room.getByUserId(user.id);
                     if (room) {
-                        room.removeUser(user.id);
+                        room.removeUser(user.id, "disconnect");
                     } else {
                         Room.removeUserFromQueue(user.id);
                     }
@@ -321,7 +326,7 @@
             
             var room = Room.getByUserId(userId);
             if (room) {
-                room.removeUser(userId);
+                room.removeUser(userId, "request");
             }
             Room.addUserToQueue(userId, data.type, data.partnerId);
         

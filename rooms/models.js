@@ -1,4 +1,5 @@
 /*jshint devel: true, forin: false */
+/*global setTimeout: false */
 
 (function () {
     "use strict";
@@ -17,6 +18,75 @@
     var EXPIRY_TIME = 60 * 1000; // 60 secs
     
     var REQUESTED_PARTNER_TIMEOUT = 10 * 1000; // 10 secs
+    
+    var mongoose = require('mongoose');
+    (function () {
+        var Schema = mongoose.Schema;
+        var ConversationPartner = {
+            userId: { type: String },
+            ipAddress: { type: String },
+            userAgent: { type: String }
+        };
+        var Message = new Schema({
+            partner: { type: String, "enum": ["venter", "listener", "system"] },
+            text: { type: String },
+            time: { type: Date, default: Date.now }
+        });
+        mongoose.model('Conversation', new Schema({
+            serverSession: { type: String },
+            status: { type: String, "enum": ["active", "complete"] },
+            startTime: { type: Date, default: Date.now },
+            finishTime: { type: Date, default: '01/01/0001' },
+            finishReason: {
+                type: String,
+                "enum": [
+                    "venterDisconnect", // the venter closed their browser tab or lost internet
+                    "listenerDisconnect", // the venter closed their browser tab or lost internet
+                    "venterRequest", // the venter requested a new partner
+                    "listenerRequest", // the listener requested a new partner
+                    "serverRestart", // the Conversation was still "active" when the server restarted
+                    "unknown"
+                ],
+                default: "unknown"
+            },
+            venter: ConversationPartner,
+            listener: ConversationPartner,
+            messages: [Message]
+        }));
+    }());
+    
+    var Conversation = exports.Conversation = mongoose.model('Conversation');
+    
+    var saveConversation = function (conversation) {
+        conversation.save(function (err) {
+            if (err) {
+                log.error({
+                    event: "Cannot save Conversation",
+                    error: err.toString()
+                });
+            }
+        });
+    };
+    
+    setTimeout(function () {
+        var serverSession = require("../app").sessionId;
+        Conversation.find({ serverSession: { $ne: serverSession }, status: "active" }, function (err, conversations) {
+            if (err) {
+                log.error({
+                    event: "Cannot retrieve inactive conversations",
+                    error: err.toString()
+                });
+            } else {
+                for (var i = 0, len = conversations.length; i < len; i += 1) {
+                    var conversation = conversations[i];
+                    conversation.status = "complete";
+                    conversation.finishTime = Date.now();
+                    conversation.finishReason = "serverRestart";
+                    saveConversation(conversation);
+                }
+            }
+        });
+    }, 5000);
     
     /**
      * A hash of roomId to Room
@@ -59,10 +129,12 @@
      * Create a Room object
      *
      * @param {String} id The unique identifier of the room
+     * @param {String} venterId The unique user ID for the venter that will be part of the room
+     * @param {String} listenerId The unique user ID for the listener that will be part of the room
      */
-    var Room = exports.Room = function (id) {
+    var Room = exports.Room = function (id, venterId, listenerId) {
         if (!(this instanceof Room)) {
-            return new Room(id);
+            return new Room(id, venterId, listenerId);
         }
         id = String(id);
         this.id = id;
@@ -80,6 +152,29 @@
             event: "New room",
             room: id
         });
+        
+        this.addUser(venterId, "venter");
+        this.addUser(listenerId, "listener");
+        
+        var venter = User.getById(venterId);
+        var listener = User.getById(listenerId);
+        
+        var conversation = this.conversation = new Conversation({
+            serverSession: require("../app").sessionId,
+            status: "active",
+            venter: {
+                userId: venterId,
+                ipAddress: venter ? venter.getIPAddress() || "" : "",
+                userAgent: venter ? venter.userAgent || "" : ""
+            },
+            listener: {
+                userId: listenerId,
+                ipAddress: listener ? listener.getIPAddress() || "" : "",
+                userAgent: listener ? listener.userAgent || "" : ""
+            },
+            messages: []
+        });
+        saveConversation(conversation);
     };
     
     /**
@@ -226,9 +321,7 @@
                                 continue;
                             }
                             
-                            var room = new Room(guid());
-                            room.addUser(venterId, "venter");
-                            room.addUser(listenerId, "listener");
+                            var room = new Room(guid(), venterId, listenerId);
                 
                             return Room.checkQueues();
                         }
@@ -331,8 +424,11 @@
     
     /**
      * Delete the current room. Adds any current users to their appropriate queues.
+     *
+     * @param {String} type Either "listener" or "venter" for the person who left that ended the chat.
+     * @param {String} reason Either "disconnect" or "request".
      */
-    Room.prototype.delete = function () {
+    Room.prototype.delete = function (type, reason) {
         log.info({
             event: "Delete room",
             room: this.id
@@ -348,6 +444,22 @@
             
             Room.addUserToQueue(userId, clientType);
         }
+        
+        var conversation = this.conversation;
+        conversation.status = "complete";
+        conversation.finishTime = Date.now();
+        if (type === "venter" || type === "listener") {
+            if (reason === "disconnect") {
+                conversation.finishReason = type + "Disconnect";
+            } else if (reason === "request") {
+                conversation.finishReason = type + "Request";
+            } else {
+                conversation.finishReason = "unknown";
+            }
+        } else {
+            conversation.finishReason = "unknown";
+        }
+        saveConversation(conversation);
     };
     
     /**
@@ -477,6 +589,12 @@
             }
         }
         
+        this.conversation.messages.push({
+            partner: clientType,
+            text: message
+        });
+        saveConversation(this.conversation);
+        
         callback(true);
     };
     
@@ -552,8 +670,9 @@
      * Remove the provided user from the Room.
      *
      * @param {String} userId The unique identifer of the user to remove.
+     * @param {String} reason Either "request" or "disconnect"
      */
-    Room.prototype.removeUser = function (userId) {
+    Room.prototype.removeUser = function (userId, reason) {
         var clientType = this.users[userId];
         if (clientType) {
             log.info({
@@ -575,6 +694,6 @@
                 this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
         }
-        this.delete();
+        this.delete(clientType || 'unknown', reason);
     };
 }());

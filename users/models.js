@@ -34,6 +34,7 @@
         this.disconnectCallbacks = [];
         this.lastSentMessageIndex = 0;
         this.lastReceivedMessageIndex = 0;
+        this.userAgent = "";
     };
     
     User.getById = function (id) {
@@ -127,6 +128,10 @@
      * @return {String} The IP Address or null
      */
     User.prototype.getIPAddress = function () {
+        if (this.ipAddress) {
+            return this.ipAddress;
+        }
+        
         var socketIOId = userIdToSocketIOId[this.id];
         if (!socketIOId) {
             return null;
@@ -151,7 +156,7 @@
                 ipAddress = connection.remoteAddress;
             }
         }
-        return ipAddress || null;
+        return (this.ipAddress = ipAddress || null);
     };
     
     var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');

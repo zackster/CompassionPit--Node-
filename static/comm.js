@@ -101,14 +101,15 @@
             isRegistered = false;
             var registerMessage = {
                 t: "register",
+            };
+            registerMessage.d = {
+                a: String(navigator.userAgent),
                 v: VERSION
             };
             if (userId) {
-                registerMessage.d = {
-                    u: userId,
-                    p: publicUserId,
-                    n: lastMessageReceived
-                };
+                registerMessage.d.u = userId;
+                registerMessage.d.p = publicUserId;
+                registerMessage.d.n = lastMessageReceived;
             }
             socket.send(registerMessage);
         });
