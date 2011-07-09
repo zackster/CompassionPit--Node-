@@ -134,7 +134,7 @@
             });
             if (req.body.restart) {
                 setTimeout(function () {
-                    require('child_process').spawn('forever', ['restart', __filename]);
+                    require('child_process').spawn('forever', ['restart', "app.js"]);
                 }, parseInt(req.body.restartTime, 10) * 1000);
             }
             res.send("Successfully sent " + JSON.stringify(message));
