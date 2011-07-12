@@ -1,7 +1,7 @@
 //- Google Website Optimizer Control Script
 script
   function utmx_section(){}function utmx(){}
-  (function(){var k='4007739858',d=document,l=d.location,c=d.cookie;function f(n){
+  (function(){var k='1104807929',d=document,l=d.location,c=d.cookie;function f(n){
   if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
   length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
   d.write('<sc'+'ript src="'+
@@ -14,7 +14,7 @@ script
 script
   var _gaq = _gaq || [];
   _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
-  _gaq.push(['gwo._trackPageview', '/4007739858/test']);
+  _gaq.push(['gwo._trackPageview', '/1104807929/test']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
@@ -25,17 +25,19 @@ script
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
 
 #tagline
-  script utmx_section("Tagline")
+  script utmx_section("Headline")
   h1 Chat anonymously 
   </noscript>
 
 #main
   #column_left
-    script utmx_section("Subheader")
+    script utmx_section("Subheadline")
     h2 &quot;One of the most human ways I've ever seen to use the web&quot;
+    </noscript>   
+
+    script utmx_section("Explanatory Paragraph") 
+    p Is something bothering you? You want to share, but you're scared to tell your friends? CompassionPit is the solution: get anonymously connected to another compassionate human from around the world. 
     </noscript>
-    
-    p You want to share your feelings, but you can't talk to somebody you know - because let's face it, they might judge you for it or use it against you in the future. CompassionPit is the solution to this: get anonymously connected to another compassionate human from around the world.
     p
       b Pick an option to the right, and then you will be randomly connected to a chat with an anonymous partner.
     
@@ -67,13 +69,10 @@ script
   #column_right
     #buttons1
       ul
-        script utmx_section("Calls To Action")
-        li
+        li(class="large")
           a(href="/vent") Share what's bothering you
-        li
+        li(class="large")
           a(href="/listen") Participate as a listener
-        </noscript>
-      
       iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:450px; height:35px;", allowTransparency="true")
   
   br.clear
