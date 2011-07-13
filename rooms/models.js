@@ -686,6 +686,9 @@
         userIdToRoomId[userId] = this.id;
         this.users[userId] = type;
         this.types[type] += 1;
+        if (this.types[type] !== 1) {
+            throw new Error("Expected this.types[" + JSON.stringify(type) + "] == 1, got " + this.types[type]);
+        }
 
         var self = this;
         // let the new user know about the other users in the room.
@@ -730,6 +733,9 @@
             });
             if (clientType in this.types) {
                 this.types[clientType] -= 1;
+                if (this.types[clientType] !== 0) {
+                    throw new Error("Expected this.types[" + JSON.stringify(clientType) + "] == 0, got " + this.types[clientType]);
+                }
             }
         }
         
