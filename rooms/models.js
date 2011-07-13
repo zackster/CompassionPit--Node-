@@ -165,7 +165,7 @@
         
         var venterIP = venter ? venter.getIPAddress() || "" : "";
         var listenerIP = listener ? listener.getIPAddress() || "" : "";
-        if (DEVELOPMENT) {
+        if (DEVELOPMENT && (!venterIP || venterIP === "127.0.0.1")) {
             venterIP = "123.123.123.123";
             listenerIP = "1.2.3.4";
         }
