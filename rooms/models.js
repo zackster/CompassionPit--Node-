@@ -8,7 +8,8 @@
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
         forceLatency = require("../utils").forceLatency,
-        User = require("../users/models").User;
+        User = require("../users/models").User,
+        hashIPAddress = require("../utils").hashIPAddress;
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -24,7 +25,8 @@
         var Schema = mongoose.Schema;
         var ConversationPartner = {
             userId: { type: String },
-            ipAddress: { type: String },
+            hashedIPAddress: { type: String },
+            geoLocation: {},
             userAgent: { type: String }
         };
         var Message = new Schema({
@@ -125,6 +127,8 @@
      */
     var userInteractions = createHash();
     
+    var DEVELOPMENT = (process.env.NODE_ENV || "development") === "development";
+    
     /**
      * Create a Room object
      *
@@ -159,22 +163,65 @@
         var venter = User.getById(venterId);
         var listener = User.getById(listenerId);
         
+        var venterIP = venter ? venter.getIPAddress() || "" : "";
+        var listenerIP = listener ? listener.getIPAddress() || "" : "";
+        if (DEVELOPMENT) {
+            venterIP = "123.123.123.123";
+            listenerIP = "1.2.3.4";
+        }
+        
         var conversation = this.conversation = new Conversation({
             serverSession: require("../app").sessionId,
             status: "active",
             venter: {
                 userId: venterId,
-                ipAddress: venter ? venter.getIPAddress() || "" : "",
+                hashedIPAddress: hashIPAddress(venterIP),
+                geoLocation: {},
                 userAgent: venter ? venter.userAgent || "" : ""
             },
             listener: {
                 userId: listenerId,
-                ipAddress: listener ? listener.getIPAddress() || "" : "",
+                hashedIPAddress: hashIPAddress(listenerIP),
+                geoLocation: {},
                 userAgent: listener ? listener.userAgent || "" : ""
             },
             messages: []
         });
         saveConversation(conversation);
+        
+        if (venterIP && venterIP !== "127.0.0.1") {
+            require('../app').geoipCity.lookup(venterIP, function (err, data) {
+                if (err) {
+                    log.error({
+                        event: "GeoIP",
+                        error: String(err.message),
+                        stack: String(err.stack),
+                        ipAddress: venterIP
+                    });
+                    return;
+                }
+                
+                conversation.venter.geoLocation = data;
+                saveConversation(conversation);
+            });
+        }
+        
+        if (listenerIP && listenerIP !== "127.0.0.1") {
+            require('../app').geoipCity.lookup(listenerIP, function (err, data) {
+                if (err) {
+                    log.error({
+                        event: "GeoIP",
+                        error: String(err.message),
+                        stack: String(err.stack),
+                        ipAddress: listenerIP
+                    });
+                    return;
+                }
+                
+                conversation.listener.geoLocation = data;
+                saveConversation(conversation);
+            });
+        }
     };
     
     /**
@@ -639,6 +686,9 @@
         userIdToRoomId[userId] = this.id;
         this.users[userId] = type;
         this.types[type] += 1;
+        if (this.types[type] !== 1) {
+            throw new Error("Expected this.types[" + JSON.stringify(type) + "] == 1, got " + this.types[type]);
+        }
 
         var self = this;
         // let the new user know about the other users in the room.
@@ -683,6 +733,9 @@
             });
             if (clientType in this.types) {
                 this.types[clientType] -= 1;
+                if (this.types[clientType] !== 0) {
+                    throw new Error("Expected this.types[" + JSON.stringify(clientType) + "] == 0, got " + this.types[clientType]);
+                }
             }
         }
         

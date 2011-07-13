@@ -20,7 +20,8 @@ var config = {
         geoLocationParts: [
             "region",
             "country_name"
-        ]
+        ],
+        hashIPAddressSalt: "somethingunique"
     },
     production: {
         port: 8000,
@@ -43,7 +44,8 @@ var config = {
         geoLocationParts: [
             "region",
             "country_name"
-        ]
+        ],
+        hashIPAddressSalt: "somethingunique"
     }
 };
 

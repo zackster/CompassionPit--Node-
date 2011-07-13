@@ -7,8 +7,7 @@
         createHash = require("../utils").createHash,
         guid = require("../utils").guid,
         config = require("../config"),
-        forceLatency = require("../utils").forceLatency,
-        geoip = require('geoip');
+        forceLatency = require("../utils").forceLatency;
     
     var userIdToUser = createHash();
     var userPublicIdToUserId = createHash();
@@ -147,7 +146,6 @@
         return (this.ipAddress = client.handshake.address.address);
     };
     
-    var geoipCity = new geoip.City(__dirname + '/../GeoLiteCity.dat');
     var configGeoParts = config.geoLocationParts || [];
     
     User.prototype.lookupGeoIP = function (callback) {
@@ -155,7 +153,7 @@
         if (!ipAddress || ipAddress === "127.0.0.1") {
             callback(null);
         } else {
-            geoipCity.lookup(ipAddress, function (err, data) {
+            require('../app').geoipCity.lookup(ipAddress, function (err, data) {
                 if (err) {
                     log.error({
                         event: "GeoIP",

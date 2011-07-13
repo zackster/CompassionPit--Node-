@@ -3,6 +3,8 @@
     
     /*global setTimeout: false */
     
+    var hashlib = require('hashlib');
+    
     /**
      * Generate a 4-character random hex string
      */
@@ -86,4 +88,13 @@
             };
         }
     }());
+    
+    var hashSalt = require('./config').hashIPAddressSalt || "";
+    exports.hashIPAddress = function (address) {
+        if (!address || address === "127.0.0.1") {
+            return "";
+        }
+        
+        return hashlib.sha512("CompassionPit$" + hashSalt + "$" + address);
+    };
 }());

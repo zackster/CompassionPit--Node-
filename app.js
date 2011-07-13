@@ -17,9 +17,11 @@
         latencyWrap = require("./utils").latencyWrap,
         config = require("./config"),
         log = require("./log"),
-        mergeStatic = require("./mergeStatic");
+        mergeStatic = require("./mergeStatic"),
+        geoip = require("geoip");
     
     app.sessionId = guid();
+    app.geoipCity = new geoip.City(__dirname + '/GeoLiteCity.dat');
     
     app.dynamicHelpers({
         base: function () {
