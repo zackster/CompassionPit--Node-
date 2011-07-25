@@ -178,7 +178,7 @@
     			supplied: "mp3"
     		});
 
-		$('#newPartner').click(function() {
+		$('#newPartner').live( 'click', function() {
 		    if ($(this).hasClass("disabled")) {
 		        return false;
 		    }
@@ -327,14 +327,33 @@
             scrollToBottomOfChat();
         };
         comm.handler("part", function (type) {
-    		addMessage("System", "Your chat partner disconnected, please wait while we find you a new " + OTHER_CLIENT_TYPE + ".");
-    		setHasPartner(false);
+			var container = $( '<span></span>' );
+		
+			var button = $( '<a></a>', {
+				'id'	: 'newPartner',
+				'href'	: '#',
+				'text'	: 'Click here'
+			});
+
+			button.click( function() {
+				requestNewChatPartner();
+				refocusInformInput();
+		
+	       		return false;
+			});
+
+			container
+				.append( 'Your partner has left the chat. ' )
+				.append( button )
+				.append( ' to be connected to a new ' + OTHER_CLIENT_TYPE + '.' );
+
+			addMessage( 'System', container );
     		
     		if (CLIENT_TYPE === "venter") {
     		    includeWufooEmbedScript();
     		}
             
-    		infoWithQueue('Waiting for a chat partner... ');
+    		info('Partner disconnected.');
         });
         
         comm.start();
