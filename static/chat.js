@@ -145,13 +145,17 @@
             queryQueuePosition();
         }
 
-        function requestNewChatPartner() {
+        function requestNewChatPartner( priority ) {
         	if (hasPartner) {
         		setHasPartner(false);
         		addMessage('System', 'Please wait while we find you a new chat partner.');
-        		requestNewChatChannel(true);
+        		requestNewChatChannel(true, priority);
         	}
         }
+
+		function requestNewChatPartnerPriority() {
+			requestNewChatPartner( true );
+		}
 
         var hasFocus = true;
         $(window).bind("blur", function() {
@@ -187,12 +191,13 @@
 	        return false;
 	    });
 
-        function requestNewChatChannel(forceNewPartner) {
+        function requestNewChatChannel(forceNewPartner, priority) {
             setHasPartner(false);
             
             comm.request("join", {
                 type: CLIENT_TYPE,
-                partnerId: (!forceNewPartner && lastPartnerId) || undefined
+                partnerId: (!forceNewPartner && lastPartnerId) || undefined,
+		priority: priority,
             }, function () {
             	if (!hasPartner) {
                     infoWithQueue('Waiting for a chat partner... ');
@@ -330,16 +335,15 @@
 			var container = $( '<span></span>' );
 		
 			var button = $( '<a></a>', {
-				'id'	: 'newPartner',
 				'href'	: '#',
 				'text'	: 'Click here'
 			});
 
 			button.click( function() {
-				requestNewChatPartner();
+				requestNewChatPartnerPriority();
 				refocusInformInput();
 		
-	       		return false;
+				return false;
 			});
 
 			container
