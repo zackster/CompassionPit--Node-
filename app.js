@@ -350,7 +350,7 @@
             if (room) {
                 room.removeUser(userId, "request");
             }
-            Room.addUserToQueue(userId, data.type, data.partnerId);
+            Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
         
             callback(true);
         };
