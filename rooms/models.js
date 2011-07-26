@@ -270,8 +270,9 @@
      * @param {String} userId The unique user identifier
      * @param {String} type The client type, either "venter" or "listener"
      * @param {String} requestedPartnerId The public unique identifier of the requested partner. Optional.
+     * @param {Boolean} priority Setting this flag to true pushes the user directly to the front of the queue.
      */
-    Room.addUserToQueue = function (userId, type, requestedPartnerId) {
+    Room.addUserToQueue = function (userId, type, requestedPartnerId, priority) {
         if (!userId) {
             throw new Error("Improper userId");
         } else if (!VALID_TYPES[type]) {
@@ -289,7 +290,13 @@
         }
         
         var queue = type === "venter" ? venterQueue : listenerQueue;
-        queue.push(userId);
+
+        if (priority) {
+            queue.unshift(userId);
+        } else {
+            queue.push(userId);
+        }
+
         if (requestedPartnerId) {
             queueRequestedPartners[userId] = {
                 timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
@@ -744,6 +751,12 @@
         delete userIdToRoomId[userId];
         if (this.hasAnyUsers()) {
             for (var otherUserId in users) {
+		if (reason == 'disconnect') {
+			// trash the room
+			delete users[ otherUserId ];
+			delete userIdToRoomId[ otherUserId ];
+		}
+
                 this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
         }
