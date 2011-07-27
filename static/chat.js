@@ -325,7 +325,7 @@
                         .append($("<iframe>", {
                             allowTransparency: "true",
                             frameborder: 0,
-                            scrolling: "no",
+                            scrolling: "yes",
                             style: "width:100%;height:270px;border:none",
                             src: "http://awesomenessreminders.wufoo.com/embed/r7x3q1/"
                         }))));

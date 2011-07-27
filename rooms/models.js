@@ -292,6 +292,7 @@
         var queue = type === "venter" ? venterQueue : listenerQueue;
 
         if (priority) {
+			console.log( 'prioritizing user: ' + userId );
             queue.unshift(userId);
         } else {
             queue.push(userId);
@@ -752,11 +753,13 @@
         if (this.hasAnyUsers()) {
             for (var otherUserId in users) {
 		if (reason == 'disconnect') {
+			console.log( 'trashing room ' + this.id + ' due to user disconnect.' );
 			// trash the room
 			delete users[ otherUserId ];
 			delete userIdToRoomId[ otherUserId ];
 		}
 
+		console.log( 'sending part message to user ' + otherUserId );
                 this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
         }
