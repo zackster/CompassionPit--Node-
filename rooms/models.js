@@ -291,8 +291,15 @@
         
         var queue = type === "venter" ? venterQueue : listenerQueue;
 
+        console.log( 'adding user ' + userId + ' to queue ' + type );
+
         if (priority) {
+<<<<<<< HEAD
 			console.log( 'prioritizing user: ' + userId );
+=======
+            console.log( 'prioritizing user ' + userId );
+
+>>>>>>> f9e3bd0bdf86c29e68a6240ac179581c5980f08f
             queue.unshift(userId);
         } else {
             queue.push(userId);
@@ -323,6 +330,8 @@
             listenerQueue.splice(index, 1);
         }
         delete queueRequestedPartners[userId];
+
+        console.log( 'dropped user ' + userId + ' from queue' );
     };
     
     /**
@@ -755,11 +764,18 @@
 		if (reason == 'disconnect') {
 			console.log( 'trashing room ' + this.id + ' due to user disconnect.' );
 			// trash the room
+                        console.log( 'trashing the room ' + this.id + ' due to user disconnect' );
+
 			delete users[ otherUserId ];
-			delete userIdToRoomId[ otherUserId ];
+                        delete userIdToRoomId[ otherUserId ];
 		}
 
+<<<<<<< HEAD
 		console.log( 'sending part message to user ' + otherUserId );
+=======
+                console.log( 'sending part message to ' + otherUserId );
+
+>>>>>>> f9e3bd0bdf86c29e68a6240ac179581c5980f08f
                 this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
         }
