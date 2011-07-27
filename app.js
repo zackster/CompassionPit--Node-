@@ -192,6 +192,9 @@
     
         // let socket.io hook into the existing app
         socket = app.socket = socketIO.listen(app);
+
+        // disable debug logging in socket.io
+        socket.set( 'log level', 1 );
     
         var socketHandlers = Object.create(null);
         
