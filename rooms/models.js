@@ -291,7 +291,11 @@
         
         var queue = type === "venter" ? venterQueue : listenerQueue;
 
+        console.log( 'adding user ' + userId + ' to queue ' + type );
+
         if (priority) {
+            console.log( 'prioritizing user ' + userId );
+
             queue.unshift(userId);
         } else {
             queue.push(userId);
@@ -322,6 +326,8 @@
             listenerQueue.splice(index, 1);
         }
         delete queueRequestedPartners[userId];
+
+        console.log( 'dropped user ' + userId + ' from queue' );
     };
     
     /**
@@ -753,9 +759,13 @@
             for (var otherUserId in users) {
 		if (reason == 'disconnect') {
 			// trash the room
+                        console.log( 'trashing the room ' + this.id + ' due to user disconnect' );
+
 			delete users[ otherUserId ];
-			delete userIdToRoomId[ otherUserId ];
+                        delete userIdToRoomId[ otherUserId ];
 		}
+
+                console.log( 'sending part message to ' + otherUserId );
 
                 this.sendToUser(otherUserId, "part", clientType || 'unknown');
             }
