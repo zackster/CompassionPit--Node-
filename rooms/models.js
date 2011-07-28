@@ -1,3 +1,4 @@
+/* vi: set ts=4:set expandtab: */
 /*jshint devel: true, forin: false */
 /*global setTimeout: false */
 
@@ -9,7 +10,8 @@
         createHash = require("../utils").createHash,
         forceLatency = require("../utils").forceLatency,
         User = require("../users/models").User,
-        hashIPAddress = require("../utils").hashIPAddress;
+        hashIPAddress = require("../utils").hashIPAddress,
+		async = require( 'async' );
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -736,6 +738,8 @@
      * @param {String} reason Either "request" or "disconnect"
      */
     Room.prototype.removeUser = function (userId, reason) {
+		var self = this;
+
         var clientType = this.users[userId];
         if (clientType) {
             log.info({
@@ -755,21 +759,39 @@
         var users = this.users;
         delete users[userId];
         delete userIdToRoomId[userId];
-        if (this.hasAnyUsers()) {
-            for (var otherUserId in users) {
-		if (reason == 'disconnect') {
-			// trash the room
-                        console.log( 'trashing the room ' + this.id + ' due to user disconnect' );
 
-			delete users[ otherUserId ];
-                        delete userIdToRoomId[ otherUserId ];
+		if ( this.hasAnyUsers() ) {
+			console.log( 'trashing room %s due to user disconnect', this.id );
+
+			var userIds = Object.keys( users );
+
+			async.forEach(
+				userIds,
+				function( user, callback ) {
+					if ( reason == 'disconnect' ) {
+						console.log( 'dropping user %s from room', user );
+
+						delete users[ user ]
+						delete userIdToRoomId[ user ];
+					}
+
+					console.log( 'sending part message to %s', user );
+
+					self.sendToUser( user, 'part', clientType || 'unknown' );
+
+					callback();
+				},
+				function( err ) {
+					var remaining = Object.keys( users );
+
+					console.log( '%s room deconstruction complete, users remaining: %s', reason, remaining.join( ', ' ) );
+
+			        self.delete( clientType || 'unknown', reason );
+				}
+			);
+		} else {
+			// no users to worry about, just delete the room
+			this.delete( clientType || 'unknown', reason );
 		}
-
-                console.log( 'sending part message to ' + otherUserId );
-
-                this.sendToUser(otherUserId, "part", clientType || 'unknown');
-            }
-        }
-        this.delete(clientType || 'unknown', reason);
     };
 }());
