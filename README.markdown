@@ -56,6 +56,7 @@ To get project to run:
 --------
 
 Discoveries:
+
 * url of 'venter' or 'listener' renders views/chat.jade
 
 * i didn't know what 'use strict' means or does, so i looked it up:
@@ -92,6 +93,7 @@ Discoveries:
 
  
 Not Understood:
+
 * what is the config item 'serveMerged' mean? it is set 'true' in config.
   
   If serveMerged is true, it will merge and minify the JS and CSS files and serve the merged version rather than a
@@ -111,8 +113,6 @@ Not Understood:
   
   when the client sends a message with the "register" type, it calls socketHandlers[type](...)
   
-* i am still having trouble seeing where some messages originate.
-
 
 Logging
 =======
