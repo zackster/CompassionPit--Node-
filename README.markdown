@@ -32,9 +32,8 @@ CompassionPit--Node- notes
 
 --------
 To get project to run:
-* git ignores config.js. got the file from zack.
-  
-  Actually, you can copy config.js.template to config.js
+
+* copy "config.js.template" to "config.js". config.js is in the .gitignore file, which git tracks. "static/style.min.css" and "static/script.min.js" are also included in ".gitignore"; those are automatically generated and minified when the application is run.
 
 * install GeoIP lib:
   
@@ -53,8 +52,6 @@ To get project to run:
 
 * `node app.js`
 
-* cloud9 will run the project but i had trouble setting and hitting a breakpoint.
-  needs more exploration.
 
 --------
 
