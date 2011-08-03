@@ -773,11 +773,17 @@
 
 						delete users[ user ]
 						delete userIdToRoomId[ user ];
+
+						console.log( 'sending partDisconnect message to %s', user );
+
+						self.sendToUser( user, 'partDisconnect', clientType || 'unknown' );
+					} else {
+						// send partRequest and automatically find a new match
+						console.log( 'sending partRequest message to %s', user );
+
+						self.sendToUser( user, 'partRequest', clientType || 'unknown' );
+
 					}
-
-					console.log( 'sending part message to %s', user );
-
-					self.sendToUser( user, 'part', clientType || 'unknown' );
 
 					callback();
 				},
