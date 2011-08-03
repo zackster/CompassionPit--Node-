@@ -331,7 +331,18 @@
                         }))));
             scrollToBottomOfChat();
         };
-        comm.handler("part", function (type) {
+		comm.handler("partRequest", function (type) {
+			// partner requested a new match, automatically reconnect
+			addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
+			setHasPartner( false );
+
+			if ( CLIENT_TYPE === 'venter' ) {
+				includeWufooEmbedScript();
+			}
+
+			infoWithQueue( 'Waiting for a new partner... ' );
+		});
+        comm.handler("partDisconnect", function (type) {
 			var container = $( '<span></span>' );
 		
 			var button = $( '<a></a>', {
