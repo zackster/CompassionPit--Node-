@@ -13,6 +13,8 @@ html
     script
       window.COMPASSION_PIT_VERSION = !{JSON.stringify(config.version || 0)};
     - if (config.serveMerged)
+      script
+        (function(){var noop=function(){};var console={log:noop,error:noop}})()
       script(src="/script.min.js?" + jsHash)
     - else
       - each script in config.scripts
