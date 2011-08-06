@@ -799,6 +799,5 @@
 			// no users to worry about, just delete the room
 			this.delete( clientType || 'unknown', reason );
 		}
->>>>>>> blkcat/master
     };
 }());
