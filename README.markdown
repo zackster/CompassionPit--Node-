@@ -33,6 +33,16 @@ CompassionPit--Node- notes
 --------
 To get project to run:
 
+* install XCode4 - this will give you the Carbon and gcc/g++ tools needed to compile node.js later
+
+* install MongoDB: http://shiftcommathree.com/articles/how-to-install-mongodb-on-os-x
+
+* install node.js (nodejs.org)
+
+* install npm (node package manager). one line install:
+
+	`curl http://npmjs.org/install.sh | sh`
+
 * copy "config.js.template" to "config.js". config.js is in the .gitignore file, which git tracks. "static/style.min.css" and "static/script.min.js" are also included in ".gitignore"; those are automatically generated and minified when the application is run.
 
 * install GeoIP lib:
