@@ -1,6 +1,8 @@
 !!! 5
 html
   head
+    script 
+      var _sf_startpt=(new Date()).getTime()
     title Compassion Pit
     - if (config.serveMerged)
       link(rel="stylesheet", href="/style.min.css?" + cssHash, type="text/css")
@@ -53,3 +55,21 @@ html
               a(href="/terms-of-service") Terms of Service
             li
               a(href="/privacy-policy") Privacy Policy
+                
+    script    
+      var _sf_async_config={uid:27290,domain:"compassionpit.com"};
+      (function(){
+        function loadChartbeat() {
+          window._sf_endpt=(new Date()).getTime();
+          var e = document.createElement('script');
+          e.setAttribute('language', 'javascript');
+          e.setAttribute('type', 'text/javascript');
+          e.setAttribute('src',
+             (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
+             "js/chartbeat.js");
+          document.body.appendChild(e);
+        }
+        var oldonload = window.onload;
+        window.onload = (typeof window.onload != 'function') ?
+           loadChartbeat : function() { oldonload(); loadChartbeat(); };
+      })();
