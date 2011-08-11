@@ -372,6 +372,20 @@
             log.store("messageSent");
             room.receiveMessage(userId, message, callback);
         };
+
+        /**
+         * typing status.
+         */
+        socketHandlers.typing = function (client, user, message, callback) {
+            var userId = user.id;
+            
+            var room = Room.getByUserId(userId);
+            if (!room) {
+                callback(false);
+                return;
+            }
+            room.sendTypeStatus(userId, message, callback);
+        };
     
         /**
          * Send a "ping" to let the server know the client is still active
