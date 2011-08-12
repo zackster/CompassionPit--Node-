@@ -11,7 +11,7 @@
         forceLatency = require("../utils").forceLatency,
         User = require("../users/models").User,
         hashIPAddress = require("../utils").hashIPAddress,
-		async = require( 'async' );
+        async = require( 'async' );
     
     var has = Object.prototype.hasOwnProperty;
     
@@ -659,6 +659,31 @@
         
         callback(true);
     };
+
+    Room.prototype.sendTypeStatus = function (userId, message, callback) {
+        this.poke();
+        
+        var clientType = this.users[userId];
+        if (!clientType || !VALID_TYPES[clientType]) {
+            callback(false);
+            return;
+        }
+        
+        log.info({
+            event: "Typing",
+            user: userId,
+            room: this.id,
+            type: clientType
+        });
+
+        for (var otherUserId in this.users) {
+            if (otherUserId !== userId) {
+                this.sendToUser(otherUserId, "typing", clientType, message);
+            }
+        }
+        
+        callback(true);
+    };
     
     Room.prototype.lookupUserGeoIP = function (userId, callback) {
         var user = User.getById(userId);
@@ -738,7 +763,7 @@
      * @param {String} reason Either "request" or "disconnect"
      */
     Room.prototype.removeUser = function (userId, reason) {
-		var self = this;
+        var self = this;
 
         var clientType = this.users[userId];
         if (clientType) {
@@ -760,44 +785,44 @@
         delete users[userId];
         delete userIdToRoomId[userId];
 
-		if ( this.hasAnyUsers() ) {
-			console.log( 'trashing room %s due to user disconnect', this.id );
+        if ( this.hasAnyUsers() ) {
+            console.log( 'trashing room %s due to user disconnect', this.id );
 
-			var userIds = Object.keys( users );
+            var userIds = Object.keys( users );
 
-			async.forEach(
-				userIds,
-				function( user, callback ) {
-					if ( reason == 'disconnect' ) {
-						console.log( 'dropping user %s from room', user );
+            async.forEach(
+                userIds,
+                function( user, callback ) {
+                    if ( reason == 'disconnect' ) {
+                        console.log( 'dropping user %s from room', user );
 
-						delete users[ user ]
-						delete userIdToRoomId[ user ];
+                        delete users[ user ]
+                        delete userIdToRoomId[ user ];
 
-						console.log( 'sending partDisconnect message to %s', user );
+                        console.log( 'sending partDisconnect message to %s', user );
 
-						self.sendToUser( user, 'partDisconnect', clientType || 'unknown' );
-					} else {
-						// send partRequest and automatically find a new match
-						console.log( 'sending partRequest message to %s', user );
+                        self.sendToUser( user, 'partDisconnect', clientType || 'unknown' );
+                    } else {
+                        // send partRequest and automatically find a new match
+                        console.log( 'sending partRequest message to %s', user );
 
-						self.sendToUser( user, 'partRequest', clientType || 'unknown' );
+                        self.sendToUser( user, 'partRequest', clientType || 'unknown' );
 
-					}
+                    }
 
-					callback();
-				},
-				function( err ) {
-					var remaining = Object.keys( users );
+                    callback();
+                },
+                function( err ) {
+                    var remaining = Object.keys( users );
 
-					console.log( '%s room deconstruction complete, users remaining: %s', reason, remaining.join( ', ' ) );
+                    console.log( '%s room deconstruction complete, users remaining: %s', reason, remaining.join( ', ' ) );
 
-			        self.delete( clientType || 'unknown', reason );
-				}
-			);
-		} else {
-			// no users to worry about, just delete the room
-			this.delete( clientType || 'unknown', reason );
-		}
+                    self.delete( clientType || 'unknown', reason );
+                }
+            );
+        } else {
+            // no users to worry about, just delete the room
+            this.delete( clientType || 'unknown', reason );
+        }
     };
 }());

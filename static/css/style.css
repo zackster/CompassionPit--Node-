@@ -57,15 +57,23 @@ img#logo {
 	padding:0px 20px 0px 60px;
 }
 
-#column_left_chat {
-	width:600px;
-	float:left;
-	padding:20px;
+#column_left_wrap {
+	width:680px;
 	margin:0 0 0 40px;
+	float:left;
+	min-height: 300px;
+}
+
+#column_left_chat {
+	width: 100%;
 	background-color: #FFFFFF;
-	height: 300px;
 	border: 1px solid #4A7A8A;
-	overflow: scroll;
+	overflow-y: scroll;
+	min-height: 300px;
+}
+
+#typing_status{
+	height: 30px;
 }
 
 #column_left_chat_type {
