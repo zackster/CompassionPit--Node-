@@ -17,12 +17,18 @@ script
   h1
     #status
 #main
-  #column_left_chat
-    table#chatWindow(width="100%")
-      tr
-        td
-    br.clear
-  
+  #column_left_wrap
+    #column_left_chat
+      table#chatWindow(width="100%")
+        tr
+          td
+    br
+    #chat_input
+      form
+        input#inform(type="text", autocomplete="off", size="110")
+        input(type="submit", value="Send Chat") 
+      br
+      #typing_status
   #column_right_chat
     #buttons1
       ul
@@ -32,6 +38,9 @@ script
           label
             input(type="checkbox", id="enable_sound")
             #{"Enable sound"}
+            br
+            input(type="checkbox", id="enable_typing")
+            #{"Let others see when I'm typing"}
         li(style="display:none")
           a(href="#") Report ABUSE
   
