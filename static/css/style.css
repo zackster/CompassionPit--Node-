@@ -7,11 +7,6 @@ body {
 }
 
 /***** Main Content Styles ******/
-/*
-#wrap{
-	background: url("/img/bghighlight.png") top center no-repeat;
-}
-*/
 #header {
 	background: url("/img/logo.png") center center no-repeat;
 	height: 120px;
@@ -247,47 +242,6 @@ body {
 	padding-bottom: 5px;
 }
 
-
-
-
-
-/***** Button Styles ******/
-
-/*- Buttons 1--------------------------- */
-	
-
-/*
-#buttons1 li {
-  width: 62.5%;
-}
-
-#buttons1 li.medium {
-  width: 81.25%;
-}
-
-#buttons1 li.large {
-  width: 100%;
-}
-
-#buttons1 li a {
-	text-decoration: none;
-	border-radius: 5px;
-	background: #4a7a8a;
-	color: #FFF;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:13px;
-	display: block;
-	padding: 8px 8px 10px 10px;
-	margin-bottom:20px;
-}	
-#buttons1 li a:hover {
-	background: #52b9db;
-}
-
-#buttons1 li a.disabled, a.disabled:hover {
-	background: #8a8a8a;
-	cursor:default;
-}*/
 
 /*- Buttons 2--------------------------- */
 	
