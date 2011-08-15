@@ -121,7 +121,7 @@
             $status.removeClass('errorMessage infoMessage');
             $status.addClass(cssClass);
             if(msgform) {
-                $status.text("connected");
+                $status.text("Connected");
             } else {
                 $status.text(msg);
             }
@@ -157,6 +157,7 @@
         });
 
         $('#enable_sound').attr('checked', true);
+        $('#enable_typing').attr('checked', true);
         info('Initializing');
 
         $('#audioPlayer')
@@ -322,11 +323,11 @@
                         break;
 
                     case "start":
-                        $("#typing_status").text(type + ' is typing')
+                        $("#typing_status").text(type + ' is typing');
                         break;
 
                     case "stop":
-                        $("#typing_status").text('')
+                        $("#typing_status").text('');
                         break;
                 }
             }

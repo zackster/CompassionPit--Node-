@@ -1,3 +1,28 @@
+#audioPlayer
+#main
+  #left
+    #column_left_chat
+      table#chatWindow
+        tr
+    #chat_input
+      form
+        input#inform(type="text", autocomplete="off", size="110")
+        input#sendmessage(type="submit", value="SEND")
+  #right
+    #buttons1
+      #status
+      ul
+        li
+          a(href="#", id="newPartner") Find a new partner
+        li
+          label
+            input(type="checkbox", id="enable_sound")
+            #{" Enable Sound"}
+        li
+          label
+            input(type="checkbox", id="enable_typing")
+            #{" Visible Typing"}
+        #typing_status
 script
   //- Google Website Optimizer Tracking Script
   var _gaq = _gaq || [];
@@ -11,37 +36,3 @@ script
 
 script
   window.CLIENT_TYPE = !{JSON.stringify(type)};
-
-#audioPlayer
-#tagline
-  h1
-    #status
-#main
-  #column_left_wrap
-    #column_left_chat
-      table#chatWindow(width="100%")
-        tr
-          td
-    br
-    #chat_input
-      form
-        input#inform(type="text", autocomplete="off", size="110")
-        input(type="submit", value="Send Chat") 
-      br
-      #typing_status
-  #column_right_chat
-    #buttons1
-      ul
-        li
-          a(href="#", id="newPartner") Find a new partner
-        li(style="font-family:Arial, Helvetica, sans-serif;font-size:.8em")
-          label
-            input(type="checkbox", id="enable_sound")
-            #{"Enable sound"}
-            br
-            input(type="checkbox", id="enable_typing")
-            #{"Let others see when I'm typing"}
-        li(style="display:none")
-          a(href="#") Report ABUSE
-  
-  br.clear
