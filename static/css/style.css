@@ -1,9 +1,15 @@
 /***** General Styles ******/
 
 body {
-	background: #21323b url("/img/bg.png") center;
+	background: #bde9ff url("/img/bg.png") center;
 	font-family: sans-serif;
 	font-size: 13px;
+}
+
+#audioPlayer {
+	width: 960px;
+	height: 0px;
+	opacity: 0;
 }
 
 /***** Main Content Styles ******/
@@ -180,7 +186,7 @@ body {
 	height:60px;
 	width:940px;
 	margin: 0 auto;
-	padding: 10px 20px 10px 20px;
+	padding: 10px;
 }
 
 #copyright_notice {
