@@ -57,7 +57,8 @@
     
     app.get("/", function (req, res, next) {
         res.render('index', {
-            roomCounts: getRoomCounts()
+            roomCounts: getRoomCounts(),
+            includeCrazyEgg: true
         });
     });
     
