@@ -92,13 +92,15 @@
     
     app.get("/vent", function (req, res) {
         res.render("chat", {
-            type: "venter"
+            type: "venter",
+            includeCrazyEgg: true
         });
     });
     
     app.get("/listen", function (req, res) {
         res.render("chat", {
-            type: "listener"
+            type: "listener",
+            includeCrazyEgg: true
         });
     });
 
