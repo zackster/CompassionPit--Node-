@@ -32,47 +32,8 @@ html
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
   body
-  #wrap
-    #container
-      a(href="#")#header
-      != body
-      #footer
-        #copyright_notice
-          span &copy; 2010-2011
-          #{" CompassionPit.com All rights reserved."}
-        #nav
-          ul#links
-            li
-              a(href="/") Home
-            li
-              a(href="/about-us") About Us
-            li
-              a(href="/blog/") Blog
-            li
-              a(href="/forum/", target="_blank") Forum
-            li
-              a(href="/terms-of-service") Terms of Service
-            li
-              a(href="/privacy-policy") Privacy Policy
-                
-    script    
-      var _sf_async_config={uid:27290,domain:"compassionpit.com"};
-      (function(){
-        function loadChartbeat() {
-          window._sf_endpt=(new Date()).getTime();
-          var e = document.createElement('script');
-          e.setAttribute('language', 'javascript');
-          e.setAttribute('type', 'text/javascript');
-          e.setAttribute('src',
-             (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
-             "js/chartbeat.js");
-          document.body.appendChild(e);
-        }
-        var oldonload = window.onload;
-        window.onload = (typeof window.onload != 'function') ?
-           loadChartbeat : function() { oldonload(); loadChartbeat(); };
-      })();
-    #header
+  #container
+    a(href="#")#header
     != body
     #footer
       #copyright_notice
