@@ -1,0 +1,36 @@
+#abuselist {
+  width: 100%;
+}
+#abuselist th, #abuselist td {
+  padding: 8px;
+  text-align: center;
+}
+
+#abuselist tr[id]:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+#abuselist div.referrers {
+  white-space: nowrap;
+}
+
+#abuselist td.ip_address {
+  max-width: 400px;
+  overflow: hidden;
+}
+
+#abuselist div.ip_hash {
+  width: 100%; xmax-width: 400px;
+  overflow: hidden;
+}
+
+#abuselist div.conversations {
+  text-align: left;
+}
+
+#abuselist div.conversations > div {
+  margin: 2px;
+  padding: 2px;
+  border: 1px solid gray;
+}

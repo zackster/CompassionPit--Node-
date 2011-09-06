@@ -48,6 +48,8 @@
                     "listenerDisconnect", // the venter closed their browser tab or lost internet
                     "venterRequest", // the venter requested a new partner
                     "listenerRequest", // the listener requested a new partner
+                    "venterReportedAbuse", // venter reported abuse
+                    "listenerReportedAbuse", // listener reported abuse
                     "serverRestart", // the Conversation was still "active" when the server restarted
                     "unknown"
                 ],
@@ -57,9 +59,16 @@
             listener: ConversationPartner,
             messages: [Message]
         }));
+        mongoose.model('Abuser', new Schema({
+            hashedIPAddress: { type: String },
+            banned: { type: Boolean },
+            referrers: [],
+            conversations: []
+        }));
     }());
     
     var Conversation = exports.Conversation = mongoose.model('Conversation');
+    var Abuser = exports.Abuser = mongoose.model('Abuser');
     
     var saveConversation = function (conversation) {
         conversation.save(function (err) {
@@ -167,10 +176,6 @@
         
         var venterIP = venter ? venter.getIPAddress() || "" : "";
         var listenerIP = listener ? listener.getIPAddress() || "" : "";
-        if (DEVELOPMENT && (!venterIP || venterIP === "127.0.0.1")) {
-            venterIP = "123.123.123.123";
-            listenerIP = "1.2.3.4";
-        }
         
         var conversation = this.conversation = new Conversation({
             serverSession: require("../app").sessionId,
@@ -290,27 +295,35 @@
             // in a queue already
             return;
         }
-        
-        var queue = type === "venter" ? venterQueue : listenerQueue;
 
-        console.log( 'adding user ' + userId + ' to queue ' + type );
-
-        if (priority) {
-            console.log( 'prioritizing user ' + userId );
-
-            queue.unshift(userId);
-        } else {
-            queue.push(userId);
+        var user = User.getById(userId);
+        if (DEVELOPMENT && (user.getIPAddress() == "" || user.getIPAddress() == "127.0.0.1")) {
+            // console.log("setting ip for " + type + " " + userId);
+            user.setIPAddress(type === "venter" ? "123.123.123.123" : "1.2.3.4");
         }
+        if (user.relatedUserId) { // is not eliza
+            // don't queue Eliza
 
-        if (requestedPartnerId) {
-            queueRequestedPartners[userId] = {
-                timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
-                partnerId: requestedPartnerId
-            };
+            var queue = type === "venter" ? venterQueue : listenerQueue;
+            console.log( 'adding user ' + userId + ' to queue ' + type );
+    
+            if (priority) {
+                console.log( 'prioritizing user ' + userId );
+
+                queue.unshift(userId);
+            } else {
+                queue.push(userId);
+            }
+
+            if (requestedPartnerId) {
+                queueRequestedPartners[userId] = {
+                    timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
+                    partnerId: requestedPartnerId
+                };
+            }
+
+            Room.checkQueues();
         }
-         
-        Room.checkQueues();
     };
     
     /**
@@ -346,6 +359,7 @@
         for (var i = 0, lenI = venterQueue.length; i < lenI; i += 1) {
             var venterId = venterQueue[i];
             var venter = User.getById(venterId);
+
             if (venter && venter.isClientConnected()) {
                 // venter exists and the client is still connected
                 
@@ -382,10 +396,37 @@
                                 // the listener wants a partner, this is not the right venter.
                                 continue;
                             }
-                            
-                            var room = new Room(guid(), venterId, listenerId);
-                
-                            return Room.checkQueues();
+
+                            var venterIP = venter.getIPAddress();
+                            var listenerIP = listener.getIPAddress();
+
+                            var hashedVenterIP = hashIPAddress(venterIP); 
+                            var hashedListenerIP = hashIPAddress(listenerIP);
+
+                            Abuser.find({ hashedIPAddress: { $in: [hashedVenterIP, hashedListenerIP ]}, banned: true }, function (err, abusers) {
+                                if (err) {
+                                    log.error({
+                                        event: "Cannot retrieve abuser by hashedIP",
+                                        error: err.toString()
+                                    });
+                                } else {
+                                    var abuser = abusers.shift();
+                                    if (abuser) {
+                                        if (abuser.hashedIPAddress == hashedVenterIP) {
+                                            // console.log("creating room for venter abuser " + venterId + " and eliza " + venter.relatedUserId);
+                                            new Room(guid(), venterId, venter.relatedUserId);
+                                        } else  {
+                                            // console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.relatedUserId);
+                                            new Room(guid(), listener.relatedUserId, listenerId);
+                                        }
+                                    } else {
+                                        // console.log("creating standard room " + venterId + " " + listenerId);
+                                        new Room(guid(), venterId, listenerId);
+                                    }
+                                }
+                                return Room.checkQueues();
+                            });
+                            return;
                         }
                     }
                 }
@@ -515,6 +556,8 @@
                 conversation.finishReason = type + "Disconnect";
             } else if (reason === "request") {
                 conversation.finishReason = type + "Request";
+            } else if (reason === "abuse") {
+                conversation.finishReason = type + "ReportedAbuse";
             } else {
                 conversation.finishReason = "unknown";
             }
@@ -747,15 +790,85 @@
                         self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
                     });
                 }
-                
-                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
-                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
+
+                if (User.getById(userId).relatedUserId && User.getById(otherUserId).relatedUserId) {
+                    (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
+                    (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
+                }
             }
         });
         
         Room.removeUserFromQueue(userId);
     };
     
+    /**
+     * Report abuse move the provided user from the Room.
+     *
+     * @param {String} userId The unique identifer of the user that reports abuse.
+     */
+    Room.prototype.reportAbuse = function (userId) {
+        var self = this;
+        var clientType = this.users[userId];
+        if (clientType) {
+            log.info({
+                event: "Abuse Reported",
+                user: userId,
+                room: this.id,
+                type: clientType || 'unknown'
+            });
+        }
+
+        Object.keys(this.users).forEach(function (otherUserId) {
+            if (otherUserId !== userId) {
+                var user = User.getById(userId);
+                if (otherUserId == user.relatedUserId) {
+                    // user reports abuse for Eliza
+                    return;
+                }
+                var otherUser = User.getById(otherUserId);
+
+                var abuserType = self.users[otherUserId];
+                var hashedIPAddress = self.conversation[abuserType].hashedIPAddress;
+                Abuser.find({ hashedIPAddress: self.conversation[abuserType].hashedIPAddress }, function (err, abusers) {
+                    if (err) {
+                        log.error({
+                            event: "Cannot retrieve inactive conversations",
+                            error: err.toString()
+                        });
+                    } else {
+                        var abuser = abusers[0];
+                        if (abuser) {
+                            abuser.conversations.push(self.conversation._id);
+                            abuser.referrers.push(otherUser.referrer);
+                        } else {
+                            abuser = new Abuser({
+                                hashedIPAddress: self.conversation[abuserType].hashedIPAddress,
+                                conversations: [ self.conversation._id ],
+                                referrers: [ otherUser.referrer ]
+                            });
+                        }
+                        abuser.save();
+                    }
+                });
+                /* this creates object with "$push" key, eg { "$push": {collections : .. }}, probably bug in mongoose 
+                Abuser.update(
+                    { hashedIPAddress: self.conversation[abuserType].hashedIPAddress },
+                    { $push: { conversations: [ self.conversation._id ] } },
+                    { upsert: true },
+                    function (err) {
+                        if (err) {
+                            log.error({
+                                event: "Cannot update abuser",
+                                error: err.toString()
+                            });
+                            console.log(err.toString())
+                        }
+                    }
+                ); */
+            }
+        });
+    }
+
     /**
      * Remove the provided user from the Room.
      *

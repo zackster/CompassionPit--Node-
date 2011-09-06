@@ -1,0 +1,73 @@
+#tagline
+  h1 Abuse
+#main
+  table#abuselist
+    tr
+      th Referrers
+      th Encrypted IP Address
+      th Number of Incidents Reported For
+    - each abuser in abusers
+      tr(id=abuser.hashedIPAddress)
+        td
+          .referrers
+            ul
+            - each referrer in abuser.referrers
+              li #{referrer}
+        td.ip_address
+          .ip_hash #{abuser.hashedIPAddress}
+          .conversations(style="display: none")
+        td.conversations_count #{abuser.conversations.length}
+script
+  function getAbuseConversationsContainer(abuserHashedIPAddress) {
+      return $('#' + abuserHashedIPAddress + ' .conversations');
+  }
+
+  function renderAbuseConversations(abuserHashedIPAddress, data) {
+      var conversations = data.conversations;
+      var container = getAbuseConversationsContainer(abuserHashedIPAddress);
+      for (var i in conversations) {
+          var conversation = conversations[i];
+          var typemap = {};
+          var roles = {};
+          if (abuserHashedIPAddress == conversation.listener.hashedIPAddress) {
+              roles.abuser = 'listener';
+              roles.abused = typemap.venter = 'venter';
+              typemap.listener = 'abuser';
+          } else {
+              roles.abuser = 'venter';
+              typemap.venter = 'abuser';
+              roles.abused = typemap.listener = 'listener';
+          }
+
+          var messages = 'empty conversation';
+          if (conversation.messages.length) {
+              messages = '<ul>';
+              for (var i in conversation.messages) {
+                  var m = conversation.messages[i];
+                  if (typemap[m.partner] == 'abuser') {
+                      messages += '<li><strong>' + typemap[m.partner] + ':' + m.text + '</strong><li>';
+                  } else {
+                      messages += '<li>' + typemap[m.partner] + ':' + m.text + '<li>';
+                  }
+              }
+              messages += '</ul>';
+          }
+          var ignoreButton = '<input id="' + conversation._id + '" abuserHashedIPAddress="' + abuserHashedIPAddress + '" class="ignoreincident" type="button" value="ignore this incident">';
+          //var ignoreButton = '<input id="' + i + '" abuserHashedIPAddress="' + abuserHashedIPAddress + '" class="ignoreincident" type="button" value="ignore this incident">';
+          container.append('<div><div>Role of abuser: ' + roles.abuser + '</div><div>Role of abused: ' + roles.abused + '</div><div>' + messages + '<div>' + ignoreButton + '<div></div><div>');
+      }
+      if (conversations.length) {
+          if (!data.banned) {
+              var banButton = '<input abuserHashedIPAddress="' + abuserHashedIPAddress + '" class="banuser" type="button" value="hellban this user">';
+              container.append(banButton);
+          } else {
+              container.append('<span class="errorMessage">already banned</span>');
+          }
+      }
+  }
+
+  function renderAbuseConversationsCount(abuserHashedIPAddress, data) {
+      var conversations = data.conversations;
+      var container = getAbuseConversationsContainer(abuserHashedIPAddress);
+      $('#' + abuserHashedIPAddress + ' .conversations_count').html(conversations.length);
+  }

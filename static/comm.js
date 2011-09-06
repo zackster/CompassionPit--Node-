@@ -60,9 +60,10 @@
         };
     }());
 
-    exports.create = function () {
+    exports.create = function (relatedUserId) {
         var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
-            'max reconnection attempts': 5
+            'max reconnection attempts': 5,
+            'force new connection': true
         });
         
         var events = {};
@@ -102,8 +103,11 @@
             var registerMessage = {
                 t: "register",
             };
+            var referrer = document.cookie.match('referrer=([^;]+)') || [];
             registerMessage.d = {
+                r: decodeURIComponent(referrer[1]),
                 a: String(navigator.userAgent),
+                e: relatedUserId,
                 v: VERSION
             };
             if (userId) {
@@ -170,7 +174,7 @@
                     
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
-                        emit('connect', firstConnect);
+                        emit('connect', firstConnect, userId);
                     }
                     firstConnect = false;
                 }

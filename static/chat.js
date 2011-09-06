@@ -1,5 +1,7 @@
-(function ($, undefined) {
-    $(function () {
+(function (exports, $, undefined) {
+
+    exports.create = function (elizaId) {
+
         if ($("#chatWindow").length === 0) {
             return;
         }
@@ -26,7 +28,7 @@
             }
         };
         
-        var comm = Comm.create();
+        var comm = Comm.create(elizaId);
         window.comm = comm;
         var hasPartner = false;
         var lastPartnerId = null;
@@ -134,11 +136,15 @@
             return false;
         });
 
-        function requestNewChatPartner( priority ) {
+        function requestNewChatPartner( priority, isAbuse ) {
             if (hasPartner) {
                 setHasPartner(false);
-                addMessage('System', 'Please wait while we find you a new chat partner.');
-                requestNewChatChannel(true, priority);
+                if (isAbuse) {
+                    addMessage('System', 'This conversation has been reported as abuse. You are being connected to a new chat partner');
+                } else {
+                    addMessage('System', 'Please wait while we find you a new chat partner.');
+                }
+                requestNewChatChannel(true, priority, isAbuse);
             }
         }
 
@@ -181,13 +187,23 @@
             return false;
         });
 
-        function requestNewChatChannel(forceNewPartner, priority) {
+        $('#reportAbuse').live( 'click', function() {
+            if ($(this).hasClass("disabled")) {
+                return false;
+            }
+            requestNewChatPartner(false, true);
+            refocusInformInput();
+            return false;
+        });
+
+        function requestNewChatChannel(forceNewPartner, priority, isAbuse) {
             setHasPartner(false);
             
             comm.request("join", {
                 type: CLIENT_TYPE,
                 partnerId: (!forceNewPartner && lastPartnerId) || undefined,
-        priority: priority,
+                priority: priority,
+                isAbuse: isAbuse
             }, function () {
                 if (!hasPartner) {
                     infoWithQueue('Waiting for a chat partner... ');
@@ -420,5 +436,5 @@
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
         }
-    });
-}(jQuery));
+    };
+}(window.Chat = {}, jQuery));

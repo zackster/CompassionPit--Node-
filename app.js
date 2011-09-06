@@ -12,6 +12,7 @@
         connect = require("connect"),
         Room = require("./rooms/models").Room,
         User = require("./users/models").User,
+        Abuse = require("./abusers/models").Abuse,
         guid = require("./utils").guid,
         forceLatency = require("./utils").forceLatency,
         latencyWrap = require("./utils").latencyWrap,
@@ -144,6 +145,21 @@
             }
             res.send("Successfully sent " + JSON.stringify(message));
         }
+    });
+
+    app.get("/abuse", function (req, res) {
+        res.render("abuse-login");
+    });
+
+    app.post("/abuse", function (req, res) {
+        if (req.body.password !== config.systemPassword) {
+            res.send("Wrong password");
+        }
+        Abuse.getAllAbusers(function (abusers)  {
+            res.render("abuse", {
+                abusers: abusers
+            });
+        });
     });
     
     app.get('/messageChart', function (req, res) {
@@ -290,18 +306,21 @@
             var userId = data.u || null,
                 publicUserId = data.p || null,
                 lastMessageReceived = data.n || 0,
-                userAgent = data.a || null;
+                userAgent = data.a || null,
+                referrer = data.r || null,
+                relatedUserId = data.e || false;
             var clientId = client.id;
             
             var user = userId && User.getById(userId);
             var isNewUser = !user;
             if (isNewUser) {
                 if (userId && publicUserId) {
-                    user = new User(clientId, userId, publicUserId);
+                    user = new User(clientId, userId, publicUserId, relatedUserId);
                 } else {
-                    user = new User(clientId);
+                    user = new User(clientId, null, null, relatedUserId);
                 }
                 user.getIPAddress();
+                user.referrer = referrer || "";
                 user.userAgent = userAgent || "";
                 user.disconnect(function () {
                     var room = Room.getByUserId(user.id);
@@ -329,7 +348,7 @@
                     user: user.id
                 });
             }
-            
+
             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex]);
             Room.checkQueues();
         };
@@ -354,7 +373,12 @@
             
             var room = Room.getByUserId(userId);
             if (room) {
-                room.removeUser(userId, "request");
+                if (data.isAbuse) {
+                    room.removeUser(userId, "abuse");
+                    room.reportAbuse(userId);
+                } else {
+                    room.removeUser(userId, "request");
+                }
             }
             Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
         
@@ -409,5 +433,27 @@
         socketHandlers.counts = function (client, user, _, callback) {
             callback(getRoomCounts());
         };
+
+        /**
+         * abuser conversations
+         */
+        socketHandlers.get_abuser_conversations = function (client, user, abuserHashedIPAddress, callback) {
+            Abuse.getConversations(abuserHashedIPAddress, function (data) {
+                callback(data);
+            })
+        };
+
+        socketHandlers.ignore_abuser_conversation = function (client, user, data, callback) {
+            Abuse.removeConversation(data, function () {
+                callback(true);
+            })
+        };
+
+        socketHandlers.ban_abuser = function (client, user, abuserHashedIPAddress, callback) {
+            Abuse.banAbuser(abuserHashedIPAddress, function () {
+                callback(true);
+            })
+        };
+
     });
 }());
