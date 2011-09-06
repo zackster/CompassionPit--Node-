@@ -158,8 +158,42 @@ body {
 	font-weight: bold;
 }
 
-#buttons1 a:link, #buttons1 a:active, #buttons1 a:visited, #buttons1 a:hover{
-  color: rgba(42,159,227,1);
+#buttons1 li.venter {
+	display: block;
+	margin: 10px 10px 10px 0px;
+	width: 270px;
+	padding-top: 7px;
+	background: red;
+	box-shadow: inset 0px 0px 2px rgba(42,159,227,0.8);
+	text-align: center;
+	height: 23px;
+	color: rgba(42,159,227,1);
+	font-weight: bold;
+}
+
+#buttons1 li.listener {
+	display: block;
+	margin: 10px 10px 10px 0px;
+	width: 270px;
+	padding-top: 7px;
+	background: blue;
+	box-shadow: inset 0px 0px 2px rgba(42,159,227,0.8);
+	text-align: center;
+	height: 23px;
+	color: rgba(42,159,227,1);
+	font-weight: bold;
+}
+
+#buttons1 a.listener {
+  text-decoration: none;
+  font-size: 1.3em;
+  color: black;
+}
+
+#buttons1 a.venter {
+  text-decoration: none;
+  font-size: 1.3em;
+  color: white;
 }
 
 .infoMessage {
