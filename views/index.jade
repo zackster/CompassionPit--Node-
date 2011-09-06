@@ -23,6 +23,10 @@ script
   
 script
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
+  if (!document.cookie.match(/referrer=http/)) {
+      document.cookie = "referrer=" + encodeURIComponent(document.referrer);
+  }
+
 #main
   #mainleft
     h2 Vent anonymously ...without being embarrassed 
