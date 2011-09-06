@@ -1,7 +1,7 @@
 //- Google Website Optimizer Control Script
 script
   function utmx_section(){}function utmx(){}
-  (function(){var k='1104807929',d=document,l=d.location,c=d.cookie;function f(n){
+  (function(){var k='0393270641',d=document,l=d.location,c=d.cookie;function f(n){
   if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
   length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
   d.write('<sc'+'ript src="'+
@@ -14,7 +14,7 @@ script
 script
   var _gaq = _gaq || [];
   _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
-  _gaq.push(['gwo._trackPageview', '/1104807929/test']);
+  _gaq.push(['gwo._trackPageview', '/0393270641/test']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
@@ -25,9 +25,16 @@ script
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
 #main
   #mainleft
+    script
+      utmx_section("Main headline")
     h2 Vent anonymously ...without being embarrassed 
-
+    </noscript>
+    
+    script
+      utmx_section("Subheadline")
     p Get it off your chest without it biting you in the ass.
+    </noscript>
+    
     br
     br
     p 
@@ -56,11 +63,14 @@ script
       #{"!"}
   #mainright
      #buttons1
+      script
+        utmx_section("Calls to action")
       ul
         li(class="large")
           a(href="/vent") Share what's bothering you
         li(class="large")
           a(href="/listen") Participate as a listener
+      </noscript>
       iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:280px; height:35px;", allowTransparency="true")
     
 
