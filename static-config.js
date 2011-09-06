@@ -13,6 +13,8 @@ module.exports = function (config) {
         "socket.io/socket.io.js",
         "comm.js",
         "chat.js",
+        "abuse.js",
+        "elizabot.js",
         "index.js",
         "logs.js",
         "messageChart.js"
@@ -20,6 +22,7 @@ module.exports = function (config) {
     config.styles = [
         "css/reset.css",
         "css/style.css",
+        "css/abuse.css",
         "jquery-ui-1.8.13.custom.css",
         "jquery.ui.datetime.css"
     ];

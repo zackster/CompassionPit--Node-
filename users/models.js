@@ -15,12 +15,13 @@
     var socketIOIdToUserId = createHash();
     var userIdsWithoutSocketIOClient = createHash();
     
-    var User = exports.User = function (socketIOId, id, publicId) {
+    var User = exports.User = function (socketIOId, id, publicId, relatedUserId) {
         if (!(this instanceof User)) {
             throw new Error("Must be called with new");
         }
         this.id = id = id || guid();
         this.publicId = publicId = publicId || guid();
+        this.relatedUserId = relatedUserId;
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];
@@ -145,6 +146,15 @@
         
         return (this.ipAddress = client.handshake.address.address);
     };
+    /**
+     * Set IP Address for the provided clientId
+     *
+     * @param {String} IP address to set
+     * @return {String} New IP Address
+     */
+    User.prototype.setIPAddress = function (ipAddress) {
+        return this.ipAddress = ipAddress;
+    }
     
     var configGeoParts = config.geoLocationParts || [];
     
