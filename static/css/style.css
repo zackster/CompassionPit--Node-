@@ -158,6 +158,12 @@ body {
 	font-weight: bold;
 }
 
+#buttons1 li.hidden {
+	display: none;
+}
+
+
+
 #buttons1 a:link, #buttons1 a:active, #buttons1 a:visited, #buttons1 a:hover{
   color: rgba(42,159,227,1);
 }

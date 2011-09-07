@@ -40,6 +40,8 @@
                     if (hasPartner) {
                         $("#newPartner")
                             .removeClass("disabled");
+                        $("#abuseButtonContainer")
+                            .removeClass("hidden");
                     }
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
@@ -47,6 +49,8 @@
             } else {
                 $("#newPartner")
                     .addClass("disabled");
+                $("#abuseButtonContainer")
+                    .addClass("hidden");
                 currentPartnerId = null;
             }
         };
