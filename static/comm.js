@@ -60,7 +60,7 @@
         };
     }());
 
-    exports.create = function (relatedUserId) {
+    exports.create = function (elizaUserId) {
         var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
             'max reconnection attempts': 5,
             'force new connection': true
@@ -107,7 +107,7 @@
             registerMessage.d = {
                 r: decodeURIComponent(referrer[1]),
                 a: String(navigator.userAgent),
-                e: relatedUserId,
+                e: elizaUserId,
                 v: VERSION
             };
             if (userId) {

@@ -301,7 +301,7 @@
             // console.log("setting ip for " + type + " " + userId);
             user.setIPAddress(type === "venter" ? "123.123.123.123" : "1.2.3.4");
         }
-        if (user.relatedUserId) { // is not eliza
+        if (user.elizaUserId) {
             // don't queue Eliza
 
             var queue = type === "venter" ? venterQueue : listenerQueue;
@@ -413,11 +413,11 @@
                                     var abuser = abusers.shift();
                                     if (abuser) {
                                         if (abuser.hashedIPAddress == hashedVenterIP) {
-                                            // console.log("creating room for venter abuser " + venterId + " and eliza " + venter.relatedUserId);
-                                            new Room(guid(), venterId, venter.relatedUserId);
+                                            // console.log("creating room for venter abuser " + venterId + " and eliza " + venter.elizaUserId);
+                                            new Room(guid(), venterId, venter.elizaUserId);
                                         } else  {
-                                            // console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.relatedUserId);
-                                            new Room(guid(), listener.relatedUserId, listenerId);
+                                            // console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.elizaUserId);
+                                            new Room(guid(), listener.elizaUserId, listenerId);
                                         }
                                     } else {
                                         // console.log("creating standard room " + venterId + " " + listenerId);
@@ -791,7 +791,7 @@
                     });
                 }
 
-                if (User.getById(userId).relatedUserId && User.getById(otherUserId).relatedUserId) {
+                if (User.getById(userId).elizaUserId && User.getById(otherUserId).elizaUserId) {
                     (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
                     (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
                 }
@@ -821,7 +821,7 @@
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
                 var user = User.getById(userId);
-                if (otherUserId == user.relatedUserId) {
+                if (otherUserId == user.elizaUserId) {
                     // user reports abuse for Eliza
                     return;
                 }

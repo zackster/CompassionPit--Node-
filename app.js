@@ -308,16 +308,16 @@
                 lastMessageReceived = data.n || 0,
                 userAgent = data.a || null,
                 referrer = data.r || null,
-                relatedUserId = data.e || false;
+                elizaUserId = data.e || false;
             var clientId = client.id;
             
             var user = userId && User.getById(userId);
             var isNewUser = !user;
             if (isNewUser) {
                 if (userId && publicUserId) {
-                    user = new User(clientId, userId, publicUserId, relatedUserId);
+                    user = new User(clientId, userId, publicUserId, elizaUserId);
                 } else {
-                    user = new User(clientId, null, null, relatedUserId);
+                    user = new User(clientId, null, null, elizaUserId);
                 }
                 user.getIPAddress();
                 user.referrer = referrer || "";
