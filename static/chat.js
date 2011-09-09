@@ -29,7 +29,6 @@
         };
         
         var comm = Comm.create(elizaId);
-        window.comm = comm;
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;
@@ -40,6 +39,8 @@
                     if (hasPartner) {
                         $("#newPartner")
                             .removeClass("disabled");
+                        $("#abuseButtonContainer")
+                            .removeClass("hidden");
                     }
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
@@ -47,6 +48,9 @@
             } else {
                 $("#newPartner")
                     .addClass("disabled");
+                $("#abuseButtonContainer")
+                    .addClass("hidden");
+                $("#typing_status").text('');
                 currentPartnerId = null;
             }
         };
@@ -328,7 +332,7 @@
             }
         });
         comm.handler("typing", function (type, message) {
-            if (type != CLIENT_TYPE) {
+            if (type != CLIENT_TYPE && hasPartner) {
                 switch (message.state){
                     case "on":
                         addMessage('System', 'You will now be able to see when '+type+' is typing');
