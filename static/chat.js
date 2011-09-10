@@ -382,27 +382,26 @@
 
         });
         
-        var includeWufooEmbedScript = function () {
+        var includeLikeButtonScript = function () {
             $('#chatWindow > tbody:last')
-                .append($("<tr>")
+                .append($('<tr class="off-white-row">')
                     .append($("<td>")
                         .append($("<iframe>", {
                             allowTransparency: "true",
                             frameborder: 0,
-                            scrolling: "yes",
-                            style: "width:100%;height:270px;border:none",
-                            src: "http://awesomenessreminders.wufoo.com/embed/r7x3q1/"
+                            scrolling: "no",
+                            style: "width:100%;height:24px;border:none;overflow:hidden;",
+                            src: "http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=24"
                         }))));
             scrollToBottomOfChat();
         };
+        
         comm.handler("partRequest", function (type) {
             // partner requested a new match, automatically reconnect
             addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
             setHasPartner( false );
 
-            if ( CLIENT_TYPE === 'venter' ) {
-                includeWufooEmbedScript();
-            }
+            includeLikeButtonScript();
 
             infoWithQueue( 'Waiting for a new partner... ' );
         });
@@ -428,9 +427,7 @@
 
             addMessage( 'System', container );
             
-            if (CLIENT_TYPE === "venter") {
-                includeWufooEmbedScript();
-            }
+            includeLikeButtonScript();
             
             info('Partner disconnected.');
         });
