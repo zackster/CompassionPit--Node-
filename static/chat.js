@@ -1,7 +1,5 @@
-(function (exports, $, undefined) {
-
-    exports.create = function (elizaId) {
-
+(function ($, undefined) {
+    $(function () {
         if ($("#chatWindow").length === 0) {
             return;
         }
@@ -28,7 +26,8 @@
             }
         };
         
-        var comm = Comm.create(elizaId);
+        var comm = Comm.create();
+        window.comm = comm;
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;
@@ -39,8 +38,6 @@
                     if (hasPartner) {
                         $("#newPartner")
                             .removeClass("disabled");
-                        $("#abuseButtonContainer")
-                            .removeClass("hidden");
                     }
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
@@ -48,9 +45,6 @@
             } else {
                 $("#newPartner")
                     .addClass("disabled");
-                $("#abuseButtonContainer")
-                    .addClass("hidden");
-                $("#typing_status").text('');
                 currentPartnerId = null;
             }
         };
@@ -140,15 +134,11 @@
             return false;
         });
 
-        function requestNewChatPartner( priority, isAbuse ) {
+        function requestNewChatPartner( priority ) {
             if (hasPartner) {
                 setHasPartner(false);
-                if (isAbuse) {
-                    addMessage('System', 'This conversation has been reported as abuse. You are being connected to a new chat partner');
-                } else {
-                    addMessage('System', 'Please wait while we find you a new chat partner.');
-                }
-                requestNewChatChannel(true, priority, isAbuse);
+                addMessage('System', 'Please wait while we find you a new chat partner.');
+                requestNewChatChannel(true, priority);
             }
         }
 
@@ -191,23 +181,13 @@
             return false;
         });
 
-        $('#reportAbuse').live( 'click', function() {
-            if ($(this).hasClass("disabled")) {
-                return false;
-            }
-            requestNewChatPartner(false, true);
-            refocusInformInput();
-            return false;
-        });
-
-        function requestNewChatChannel(forceNewPartner, priority, isAbuse) {
+        function requestNewChatChannel(forceNewPartner, priority) {
             setHasPartner(false);
             
             comm.request("join", {
                 type: CLIENT_TYPE,
                 partnerId: (!forceNewPartner && lastPartnerId) || undefined,
-                priority: priority,
-                isAbuse: isAbuse
+        priority: priority,
             }, function () {
                 if (!hasPartner) {
                     infoWithQueue('Waiting for a chat partner... ');
@@ -332,7 +312,7 @@
             }
         });
         comm.handler("typing", function (type, message) {
-            if (type != CLIENT_TYPE && hasPartner) {
+            if (type != CLIENT_TYPE) {
                 switch (message.state){
                     case "on":
                         addMessage('System', 'You will now be able to see when '+type+' is typing');
@@ -382,26 +362,27 @@
 
         });
         
-        var includeLikeButtonScript = function () {
+        var includeWufooEmbedScript = function () {
             $('#chatWindow > tbody:last')
-                .append($('<tr class="off-white-row">')
+                .append($("<tr>")
                     .append($("<td>")
                         .append($("<iframe>", {
                             allowTransparency: "true",
                             frameborder: 0,
-                            scrolling: "no",
-                            style: "width:100%;height:24px;border:none;overflow:hidden;",
-                            src: "http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=24"
+                            scrolling: "yes",
+                            style: "width:100%;height:270px;border:none",
+                            src: "http://awesomenessreminders.wufoo.com/embed/r7x3q1/"
                         }))));
             scrollToBottomOfChat();
         };
-        
         comm.handler("partRequest", function (type) {
             // partner requested a new match, automatically reconnect
             addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
             setHasPartner( false );
 
-            includeLikeButtonScript();
+            if ( CLIENT_TYPE === 'venter' ) {
+                includeWufooEmbedScript();
+            }
 
             infoWithQueue( 'Waiting for a new partner... ' );
         });
@@ -427,7 +408,9 @@
 
             addMessage( 'System', container );
             
-            includeLikeButtonScript();
+            if (CLIENT_TYPE === "venter") {
+                includeWufooEmbedScript();
+            }
             
             info('Partner disconnected.');
         });
@@ -437,5 +420,5 @@
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
         }
-    };
-}(window.Chat = {}, jQuery));
+    });
+}(jQuery));
