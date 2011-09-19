@@ -12,7 +12,10 @@
           .referrers
             ul
             - each referrer in abuser.referrers
-              li #{referrer}
+              - if (referrer != 'undefined')
+                li
+                  a(href=referrer)
+                    #{referrer}
         td.ip_address
           .ip_hash #{abuser.hashedIPAddress}
           .conversations(style="display: none")

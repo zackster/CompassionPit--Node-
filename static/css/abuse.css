@@ -4,6 +4,8 @@
 
 #abuselist th, #abuselist td {
   padding: 8px;
+  max-width: 200px;
+  overflow: hidden;
   text-align: center;
 }
 
@@ -22,7 +24,7 @@
 }
 
 #abuselist div.ip_hash {
-  width: 100%; xmax-width: 400px;
+  width: 100%;
   overflow: hidden;
 }
 
