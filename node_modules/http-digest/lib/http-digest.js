@@ -3,8 +3,8 @@ var http = require('http');
 var crypto = require('crypto');
 
 /* constants */
-const nonce_expire_timeout = 3600000;            /* server nonce expiration timeout (milliseconds) */
-const authentication_realm = "node-http-digest"; /* http authentication realm */
+var nonce_expire_timeout = 3600000;            /* server nonce expiration timeout (milliseconds) */
+var authentication_realm = "node-http-digest"; /* http authentication realm */
 
 /* state information */
 var nonces = {};
