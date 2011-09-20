@@ -21,7 +21,11 @@ var config = {
             "region",
             "country_name"
         ],
-        hashIPAddressSalt: "somethingunique"
+        hashIPAddressSalt: "somethingunique",
+        listenerAuthentication: {
+            username: 'listener',
+            password: 'listener'
+        }
     },
     production: {
         port: 8000,
@@ -45,7 +49,11 @@ var config = {
             "region",
             "country_name"
         ],
-        hashIPAddressSalt: "somethingunique"
+        hashIPAddressSalt: "somethingunique",
+        listenerAuthentication: {
+            username: 'listener',
+            password: 'listener'
+        }
     }
 };
 

@@ -19,7 +19,8 @@
         config = require("./config"),
         log = require("./log"),
         mergeStatic = require("./mergeStatic"),
-        geoip = require("geoip");
+        geoip = require("geoip"),
+        httpdigest = require('http-digest');
     
     app.sessionId = guid();
     app.geoipCity = new geoip.City(__dirname + '/GeoLiteCity.dat');
@@ -99,10 +100,19 @@
     });
     
     app.get("/listen", function (req, res) {
-        res.render("chat", {
-            type: "listener",
-            includeCrazyEgg: true
-        });
+        if (config.listenerAuthentication) {
+            httpdigest.http_digest_auth(req, res, config.listenerAuthentication.username, config.listenerAuthentication.password, function (req, res) {
+                res.render("chat", {
+                    type: "listener",
+                    includeCrazyEgg: true
+                });
+            })
+        } else {
+            res.render("chat", {
+                type: "listener",
+                includeCrazyEgg: true
+            });
+        }
     });
 
     app.get("/chat.html", function (req, res) {
