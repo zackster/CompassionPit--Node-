@@ -7,20 +7,25 @@
       th Encrypted IP Address
       th Number of Incidents Reported For
     - each abuser in abusers
-      tr(id=abuser.hashedIPAddress)
-        td
-          .referrers
-            ul
-            - each referrer in abuser.referrers
-              - if (referrer != 'undefined')
-                li
-                  a(href=referrer)
-                    #{referrer}
-        td.ip_address
-          .ip_hash #{abuser.hashedIPAddress}
-          .conversations(style="display: none")
-        td.conversations_count #{abuser.conversations.length}
+      - if (abuser.conversations.length > 0)
+        tr(id=abuser.hashedIPAddress)
+          td
+            .referrers
+              ul
+              - each referrer in abuser.referrers
+                - if (referrer != 'undefined')
+                  li
+                    a(href=referrer)
+                      #{referrer}
+          td.ip_address
+            .ip_hash #{abuser.hashedIPAddress}
+            .conversations(style="display: none")
+          td.conversations_count #{abuser.conversations.length}
 script
+  function getAbuseRow(abuserHashedIPAddress) {
+      return $('#' + abuserHashedIPAddress);
+  }
+
   function getAbuseConversationsContainer(abuserHashedIPAddress) {
       return $('#' + abuserHashedIPAddress + ' .conversations');
   }

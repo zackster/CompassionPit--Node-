@@ -16,7 +16,7 @@
                 if (data.conversations.length) {
                     renderAbuseConversations(abuserHashedIPAddress, data);
                 } else {
-                    container.hide();
+                    getAbuseRow(abuserHashedIPAddress).hide();
                 }
                 renderAbuseConversationsCount(abuserHashedIPAddress, data);
             });
