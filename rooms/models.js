@@ -71,14 +71,16 @@
     var Abuser = exports.Abuser = mongoose.model('Abuser');
     
     var saveConversation = function (conversation) {
-        conversation.save(function (err) {
-            if (err) {
-                log.error({
-                    event: "Cannot save Conversation",
-                    error: err.toString()
-                });
-            }
-        });
+        if (conversation.messages.length) {
+            conversation.save(function (err) {
+                if (err) {
+                    log.error({
+                        event: "Cannot save Conversation",
+                        error: err.toString()
+                    });
+                }
+            });
+        }
     };
     
     setTimeout(function () {
