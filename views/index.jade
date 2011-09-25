@@ -27,47 +27,42 @@ script
       document.cookie = "referrer=" + encodeURIComponent(document.referrer);
   }
 
-#main
-  #mainleft
-    h2 Vent anonymously ...without being embarrassed 
-
-    p Get it off your chest without it biting you in the ass.
-    br
-    br
-    p 
-      b Pick an option to the right, and then you will be randomly connected to a chat with an anonymous partner. 
-    br
-    br
-    p#counts(style="display:none")
-      #{"There are "}
-      span#listener-count 0
-      #{" listeners and "}
-      span#venter-count 0
-      #{" venters."}
-    p#need-listeners(style="display:none")
-      | There are venters who need someone to talk to -- please join as a listener.
-    p#need-venters(style="display:none")
-      | If you join as a listener and aren't immediately paired up with a venter, your computer will play a sound when a venter joins your chat.
-    p#need-anyone(style="display:none")
-      b Nobody's online right now, please join in and keep things going!
-    br
-    br
-    p
-      #{"*"}
-      strong(style="color:red") NEW
-      #{"* "}
-      a(href="/forum/", target="_blank") The CompassionPit forum
-      #{"!"}
-  #mainright
-     #buttons1
-      ul
-        li(class="large")
-          a(href="/vent") Share what's bothering you
-        li(class="large")
-          a(href="/listen") Participate as a listener
-      iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:280px; height:35px;", allowTransparency="true")
-    
-
-
-   
-
+.cont_lft.fltlft
+  h1#counts Currently Online: 
+    span#listener-count 0
+    span Listeners &amp;
+    span#venter-count 0
+    span Venters
+  em Spill your guts to a random chat partner:
+  a.vent(href="/vent") &nbsp;
+  em Help a random person get it off their chest:
+  a.listen(href="/vent") &nbsp;
+  span.new
+    span.newframe News
+    b
+      em No time to chat? Post a message:
+      a(href="/forum") Compassion Pit Forum
+.cont_rht.fltrht
+  h1 Compassion Pit visitors are people dealing with all sorts of life's problems. And we’re here to help...
+  em Whether it’s sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
+    a(href="/faq)FAQ Page
+  span.testimonial
+    b It's like the easiest chat tool I’ve found out there on the internet. I even met my wife on CompassionPit! She just kept listening to me vent and vent, and soon enough, I had myself a stalker! What else to say? I just love it...
+      em -Joseph Schmoe
+  ul.social
+    li
+      a(href="#")
+        img(src="img/social01.jpg", width="60", height="22")
+    li
+      a(href="#")
+        img(src="img/social02.jpg", width="60", height="22")
+    li
+      a(href="#")
+        img(src="img/social03.jpg", width="50", height="22")
+    li
+      a(href="#")
+        img(src="img/social04.jpg", width="49", height="24")
+    li
+      a(href="#")
+        img(src="img/social05.jpg", width="72", height="24")
+.clear

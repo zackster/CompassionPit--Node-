@@ -15,25 +15,10 @@
             
             $('#listener-count').text(listeners);
             $('#venter-count').text(venters);
-
-            $('#counts').hide();
-            $('#need-listeners').hide();
-            $('#need-venters').hide();
-            $('#need-anyone').hide();
-
-            if (listeners || venters) {
-                $('#counts').show();
-                if (listeners > venters) {
-                    $('#need-venters').show();
-                }
-                else if (venters > listeners) {
-                    $('#need-listeners').show();
-                }
-            }
-            else {
-                $('#need-anyone').show();
-            }
+            $('#counts').removeClass("loading");
+            $('#counts').show();
         };
+
         if (window.startingRoomCounts) {
             updateCounts(window.startingRoomCounts);
             window.startingRoomCounts = undefined;
@@ -43,7 +28,8 @@
         var requestCounts = function() {
             timeoutId = null;
             comm.request("counts", null, updateCounts);
-            
+
+            $('#counts').addClass("loading");
             if (hasFocus) {
                 timeoutId = setTimeout(requestCounts, 10 * 1000);
             }

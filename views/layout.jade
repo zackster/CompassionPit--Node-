@@ -32,28 +32,56 @@ html
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
   body
-    #container
-      a(href="#")#header
-      != body
+    #wrapper
+      .lft_curve
+        img(src="img/lft_curve.png", width="200", height="367")
+      .rht_curves
+        img(src="img/rht_curve.png", width="200", height="367")
+
+      #header
+        .container
+          a(href="/")
+            img.logo(src="img/logo.png", width="604", height="367")
+          .nav
+            ul
+              li
+                a(href="/vent") Vent
+              li
+                a(href="/listen") Listen
+              li
+                a(href="/forum/") Forum
+              li
+                a(href="/blog/") Blog
+
+      #body_container
+      .container
+        .topbg
+        .midbg
+          != body
+        .btmbg
+
       #footer
-        #copyright_notice
-          span &copy; 2010-2011
-          #{" CompassionPit.com All rights reserved."}
-        #nav
-          ul#links
+        .container
+          p &copy; 2011 CompassionPit.com All rights reserved.
+          ul.footernav
             li
               a(href="/") Home
             li
-              a(href="/about-us") About Us
+              a(href="/about-us") About
             li
-              a(href="/blog/") Blog
+              a(href="#") FAQ
             li
-              a(href="/forum/", target="_blank") Forum
+              a(href="/terms-of-service") Terms
             li
-              a(href="/terms-of-service") Terms of Service
-            li
-              a(href="/privacy-policy") Privacy Policy
-              
+              a(href="/privacy-policy") Privacy
+            li.last
+              a(href="#") Contact
+
+    .lft_btmcurve
+      img(src="img/lft_btmcurve.png", width="200", height="367")
+    .rht_btmcurve
+      img(src="img/btm_rhtcurve.png", width="200", height="367")
+
     script    
       var _sf_async_config={uid:27290,domain:"compassionpit.com"};
       (function(){
