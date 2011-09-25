@@ -39,8 +39,6 @@
                     if (hasPartner) {
                         $("#newPartner")
                             .removeClass("disabled");
-                        $("#abuseButtonContainer")
-                            .removeClass("hidden");
                     }
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
@@ -329,6 +327,8 @@
         comm.handler("msg", function (type, message) {
             if (type != CLIENT_TYPE) {
                 addMessage(type, message);
+                $("#abuseButtonContainer")
+                    .removeClass("hidden");
             }
         });
         comm.handler("typing", function (type, message) {
