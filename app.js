@@ -76,6 +76,14 @@
         res.redirect("/about-us", 301);
     });
     
+    app.get("/contact", function (req, res) {
+      res.render('contact');
+    });
+    
+    app.get("/faq", function (req, res) {
+      res.render('faq');
+    });
+    
     app.get("/privacy-policy", function (req, res) {
         res.render('privacy-policy');
     });
