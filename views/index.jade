@@ -1,7 +1,7 @@
 //- Google Website Optimizer Control Script
 script
   function utmx_section(){}function utmx(){}
-  (function(){var k='1104807929',d=document,l=d.location,c=d.cookie;function f(n){
+  (function(){var k='2386081484',d=document,l=d.location,c=d.cookie;function f(n){
   if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
   length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
   d.write('<sc'+'ript src="'+
@@ -14,7 +14,7 @@ script
 script
   var _gaq = _gaq || [];
   _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
-  _gaq.push(['gwo._trackPageview', '/1104807929/test']);
+  _gaq.push(['gwo._trackPageview', '/2386081484/test']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
@@ -40,15 +40,20 @@ script
   span.new
     span.newframe News
     b
-      em No time to chat? Post a message:
-      a(href="/forum/") Compassion Pit Forum
+    script
+      utmx_section('News Item')      
+      </script>
+
 .cont_rht.fltrht
   h1 Compassion Pit visitors are people dealing with all sorts of life's problems. And we’re here to help...
   em Whether it’s sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
     a(href="/faq") FAQ Page
   span.testimonial
+  script
+    utmx_section('Testimonial')
     b It's like the easiest chat tool I’ve found out there on the internet. I even met my wife on CompassionPit! She just kept listening to me vent and vent, and soon enough, I had myself a stalker! What else to say? I just love it...
       em -Joseph Schmoe
+    </script>
   ul.social
     li
       a.twitter-share-button(href="https://twitter.com/share", data-url="http://www.CompassionPit.com", data-text="CompassionPit: get it off your chest without it biting you in the ass", data-count="horizontal", data-via="CompassionPit")
