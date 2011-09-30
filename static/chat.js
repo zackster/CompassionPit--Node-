@@ -368,7 +368,8 @@
                     // new partner
                     if (geoInfo) {
                         // we have geolocation info.
-                        message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo;
+                        addMesage('System', 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo);
+                        messsage = 'We are sharing the listener\'s location with you so you do not accidentally share vulnerable information with someone you know in real life. Your location has NOT been shared with the listener.';
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
