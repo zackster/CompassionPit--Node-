@@ -64,7 +64,6 @@
         var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
             'max reconnection attempts': 5,
             'force new connection': true,
-            'transports' : ['xhr-polling']
         });
         
         var events = {};
