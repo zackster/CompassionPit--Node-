@@ -7,6 +7,7 @@
         }
 
         var comm = Comm.create();
+        comm.register();
 
         var reloadConversations = function (abuserHashedIPAddress) {
             var container = getAbuseConversationsContainer(abuserHashedIPAddress);
