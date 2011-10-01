@@ -5,7 +5,7 @@
         }
         
         var comm = Comm.create();
-        comm.start();
+        comm.register();
 
         var hasFocus = true;
         
