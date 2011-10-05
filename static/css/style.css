@@ -344,8 +344,11 @@ strong             			{ font-weight:bold;}
 .cont_lft h1 span			{ font:normal 0.8em  Arial, Helvetica, sans-serif; color:#545454; height:19px; }
 .cont_lft h1 span#listener-count			{ padding: 0 5px 0 5px; height:19px; }
 .cont_lft h1 span#venter-count				{ padding: 0 5px 0 5px; height:19px; }
+/*
 .cont_lft h1.loading span#listener-count	{ background:url(../img/icon.jpg) right 0 no-repeat;  }
 .cont_lft h1.loading span#venter-count		{ background:url(../img/icon.jpg) right 0 no-repeat;  }
+*/
+
 .cont_lft em				{ font:normal 1em  Arial, Helvetica, sans-serif; color:#545454; display:block; padding:0 0 5px 20px; }	
 .cont_lft a					{ display:block; margin:0; padding:0; text-decoration:none;}
 .cont_lft a.vent			{ background:url(../img/vent_anony_bg.jpg) center top no-repeat; width:330px; height:62px; margin:0; padding:0 0 20px 0;}
