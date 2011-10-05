@@ -342,8 +342,8 @@ strong             			{ font-weight:bold;}
 .cont_lft					{ width:367px; height:auto; margin:0; padding:36px 0 0 39px; }
 .cont_lft h1				{ font:bold 1.286em Arial, Helvetica, sans-serif; color:#ff9123; padding-bottom:21px;}
 .cont_lft h1 span			{ font:normal 0.8em  Arial, Helvetica, sans-serif; color:#545454; height:19px; }
-.cont_lft h1 span#listener-count			{ padding: 0 26px 0 5px; height:19px; }
-.cont_lft h1 span#venter-count				{ padding: 0 26px 0 5px; height:19px; }
+.cont_lft h1 span#listener-count			{ padding: 0 5px 0 5px; height:19px; }
+.cont_lft h1 span#venter-count				{ padding: 0 5px 0 5px; height:19px; }
 .cont_lft h1.loading span#listener-count	{ background:url(../img/icon.jpg) right 0 no-repeat;  }
 .cont_lft h1.loading span#venter-count		{ background:url(../img/icon.jpg) right 0 no-repeat;  }
 .cont_lft em				{ font:normal 1em  Arial, Helvetica, sans-serif; color:#545454; display:block; padding:0 0 5px 20px; }	
