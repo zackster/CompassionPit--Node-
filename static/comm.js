@@ -60,13 +60,13 @@
         };
     }());
 
-    exports.create = function (elizaUserId) {
+    exports.create = function () {
         var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
             'max reconnection attempts': 5,
             'force new connection': true,
-            'transports' : ['xhr-polling']
         });
-        
+
+        var elizaUserId;
         var events = {};
         
         var emit = function (event) {
@@ -95,10 +95,8 @@
         var lastMessageReceived = 0;
         var currentConnectIndex = 0;
         var sentConnectedEvents = false;
-        
-        socket.on('connect', function () {
-            log("connect");
-            
+
+        var register = function () {
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
@@ -118,6 +116,12 @@
             }
             socket.json.send(registerMessage);
             log("Sent register message: " + JSON.stringify(registerMessage));
+        }
+
+        socket.on('connect', function () {
+            log("socket connect");
+
+            emit("connect");
         });
         
         var unregister;
@@ -175,7 +179,7 @@
                     
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
-                        emit('connect', firstConnect, userId);
+                        emit('register', firstConnect, userId);
                     }
                     firstConnect = false;
                 }
@@ -278,6 +282,10 @@
             reconnect: function () {
                 socket.socket.disconnect();
                 socket.socket.reconnect();
+            },
+            register: function (userId) {
+                elizaUserId = userId;
+                register();
             }
         };
     };

@@ -28,7 +28,7 @@
             }
         };
         
-        var comm = Comm.create(elizaId);
+        var comm = Comm.create();
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;
@@ -54,7 +54,10 @@
         };
         setHasPartner(false);
         
-        comm.on('connect', function (first) {
+        comm.on('connect', function () {
+            // do nothing
+        });
+        comm.on('register', function (first, userId) {
             addMessage('System', first ? 'Connected' : 'Reconnected');
             requestNewChatChannel(false);
         });
@@ -368,7 +371,8 @@
                     // new partner
                     if (geoInfo) {
                         // we have geolocation info.
-                        message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo;
+                        addMessage('System', 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo);
+                        message = 'We are sharing the listener\'s location with you so you do not accidentally share vulnerable information with someone you know in real life. Your location has NOT been shared with the listener.';
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
@@ -432,10 +436,14 @@
             info('Partner disconnected.');
         });
         
-        comm.start();
-
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
+        }
+        
+        return {
+            restart: function (elizaUserId) {
+                comm.register(elizaUserId);
+            }
         }
     };
 }(window.Chat = {}, jQuery));
