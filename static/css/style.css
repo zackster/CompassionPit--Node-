@@ -8,7 +8,7 @@
 
 /***** Main Content Styles ******/
 #main {
-	width:960px;
+	width:980px;
 	margin:0px auto;
 	/* box-shadow: 0px 0px 6px rgba(42,159,227,1), inset 0px 0px 250px rgba(216,243,255,0.5); */
 	background: #fff;
@@ -44,7 +44,7 @@
 
 #main #left {
 	width:680px;
-	height: 300px;
+	height: 370px;
 	float: left;
 }
 
