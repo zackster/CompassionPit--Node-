@@ -1,26 +1,3 @@
-//- Google Website Optimizer Control Script
-script
-  function utmx_section(){}function utmx(){}
-  (function(){var k='2386081484',d=document,l=d.location,c=d.cookie;function f(n){
-  if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.
-  length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
-  d.write('<sc'+'ript src="'+
-  'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com'
-  +'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
-  +new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
-  '" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
-
-//- Google Website Optimizer Tracking Script
-script
-  var _gaq = _gaq || [];
-  _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
-  _gaq.push(['gwo._trackPageview', '/2386081484/test']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  
 script
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
   if (!document.cookie.match(/referrer=http/)) {
@@ -37,22 +14,21 @@ script
   a.vent(href="/vent") &nbsp;
   em Help a random person get it off their chest:
   a.listen(href="/listen") &nbsp;
-  script utmx_section("The News")
   span.new
-    span.newframe News
-    b
-      em No time to chat? Post a message:
-      a(href="/forum/") Compassion Pit Forum
-  </noscript>
+    script
+      google_ad_client = "ca-pub-6036766792552196";
+      /* CompassionPit Homepage Medium Rectangle */
+      google_ad_slot = "0693952875";
+      google_ad_width = 300;
+      google_ad_height = 250;
+    script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
 .cont_rht.fltrht
   h1 Compassion Pit visitors are people dealing with all sorts of life's problems. And we’re here to help...
   em Whether it’s sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
     a(href="/faq") FAQ Page
-  script utmx_section("The Testimonial")
   span.testimonial
-    b It's like the easiest chat tool I’ve found out there on the internet. I even met my wife on CompassionPit! She just kept listening to me vent and vent, and soon enough, I had myself a stalker! What else to say? I just love it...
-      em -Joseph Schmoe
-  </noscript>
+    b This site has really given me hope. Somehow you end up talking to someone that really help you.
+      em -Anonymous
   ul.social
     li
       a.twitter-share-button(href="https://twitter.com/share", data-url="http://www.CompassionPit.com", data-text="CompassionPit: get it off your chest without it biting you in the ass", data-count="horizontal", data-via="CompassionPit")
