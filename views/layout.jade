@@ -18,6 +18,7 @@ html
       script
         (function(){var noop=function(){};var console={log:noop,error:noop}})()
       script(src="/script.min.js?" + jsHash)
+      script(src="//platform.twitter.com/widgets.js")      
     - else
       - each script in config.scripts
         script(src="/" + script)
