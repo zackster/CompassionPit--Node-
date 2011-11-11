@@ -401,7 +401,7 @@
             $('#chatWindow > tbody:last')
                 .append($('<tr class="off-white-row">')
                     .append($("<td>")
-                        .append($('<a href="https://twitter.com/share" data-url="http://www.CompassionPit.com" data-text="CompassionPit: get it off your chest without it biting you in the ass" data-count="horizontal" data-via="CompassionPit" class="twitter-share-button">Tweet</a>'))));                                  
+                        .append($('<a href="https://twitter.com/share" data-url="http://www.CompassionPit.com" data-text="CompassionPit: get it off your chest without it biting you in the ass" data-count="horizontal" data-via="CompassionPit" class="twitter-share-button">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>'))));
             scrollToBottomOfChat();
         };
         
