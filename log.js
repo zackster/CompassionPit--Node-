@@ -11,6 +11,8 @@
     
     mongoose.connect(config.mongodb.uri);
     
+    console.log('connected to mongoose...');
+    
     // TODO: write some merging app that will merge the LogEntries
     /**
      * Represents a single LogEntry that will be stored in MongoDB

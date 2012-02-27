@@ -10,11 +10,12 @@ module.exports = function (config) {
         "jquery.ui.widget.js",
         "jquery.ui.datepicker.js",
         "jquery.ui.datetime.src.js",
+        "jquery.ui.progressbar.js",
+        "jquery.html5-placeholder-shim.js",
         "socket.io/socket.io.js",
         "comm.js",
         "chat.js",
         "abuse.js",
-        "elizabot.js",
         "index.js",
         "logs.js",
         "messageChart.js"
@@ -24,7 +25,8 @@ module.exports = function (config) {
         "css/style.css",
         "css/abuse.css",
         "jquery-ui-1.8.13.custom.css",
-        "jquery.ui.datetime.css"
+        "jquery.ui.datetime.css",
+        "css/jquery-ui/jquery.ui.all.css"
     ];
     config.version = 0;
     require('child_process').exec("git log -1 --format=format:%H", {

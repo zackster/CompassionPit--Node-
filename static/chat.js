@@ -1,14 +1,145 @@
 (function (exports, $, undefined) {
 
-    exports.create = function (elizaId) {
+    $("div#main").hide();
+  
+    progressBarPct = 0;
+    
+    exports.progressBar = function(pct) {
+      if(pct=='init') {
+        $("#progressbar").progressbar({value:5});
+        return;
+      }
+      progressBarPct += 15;
+      if(pct==100) {
+        progressBarPct = 100;        
+        $("#initializing").fadeOut(1000, function() {
+          $("#main").fadeIn(1000);          
+        });        
+      }
+      $( "#progressbar" ).progressbar({
+           value: progressBarPct
+      });
+      $("span#secondsTilAppLoad").html(Math.max(+$("span#secondsTilAppLoad").html() - 1, 2));
+    }
 
+    exports.create = function () {
+      
+        var self = this;
+        self.progressBar('init');
+        $("#initializing").append('<br>'+'Chat create');
+        for(var i=1;i<9;i++) {
+          setTimeout(function() { self.progressBar(); }, 1500*i);
+        }
+        var curtime = new Date();
+        
         if ($("#chatWindow").length === 0) {
             return;
-        }
+        }                        
+
+
+        $("button#login, button#register").click(function() {
+           $("div.announce").hide() 
+        });
+        $("button#login").click(function() {
+          var credentials = {
+            email: $("#registerEmail").val(),
+            password: $("#registerPassword").val()
+          }
+          var callback = function(status) {          
+            hideSpinner();
+            if(status==='success') {
+              $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
+                  $("div#loggedInAs").show();
+              });
+            }
+            else {
+              $("div#form_errors").html("Incorrect email/password combination.");
+            }          
+          }
+          showSpinner('login');
+          $("span#currentUser").html(credentials.email);
+          comm.request("authenticateUser", credentials, callback);
+        });
+        
+        
+        $("button#register").click(function() {
+          var credentials = {
+            email: $("#registerEmail").val(),
+            password: $("#registerPassword").val()
+          }
+          var callback = function(status) {
+            hideSpinner();
+            if(status=='success') {
+              $("div#reputationLogin").html("Registration Successful!").fadeOut(4000, function() {
+                  $("div#loggedInAs").show();
+              });
+            }
+            else {
+              $("div#form_errors").html("You need to enter a valid email address, and a password of at least 1 character.");
+            }
+          }
+          showSpinner('registration');
+          $("span#currentUser").html(credentials.email);
+          comm.request("registerUser", credentials, callback);
+        });
+        
+        var showSpinner = function(msg) {
+          $("div#reputationLogin").hide();          
+          var $spinner = $("div#spinner");
+          $spinner.show();
+          if(msg==='registration') {
+            $spinner.html("Submitting your registration");
+          }
+          else if(msg === 'login') {
+            $spinner.html("Logging you in");            
+          }
+          $spinner.append($('<br /><br /><img src="img/loadbar.gif" />'));          
+        };
+        
+        var hideSpinner = function() {
+          $("div#spinner").hide();
+          $("div#reputationLogin").show();
+                    
+        };
+        
+        
+        $("a.registration_mistake").click(function() {
+          $("a#meant_to_login").toggle();
+          $("a#register_account").toggle();
+          $(this).hide();          
+          $("button#login").toggle();
+          $("button#register").toggle();          
+        });
+
 
         var CLIENT_TYPE = window.CLIENT_TYPE;
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
-        var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
+        var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;        
+
+        if(CLIENT_TYPE == 'listener') {
+          $("div#reputationLogin").show();
+        }
+        else {
+//          $("div#listenerFeedback").show(); //debugging only 
+        }
+
+        $("div#listenerFeedback button").click(function() {
+          if(this.id=='helpful') {
+            send_positive_feedback();
+          }
+          else {
+            send_negative_feedback();
+          }
+          $("div#listenerFeedback").hide();
+        });
+        
+        function send_positive_feedback() {
+          comm.request("listenerFeedback", {direction:'positive'});
+        }
+        
+        function send_negative_feedback() {
+          comm.request("listenerFeedback", {direction:'negative'});
+        }
         
         window.showBrowserCloseMessage = true;
         window.onbeforeunload = function(event) {
@@ -28,7 +159,8 @@
             }
         };
         
-        var comm = Comm.create();
+        var comm = Comm.create(); 
+        window.comm = comm;
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;
@@ -43,6 +175,8 @@
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
                 currentPartnerId = value;
+                log('last partner id, ' + lastPartnerId);
+                log('current partner id, ' + currentPartnerId);
             } else {
                 $("#newPartner")
                     .addClass("disabled");
@@ -58,6 +192,8 @@
             // do nothing
         });
         comm.on('register', function (first, userId) {
+            self.progressBar(100);
+            log('registered with id, ' + userId);
             addMessage('System', first ? 'Connected' : 'Reconnected');
             requestNewChatChannel(false);
         });
@@ -119,7 +255,8 @@
             }, 0);
         };
         
-        function status(msg, cssClass, checkQueue) {
+        function status(msg, cssClass, checkQueue) {                    
+          
             checkingQueue = checkQueue && msg;
 
             var msgform = (msg === false);
@@ -139,6 +276,12 @@
             sendMessage($("#inform").val());
             refocusInformInput();
             return false;
+        });
+        
+        $('#inform').keyup(function(e) {
+          if((e.keyCode || e.which) == 13) { //Enter keycode
+            $('#chat_input').trigger('submit');
+          }
         });
 
         function requestNewChatPartner( priority, isAbuse ) {
@@ -170,6 +313,7 @@
         $('#enable_sound').attr('checked', true);
         $('#enable_typing').attr('checked', true);
         info('Initializing');
+        $("#main").hide();
 
         $('#audioPlayer')
             .jPlayer({
@@ -376,6 +520,9 @@
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
+                    if(CLIENT_TYPE == 'venter') {
+                      $("div#listenerFeedback").show();
+                    }
                 }
                 addMessage('System', message);
             }
@@ -439,16 +586,17 @@
             includeLikeButtonScript();
             
             info('Partner disconnected.');
-        });
+        });        
         
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
         }
         
         return {
-            restart: function (elizaUserId) {
-                comm.register(elizaUserId);
+            restart: function () {
+                comm.register();
             }
         }
-    };
+    };    
+    
 }(window.Chat = {}, jQuery));

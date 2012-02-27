@@ -1,3 +1,39 @@
+body {
+  overflow:scroll;
+}
+a.registration_mistake {
+  display:block;
+  margin-top:15px;
+}
+
+div.announce {
+  padding-bottom:10px;
+  margin-top:-10px;
+}
+
+div#leaderboard {
+  
+  padding: 20px;
+  
+}
+
+div#leaderboard table {
+  border-collapse:collapse;
+}
+div#leaderboard table, div#leaderboard th,  div#leaderboard td {
+  border: 1px solid black;
+}
+
+span#currentUser {
+  font-weight: bold;
+}
+.ui-progressbar-value { background-image: url(jquery-ui-images/pbar-ani.gif) !important; }
+div#initializing { padding: 20px; }
+div#progressbar { margin-top: 10px; }
+button.registration {
+  font-size: 1.6em;
+}
+
 /***** General Styles ******/
 
 #audioPlayer {
@@ -89,7 +125,7 @@
 	height: 30px;
 	margin-bottom: 10px;
 	margin-left: 10px;
-	width: 600px;
+	width: 595px;
 	border: 0;
 	padding: 0;
 	float: left;
@@ -113,7 +149,7 @@
 
 #main #right {
 	width:280px;
-	height: 300px;
+	height: 435px;
 	float: right;
 }
 
@@ -335,9 +371,9 @@ strong             			{ font-weight:bold;}
 .nav ul li a:hover			{ color:#fff; text-decoration:none;}
 
 #body_contnainer			{ width:auto; height:auto;}
-.topbg						{ background:url(../img/topbg.png) center top no-repeat; width:974px; height:6px; margin:0; padding:0;}
-.midbg						{ background:url(../img/mid.png) repeat-y center top; width:974px; height:auto; margin:0; padding:0 0 36px 0;}
-.btmbg						{ background:url(../img/bottombg.png) center top no-repeat; width:974px; height:9px; padding-bottom:10px;}
+.topbg						{ background:url(../img/topbg.png) center top no-repeat; width:982px; height:6px; margin-left:-1px; padding:0; background-size:100%;}
+.midbg						{ background:url(../img/mid.png) repeat-y center top; width:982px; height:auto; margin-left:-1px; padding:0 0 36px 0;background-size:100%;}
+.btmbg						{ background:url(../img/bottombg.png) center top no-repeat; width:982px; height:9px; margin-left:-1px; padding-bottom:10px;background-size:100%;}
 
 .cont_lft					{ width:367px; height:auto; margin:0; padding:36px 0 0 39px; }
 .cont_lft h1				{ font:bold 1.286em Arial, Helvetica, sans-serif; color:#ff9123; padding-bottom:21px;}
@@ -388,3 +424,11 @@ ul.footernav li.last			{ padding:0 0 0 ;}
 .rht_btmcurve					{ position:absolute; bottom:0; right:0; width:200px; height:367px;}
 
 /* ----------------- Index page ---------------------- */
+
+
+input.registration {
+  font-size: 20px;
+  width: 220px;
+  color: black;
+}
+

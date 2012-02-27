@@ -77,7 +77,7 @@ module.exports = {
     var io = sio.listen(http.createServer())
       , port = ++ports;
 
-    io.get('flash policy port').should.eql(843);
+    io.get('flash policy port').should.eql(10843);
     io.set('flash policy port', port);
     io.get('flash policy port').should.eql(port);
 
@@ -163,6 +163,25 @@ module.exports = {
 
     io.flashPolicyServer.close();
     done();
-  }
+  },
 
+  'flashsocket identifies as flashsocket': function (done) {
+    var cl = client(++ports)
+      , io = create(cl)
+      , ws;
+
+    io.set('transports', ['flashsocket']);
+    io.sockets.on('connection', function (socket) {
+      socket.manager.transports[socket.id].name.should.equal('flashsocket');
+      ws.finishClose();
+      cl.end();
+      io.flashPolicyServer.close();
+      io.server.close();
+      done();
+    });
+
+    cl.handshake(function (sid) {
+      ws = websocket(cl, sid, 'flashsocket');
+    });
+  }
 };

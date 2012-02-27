@@ -1,3 +1,11 @@
+#initializing
+  h1 Please wait while the CompassionPit chat loads
+  p This should take no longer than 
+    span#secondsTilAppLoad
+     #{10}
+    &nbsp;seconds.
+  #progressbar
+    
 #main
   #audioPlayer
   #left
@@ -6,7 +14,7 @@
         tr
     #chat_input
       form
-        input#inform(type="text", autocomplete="off", size="110")
+        textarea#inform(type="text", autocomplete="off", size="110")
         input#sendmessage(type="submit", value="SEND")
         script
           google_ad_client = "ca-pub-6036766792552196";
@@ -32,6 +40,34 @@
         li#abuseButtonContainer.hidden
           a(href="#", id="reportAbuse") Report Abuse
         #typing_status
+        div#spinner          
+        div#reputationLogin
+          div(class="announce")
+            p Listeners can now create accounts to earn reputation as 
+              a(href="/leaderboard",target="_blank") great listeners
+              !              
+          div(class="form_errors",id="form_errors")
+          label(class="registration")
+            input(type="text", id="registerEmail", name="registerEmail", class="registration", placeholder="Email")
+          label(class="registration")
+            input(type="text", id="registerPassword", name="registerPassword", class="registration", placeholder="Password") 
+          button(id="login", class="registration") Log In!
+          button(id="register", class="registration") Register
+          br
+          a(href="javascript:return false;", id="register_account", class="registration_mistake") Don't have an account? Register one!
+          a(href="javascript:return false;", id="meant_to_login", class="registration_mistake") Accidentally clicked register when you meant to log in?
+        div#listenerFeedback
+          p Is this listener helpful to you? 
+          br 
+          p (Leaving feedback will NOT disconnect you from chat :))
+          button(id="helpful") Yes!
+          button(id="notHelpful") No
+        div#loggedInAs
+          Currently logged in as...
+          span#currentUser
+            b Logged in as 
+            
+        
 script
   //- Google Website Optimizer Tracking Script
   var _gaq = _gaq || [];
@@ -45,3 +81,5 @@ script
 
 script
   window.CLIENT_TYPE = !{JSON.stringify(type)};
+  
+script(src="chat-init.js")

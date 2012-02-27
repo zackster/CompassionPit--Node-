@@ -4,6 +4,7 @@
 (function (exports, $, undefined) {
     "use strict";
     
+    
     var VERSION = window.COMPASSION_PIT_VERSION;
     window.COMPASSION_PIT_VERSION = undefined;
 
@@ -61,15 +62,18 @@
     }());
 
     exports.create = function () {
+        $("#initializing").append('<br>'+"Socket connection started");
+
         var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
             'max reconnection attempts': 5,
             'force new connection': true,
-        });
-
-        var elizaUserId;
+        });              
+        window.globalSocket = socket;
+        
         var events = {};
         
         var emit = function (event) {
+          log("Emit was called for event " + event);
             var callbacks = has.call(events, event) && events[event];
             if (callbacks) {
                 var args = Array.prototype.slice.call(arguments, 1);
@@ -97,6 +101,7 @@
         var sentConnectedEvents = false;
 
         var register = function () {
+          log("big register method being called.");
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
@@ -106,7 +111,6 @@
             registerMessage.d = {
                 r: decodeURIComponent(referrer[1]),
                 a: String(navigator.userAgent),
-                e: elizaUserId,
                 v: VERSION
             };
             if (userId) {
@@ -116,12 +120,19 @@
             }
             socket.json.send(registerMessage);
             log("Sent register message: " + JSON.stringify(registerMessage));
+            Chat.progressBar();
+            $("#initializing").append('<br>'+"Sent register message via socket");
         }
 
         socket.on('connect', function () {
-            log("socket connect");
-
+            log("socket connect");            
+            Chat.progressBar();
+            $("#initializing").append('<br>'+"Connected to the socket");
+            log("We are about to emit connect");
             emit("connect");
+            log("We are about to call register");
+            register();
+            
         });
         
         var unregister;
@@ -154,6 +165,8 @@
         var requests = {};
         var handlers = {};
         socket.on('message', function (data) {
+          log("Received a message.");
+          log(data);
             if (!isRegistered) {
                 if (data.t === "register") {
                     var message = arrayify(data.d);
@@ -174,6 +187,8 @@
                     
                     isRegistered = true;
                     log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
+                    $("#initializing").append('<br>'+"Received register message via socket");
+                    Chat.progressBar();
                     
                     checkSend(lastReceivedMessage);
                     
@@ -188,7 +203,7 @@
                     data.n = lastMessageReceived;
                 }
                 if (data.i) {
-                    var request = has.call(requests, data.i) && requests[data.i];
+                    var request = has.call(requests, data.i) && requests[data.i];  // the callback function that was passed for this request id
                     if (request) {
                         delete requests[data.i];
                         request.apply(undefined, arrayify(data.d));
@@ -284,9 +299,10 @@
                 socket.socket.reconnect();
             },
             register: function (userId) {
-                elizaUserId = userId;
+                log("calling register method");
                 register();
             }
         };
     };
+    
 }(window.Comm = {}, jQuery));

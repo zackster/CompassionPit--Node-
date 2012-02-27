@@ -15,13 +15,12 @@
     var socketIOIdToUserId = createHash();
     var userIdsWithoutSocketIOClient = createHash();
     
-    var User = exports.User = function (socketIOId, id, publicId, elizaUserId) {
+    var User = exports.User = function (socketIOId, id, publicId) {
         if (!(this instanceof User)) {
             throw new Error("Must be called with new");
         }
         this.id = id = id || guid();
         this.publicId = publicId = publicId || guid();
-        this.elizaUserId = elizaUserId;
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];

@@ -303,29 +303,27 @@
             // console.log("setting ip for " + type + " " + userId);
             user.setIPAddress(type === "venter" ? "123.123.123.123" : "1.2.3.4");
         }
-        if (user.elizaUserId) {
-            // don't queue Eliza
 
-            var queue = type === "venter" ? venterQueue : listenerQueue;
-            console.log( 'adding user ' + userId + ' to queue ' + type );
-    
-            if (priority) {
-                console.log( 'prioritizing user ' + userId );
+        var queue = type === "venter" ? venterQueue : listenerQueue;
+        console.log( 'adding user ' + userId + ' to queue ' + type );
 
-                queue.unshift(userId);
-            } else {
-                queue.push(userId);
-            }
+        if (priority) {
+            console.log( 'prioritizing user ' + userId );
 
-            if (requestedPartnerId) {
-                queueRequestedPartners[userId] = {
-                    timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
-                    partnerId: requestedPartnerId
-                };
-            }
-
-            Room.checkQueues();
+            queue.unshift(userId);
+        } else {
+            queue.push(userId);
         }
+
+        if (requestedPartnerId) {
+            queueRequestedPartners[userId] = {
+                timeout: Date.now() + REQUESTED_PARTNER_TIMEOUT,
+                partnerId: requestedPartnerId
+            };
+        }
+
+        Room.checkQueues();
+
     };
     
     /**
@@ -353,6 +351,9 @@
     Room.checkQueues = function () {
         if (venterQueue.length === 0 || listenerQueue.length === 0) {
             // at least one is empty, nothing to do.
+            console.log("venter or listener queue length == 0");
+            console.log(venterQueue);
+            console.log(listenerQueue);
             return;
         }
         
@@ -364,6 +365,7 @@
 
             if (venter && venter.isClientConnected()) {
                 // venter exists and the client is still connected
+                console.log("venter exists and the client is still connected");
                 
                 var venterRequestedPartner = queueRequestedPartners[venterId];
                 if (venterRequestedPartner) {
@@ -388,14 +390,17 @@
                         }
                         
                         if (!userInteractions[venterId] || userInteractions[venterId].indexOf(listenerId) === -1) {
+                            console.log("the venter is new or has not talked with the listener before..");
                             // the venter is either new (and can be paired with anyone) or has not talked with the listener
                             // before
                             
                             if (venterRequestedPartner && User.getByPublicId(venterRequestedPartner.partnerId) !== listener) {
                                 // the venter wants a partner, this is not the right listener.
+                                console.log("The venter wants a partner, this is not the right listener.");
                                 continue;
                             } else if (listenerRequestedPartner && User.getByPublicId(listenerRequestedPartner.partnerId) !== venter) {
                                 // the listener wants a partner, this is not the right venter.
+                                console.log("the listener wants a partner, this is not the right venter.");
                                 continue;
                             }
 
@@ -404,9 +409,18 @@
 
                             var hashedVenterIP = hashIPAddress(venterIP); 
                             var hashedListenerIP = hashIPAddress(listenerIP);
-
+                            
+                            console.log('About to enter abuser area');
+//                            console.log('hashed ip', hashedIPAddress);
+                            console.log('hashed venter', hashedVenterIP);
+                            console.log('hashed listener', hashedListenerIP);
+                            
+                            
+                            //TODO: refactor and remove this
                             Abuser.find({ hashedIPAddress: { $in: [hashedVenterIP, hashedListenerIP ]}, banned: true }, function (err, abusers) {
+                                console.log('Callback has been called.');
                                 if (err) {
+                                    console.log('Error, cannot retrieve abuser by hashedIP');
                                     log.error({
                                         event: "Cannot retrieve abuser by hashedIP",
                                         error: err.toString()
@@ -415,19 +429,21 @@
                                     var abuser = abusers.shift();
                                     if (abuser) {
                                         if (abuser.hashedIPAddress == hashedVenterIP) {
-                                            // console.log("creating room for venter abuser " + venterId + " and eliza " + venter.elizaUserId);
+                                            console.log("creating room for venter abuser " + venterId + " and eliza " + venter.elizaUserId);
                                             new Room(guid(), venterId, venter.elizaUserId);
                                         } else  {
-                                            // console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.elizaUserId);
+                                            console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.elizaUserId);
                                             new Room(guid(), listener.elizaUserId, listenerId);
                                         }
                                     } else {
-                                        // console.log("creating standard room " + venterId + " " + listenerId);
+                                        console.log("creating standard room " + venterId + " " + listenerId);
                                         new Room(guid(), venterId, listenerId);
                                     }
                                 }
+                                console.log('About to check queues... - again');
                                 return Room.checkQueues();
                             });
+                            console.log('Check queues has returned.');
                             return;
                         }
                     }
@@ -793,10 +809,10 @@
                     });
                 }
 
-                if (User.getById(userId).elizaUserId && User.getById(otherUserId).elizaUserId) {
-                    (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
-                    (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
-                }
+                // if (User.getById(userId).elizaUserId && User.getById(otherUserId).elizaUserId) {
+                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
+                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
+                // }
             }
         });
         
@@ -823,10 +839,6 @@
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
                 var user = User.getById(userId);
-                if (otherUserId == user.elizaUserId) {
-                    // user reports abuse for Eliza
-                    return;
-                }
                 var otherUser = User.getById(otherUserId);
 
                 var abuserType = self.users[otherUserId];
