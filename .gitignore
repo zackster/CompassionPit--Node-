@@ -1,3 +1,5 @@
 static/style.min.css
 static/script.min.js
 config.js
+node_modules/*
+GeoIP*
