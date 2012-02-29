@@ -63,8 +63,16 @@
 
     exports.create = function () {
         $("#initializing").append('<br>'+"Socket connection started");
+        
+        if(/compassionpit\.com/i.exec(document.domain)) {
+          socketio_addr = /staging\.compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8001" : "compassionpit.com:8000";  
+        }
+        else {
+          socketio_addr = null;
+        }
+        
 
-        var socket = io.connect(/compassionpit\.com/i.exec(document.domain) ? "compassionpit.com:8000" : null, {
+        var socket = io.connect(socketio_addr, {
             'max reconnection attempts': 5,
             'force new connection': true,
         });              
