@@ -64,8 +64,8 @@
     exports.create = function () {
         $("#initializing").append('<br>'+"Socket connection started");
         
-        if(/compassionpit\.com/i.exec(document.domain)) {
-          socketio_addr = /staging\.compassionpit\.com/i.exec(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";  
+        if(/compassionpit\.com/i.test(document.domain)) {
+          socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";  
         }
         else {
           socketio_addr = null;
