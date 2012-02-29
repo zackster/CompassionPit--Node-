@@ -415,35 +415,11 @@
                             console.log('hashed venter', hashedVenterIP);
                             console.log('hashed listener', hashedListenerIP);
                             
-                            
-                            //TODO: refactor and remove this
-                            Abuser.find({ hashedIPAddress: { $in: [hashedVenterIP, hashedListenerIP ]}, banned: true }, function (err, abusers) {
-                                console.log('Callback has been called.');
-                                if (err) {
-                                    console.log('Error, cannot retrieve abuser by hashedIP');
-                                    log.error({
-                                        event: "Cannot retrieve abuser by hashedIP",
-                                        error: err.toString()
-                                    });
-                                } else {
-                                    var abuser = abusers.shift();
-                                    if (abuser) {
-                                        if (abuser.hashedIPAddress == hashedVenterIP) {
-                                            console.log("creating room for venter abuser " + venterId + " and eliza " + venter.elizaUserId);
-                                            new Room(guid(), venterId, venter.elizaUserId);
-                                        } else  {
-                                            console.log("creating room for listener abuser " + listenerId + " and eliza " + listener.elizaUserId);
-                                            new Room(guid(), listener.elizaUserId, listenerId);
-                                        }
-                                    } else {
-                                        console.log("creating standard room " + venterId + " " + listenerId);
-                                        new Room(guid(), venterId, listenerId);
-                                    }
-                                }
-                                console.log('About to check queues... - again');
-                                return Room.checkQueues();
-                            });
-                            console.log('Check queues has returned.');
+                            new Room(guid(), venterId, listenerId);
+                            setTimeout(function() {
+                              Room.checkQueues();
+                            },500);
+
                             return;
                         }
                     }

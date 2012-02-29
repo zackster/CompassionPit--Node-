@@ -6,12 +6,9 @@
     
     var express = require("express");
 
-
-
-
     
     var app = module.exports = express.createServer(),
-        sys = require("sys"),
+        util = require("util"),
         socketIO = require("socket.io"),
         connect = require("connect"),
         Room = require("./rooms/models").Room,
@@ -68,7 +65,7 @@
 
         app.get("/", function (req, res, next) {
             res.render('index', {
-                roomCounts: getRoomCounts(),
+                roomCounts: getRoomCounts(), //TODO: let's make sure this is cached in memory, and displayed on index.jade ;p
                 includeCrazyEgg: true
             });
         });
@@ -547,25 +544,13 @@
             cssHash: cssHash
         });
 
-        // var fs      = require("fs");
-        // var httpsOption = {
-        //   key: fs.readFileSync('privatekey.pem').toString(),
-        //   cert: fs.readFileSync('certificate.pem').toString()
-        // };
-        // var https = express.createServer(httpsOption);
-        // https.helpers({
-        //     jsHash: jsHash,
-        //     cssHash: cssHash
-        // });        
-        // registerApp(https);
-        // registerSocket(https);
-        // https.listen(config.port);
-        // require('sys').puts("Server started on port 443");
+        console.log("Registering app routes");
         registerAppRoutes(app);
+        console.log("Registering Socket.IO");
         registerSocketIO(app);
 
         app.listen(config.port);        
-        require('sys').puts("Server started on port " + config.port);                
+        util.puts("Server started on port " + config.port);                
         
     });
     
