@@ -158,9 +158,11 @@
                 // do nothing
             }
         };
-        
+
+        log('creating comm object');
         var comm = Comm.create(); 
         window.comm = comm;
+        log('comm object creation successful');
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;

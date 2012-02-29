@@ -71,6 +71,7 @@
           socketio_addr = null;
         }
         
+        log('determining sio addr');
 
         var socket = io.connect(socketio_addr, {
             'max reconnection attempts': 5,
@@ -80,6 +81,7 @@
         
         var events = {};
         
+        log('declaring emit');
         var emit = function (event) {
           log("Emit was called for event " + event);
             var callbacks = has.call(events, event) && events[event];
@@ -279,6 +281,8 @@
             sendQueue.push(message);
             checkSend();
         };
+        
+        log('returning from comm');
 
         return {
             on: function (event, callback) {
