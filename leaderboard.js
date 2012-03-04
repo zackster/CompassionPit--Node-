@@ -95,6 +95,7 @@
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
+                console.log("left is now at %d", left);
                 if(--left === 0) {
                   console.log('calcLB is calling saveScores');
                   saveScores(listenerScores);
