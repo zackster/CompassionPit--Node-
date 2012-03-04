@@ -55,10 +55,7 @@
       
       };
       
-      this.register = function(id, email, password, callback) {
-        console.log('inside register function');
-        console.log(typeof(callback));
-        if(typeof(callback)!=='function') return;
+      this.register = function(id, email, password) {
         var self=this;
         var instance = new Users();
         instance.email = email;
@@ -70,20 +67,18 @@
             for (badField in err.errors) {
               badFields.push(badField);
             };          
-            callback(badFields);
             console.log("bad fields" + badFields);
-            return false;
+            return {success: false, error: badFields};
           }
           else if(err) {          
             callback('duplicate');
             console.log('duplicates' + err);
-            return false;
+            return {success: false, error: 'duplicate'};
           }
           else {
             self.logged_in_users[id] = email;
             console.log('success');
-            callback('success');
-            return true;
+            return {success: true};
           }
         });
       };
