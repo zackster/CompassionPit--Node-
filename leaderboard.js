@@ -33,7 +33,11 @@
   
   var saveScores = function(scores) {
 
+    console.log("scores");
+    console.log(scores);
     self.mostRecentScores = scores;
+    console.log("mostRecentScores");
+    console.log(self.mostRecentScores);
 
   }
   
