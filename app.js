@@ -44,7 +44,10 @@ process.on('uncaughtException', function(err) {
         feedbackServer = require('./feedback/server').feedbackServer(),
         dnode = require("dnode");
 
-
+    var getRoomCounts = function () {
+        var result = Room.calculateCounts();
+        return {l: result[0], v: result[1]};
+    };
 
     var registerAppRoutes = function(app) {
       
@@ -74,13 +77,6 @@ process.on('uncaughtException', function(err) {
 
         app.set('views', __dirname + '/views');
         app.set('view engine', 'jade');
-
-        var getRoomCounts = function () {
-            var methodStart = Date.now();
-            var result = Room.calculateCounts();
-            console.log("It took %s seconds to calculate room counts", Date.now()-methodStart);
-            return {l: result[0], v: result[1]};
-        };
 
         app.get("/", function (req, res, next) {
             console.log("Rendering index with getRoomCounts");
@@ -229,10 +225,10 @@ process.on('uncaughtException', function(err) {
           
           // by uncommenting this..... and letting dnode be down... and then trying to talk.... i think THAT can force a disconnect.
           try {
-            var leaderboard = {};
             dnode.connect(5050, function(remote) {
               console.log('connected to remote');
               remote.getMostRecentScores(function(leaderboard) {
+                leaderboard = leaderboard || {};
                 console.log('getmostrecentscores called back');
                 console.log(leaderboard);
                 res.render('leaderboard', { leaderboard: leaderboard });
