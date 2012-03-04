@@ -1,5 +1,6 @@
 static/style.min.css
 static/script.min.js
+start_app.sh
 config.js
 node_modules/*
 GeoIP*
