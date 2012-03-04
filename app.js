@@ -1,6 +1,14 @@
 /*jshint devel: true */
 /*global setInterval: false */
 
+
+//just for debugging -- will this catch the feedback call thats trigger the error and disconnecting my users?
+process.on('uncaughtException', function(err) {
+  console.log(err);
+});
+
+
+
 (function () {
     "use strict";
     
@@ -205,14 +213,21 @@
 
         app.get('/leaderboard', function(req, res) {
           console.log('received request');
-
-          dnode.connect(5050, function(remote) {
-            console.log('connected to remote');
-            remote.getMostRecentScores(function(leaderboard) {
-              console.log('getmostrecentscores called back');
-              res.render('leaderboard', { leaderboard: leaderboard });
+          
+          // by uncommenting this..... and letting dnode be down... and then trying to talk.... i think THAT can force a disconnect.
+          try {
+            dnode.connect(5050, function(remote) {
+              console.log('connected to remote');
+              remote.getMostRecentScores(function(leaderboard) {
+                console.log('getmostrecentscores called back');
+                res.render('leaderboard', { leaderboard: leaderboard });
+              });
             });
-          });
+            
+          }
+          catch(e) {
+            console.log("Ran into an exception though...");
+          }
 
           // feedbackServer.calculateLeaderboard(function(leaderboard) {
           //   res.render('leaderboard', { leaderboard: leaderboard });
@@ -225,15 +240,17 @@
         // add the log-based actions
         log.addActions(app);
 
-        process.on('uncaughtException', function (err) {
-            console.error(JSON.stringify(err));
-            log.error({
-                event: "Uncaught exception",
-                error: String(err.message),
-                stack: String(err.stack)
-            });
-        });
+        // commenting this out until I can really learn what this does......
+        // process.on('uncaughtException', function (err) {
+        //     console.error(JSON.stringify(err));
+        //     log.error({
+        //         event: "Uncaught exception",
+        //         error: String(err.message),
+        //         stack: String(err.stack)
+        //     });
+        // });
 
+        // we got to move this out of this method
         if (!config.serveMerged) {
             mergeStatic = function (callback) {
                 callback("", "");
