@@ -28,7 +28,7 @@
                       }
   }));
   
-  var mostRecentScores;
+  var mostRecentScores = {};
   
   var saveScores = function(scores) {
 
