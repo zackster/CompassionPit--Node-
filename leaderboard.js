@@ -11,6 +11,7 @@
   var Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
 
+  var is_email_address = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?');
     
   var Feedback = mongoose.model('Feedback', new Schema({
         listener:     {
@@ -52,7 +53,7 @@
             , thisListener;
             
         for(var i in listeners) {            
-
+          if(!is_email_address.test(listeners[i])) return;
          (function(thisListener, score) {
 
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
