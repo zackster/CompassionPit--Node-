@@ -67,8 +67,9 @@ process.on('uncaughtException', function(err) {
         app.set('view engine', 'jade');
 
         var getRoomCounts = function () {
+            methodStart = Date.now();
             var result = Room.calculateCounts();
-
+            console.log("It took %s seconds to calculate room counts", Date.now()-methodStart);
             return {l: result[0], v: result[1]};
         };
 
@@ -124,6 +125,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
+            //middleware http basic auth - password set in config.js - useful for forkers who want privacy
             if (config.listenerAuthentication) {
                 httpdigest.http_digest_auth(req, res, config.listenerAuthentication.username, config.listenerAuthentication.password, function (req, res) {
                     res.render("chat", {

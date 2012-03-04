@@ -120,7 +120,7 @@
           $("div#reputationLogin").show();
         }
         else {
-//          $("div#listenerFeedback").show(); //debugging only 
+          $("div#main").css('height','360px').css('overflow-y','hidden');
         }
 
         $("div#listenerFeedback button").click(function() {
