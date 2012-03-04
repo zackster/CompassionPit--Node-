@@ -28,9 +28,11 @@
                       }
   }));
   
+  var mostRecentScores;
+  
   var saveScores = function(scores) {
 
-    mostRecentScores = scores;
+    this.mostRecentScores = scores;
 
   }
   
