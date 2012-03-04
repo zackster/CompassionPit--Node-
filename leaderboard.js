@@ -83,7 +83,7 @@
 
          (function(thisListener, score) {
            if(!is_email_address.test(thisListener)) {
-             length--;
+             left--;
              return;
            } 
            
