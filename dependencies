@@ -2,3 +2,9 @@ node-markdown
 express
 connect
 mongoose
+socket.io
+async
+uglify-js
+geoip
+sqwish
+http-digest

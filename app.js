@@ -2,6 +2,14 @@
 /*global setInterval: false */
 
 
+/*
+
+current errors: 
+  getRoomCounts is undefined
+  
+
+*/
+
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
 //todo - modify log.js to insert this into the database .
 process.on('uncaughtException', function(err) {
@@ -221,6 +229,7 @@ process.on('uncaughtException', function(err) {
           
           // by uncommenting this..... and letting dnode be down... and then trying to talk.... i think THAT can force a disconnect.
           try {
+            var leaderboard = {};
             dnode.connect(5050, function(remote) {
               console.log('connected to remote');
               remote.getMostRecentScores(function(leaderboard) {
