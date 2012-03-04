@@ -2,6 +2,8 @@
 
 echo "$NODE_ENV"
 (
+cd /opt/chat-staging/;
+git reset --hard HEAD;
 git pull;
 NODE_ENV=staging;
 echo "Set NODE_ENV to $NODE_ENV";
