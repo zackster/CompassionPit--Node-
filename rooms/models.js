@@ -351,9 +351,9 @@
     Room.checkQueues = function () {
         if (venterQueue.length === 0 || listenerQueue.length === 0) {
             // at least one is empty, nothing to do.
-            console.log("venter or listener queue length == 0");
-            console.log(venterQueue);
-            console.log(listenerQueue);
+            // console.log("venter or listener queue length == 0");
+            // console.log(venterQueue);
+            // console.log(listenerQueue);
             return;
         }
         

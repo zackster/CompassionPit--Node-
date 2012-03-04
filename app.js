@@ -424,15 +424,7 @@ process.on('uncaughtException', function(err) {
         }
       }
       
-      socketHandlers.listenerFeedback = function(client, user, data, callback) {
-        
-          feedbackServer.addFeedback({
-            venter: user.id,
-            listener: Room.getByUserId(user.id).conversation.listener.userId,
-            direction: data['direction']
-          });
-                      
-      }
+
       
       socketHandlers.registerUser = function(client, user, data, callback) {
         
@@ -447,6 +439,16 @@ process.on('uncaughtException', function(err) {
           });
         }
 
+      }
+    
+      socketHandlers.listenerFeedback = function(client, user, data, callback) {
+        
+          feedbackServer.addFeedback({
+            venter: user.id,
+            listener: Room.getByUserId(user.id).conversation.listener.userId,
+            direction: data['direction']
+          });
+                      
       }
     
       /**
