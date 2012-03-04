@@ -67,7 +67,7 @@ process.on('uncaughtException', function(err) {
         app.set('view engine', 'jade');
 
         var getRoomCounts = function () {
-            methodStart = Date.now();
+            var methodStart = Date.now();
             var result = Room.calculateCounts();
             console.log("It took %s seconds to calculate room counts", Date.now()-methodStart);
             return {l: result[0], v: result[1]};
