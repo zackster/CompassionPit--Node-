@@ -2,7 +2,7 @@
 /*global setInterval: false */
 
 
-//just for debugging -- will this catch the feedback call thats trigger the error and disconnecting my users?
+//just for debugging -- looking for errors that would trigger disconnects, and any other problems
 process.on('uncaughtException', function(err) {
   console.log("We found an uncaught exception.");
   console.log(err);
