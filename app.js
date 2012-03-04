@@ -3,6 +3,7 @@
 
 
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
+//todo - modify log.js to insert this into the database ...
 process.on('uncaughtException', function(err) {
   console.log("We found an uncaught exception.");
   console.log(err);

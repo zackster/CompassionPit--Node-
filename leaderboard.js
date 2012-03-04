@@ -33,49 +33,24 @@
   
   var saveScores = function(scores) {
     
-    console.log('savescores called');
-    
-    console.log("scores");
-    console.log(scores);
-    self.mostRecentScores = scores;
-    console.log("mostRecentScores");
-    console.log(self.mostRecentScores);
-    
-    console.log('-----');
-    
-    mostRecentScores = scores;
-    
-    console.log("mostRecentScores");
-    console.log(mostRecentScores);
-    
-    
-    console.log('-----');
-    
-    this.mostRecentScores = scores;
-    
-    console.log("mostRecentScores");
-    console.log(this.mostRecentScores);
-    
-    
+
+    self.mostRecentScores = scores;    
 
   }
   
   var getMostRecentScores = function(cb) {
-    console.log("most, self, this");
-    console.log(mostRecentScores);
-    console.log(self.mostRecentScores);
-    console.log(this.mostRecentScores);
-    cb(mostRecentScores);
+
+    cb(self.mostRecentScores);
   }
   
   var calculateLeaderboard = function(callback) {
     
-      console.log('calcLB being called');
+      // console.log('calcLB being called');
 
   
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
         if(err) { console.log("Error! " + err ); return; } 
-        console.log('we returned from distinct listeners');
+        // console.log('we returned from distinct listeners');
         var listenerScores = {};
         var   left = listeners.length;
             
@@ -88,23 +63,23 @@
            } 
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
-             console.log('we returned from pos feed');
+             // console.log('we returned from pos feed');
            if(err) { console.log("error! " + err); return; }
              score += docs;
              
              
              Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
-               console.log('we returned from ned feed');
+               // console.log('we returned from ned feed');
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
-                console.log("left is now at %d", left);
+                // console.log("left is now at %d", left);
                 if(--left === 0) {
-                  console.log('calcLB is calling saveScores');
+                  // console.log('calcLB is calling saveScores');
                   saveScores(listenerScores);
-                  console.log('calcLB is setting a timeout');
+                  // console.log('calcLB is setting a timeout');
                   setTimeout(function() { 
-                    console.log('timeout function is being called');
+                    // console.log('timeout function is being called');
                     calculateLeaderboard(saveScores);
                   }, 5000);
                 }
