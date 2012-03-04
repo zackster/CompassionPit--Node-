@@ -4,6 +4,7 @@
 
 //just for debugging -- will this catch the feedback call thats trigger the error and disconnecting my users?
 process.on('uncaughtException', function(err) {
+  console.log("We found an uncaught exception.");
   console.log(err);
 });
 
@@ -250,12 +251,6 @@ process.on('uncaughtException', function(err) {
         //     });
         // });
 
-        // we got to move this out of this method
-        if (!config.serveMerged) {
-            mergeStatic = function (callback) {
-                callback("", "");
-            };
-        }
     }
     
     function registerSocketIO(app) {
@@ -552,6 +547,12 @@ process.on('uncaughtException', function(err) {
           })
       };
       
+    }
+    
+    if (!config.serveMerged) {
+        mergeStatic = function (callback) {
+            callback("", "");
+        };
     }
     
     mergeStatic(function (jsHash, cssHash) {
