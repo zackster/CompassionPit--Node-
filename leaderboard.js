@@ -91,12 +91,11 @@
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
-                console.log(listenerScores);
                 if(--left === 0) {
-                    setTimeout(function() { 
-                      calculateLeaderboard(saveScores);
-                    }, 5000);
-                    callback(listenerScores);
+                  saveScores(listenerScores);
+                  setTimeout(function() { 
+                    calculateLeaderboard(saveScores);
+                  }, 5000);
                 }
             });
           });                     
