@@ -75,7 +75,7 @@
   
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
         if(err) { console.log("Error! " + err ); return; } 
-
+        console.log('we returned from distinct listeners');
         var listenerScores = {};
         var   left = listeners.length;
             
@@ -85,11 +85,13 @@
            if(!is_email_address.test(thisListener)) return;
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
+             console.log('we returned from pos feed');
            if(err) { console.log("error! " + err); return; }
              score += docs;
              
              
              Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
+               console.log('we returned from ned feed');
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
