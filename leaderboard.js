@@ -38,10 +38,31 @@
     self.mostRecentScores = scores;
     console.log("mostRecentScores");
     console.log(self.mostRecentScores);
+    
+    console.log('-----');
+    
+    mostRecentScores = scores;
+    
+    console.log("mostRecentScores");
+    console.log(mostRecentScores);
+    
+    
+    console.log('-----');
+    
+    this.mostRecentScores = scores;
+    
+    console.log("mostRecentScores");
+    console.log(this.mostRecentScores);
+    
+    
 
   }
   
   var getMostRecentScores = function(cb) {
+    console.log("most, self, this");
+    console.log(mostRecentScores);
+    console.log(self.mostRecentScores);
+    console.log(this.mostRecentScores);
     cb(mostRecentScores);
   }
   

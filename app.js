@@ -224,6 +224,7 @@ process.on('uncaughtException', function(err) {
               console.log('connected to remote');
               remote.getMostRecentScores(function(leaderboard) {
                 console.log('getmostrecentscores called back');
+                console.log(leaderboard);
                 res.render('leaderboard', { leaderboard: leaderboard });
               });
             });
