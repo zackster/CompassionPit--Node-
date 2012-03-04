@@ -43,19 +43,20 @@
       var listenerScores = {};
   
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
-        if(err) {
-          console.log("Error! " + err );
-          return;
-        } 
+        if(err) { console.log("Error! " + err ); return; } 
         
         var   left = listeners.length
             , score
             , thisListener;
             
         for(var i in listeners) {            
-          if(!is_email_address.test(listeners[i])) continue;
-         (function(thisListener, score) {
 
+         (function(thisListener, score) {
+           console.log(thisListener);
+           console.log(!is_email_address.test(thisListener));
+           if(!is_email_address.test(thisListener)) continue;
+           
+           
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
            if(err) { console.log("error! " + err); return; }
              score += docs;
