@@ -32,7 +32,9 @@
   var self = this;
   
   var saveScores = function(scores) {
-
+    
+    console.log('savescores called');
+    
     console.log("scores");
     console.log(scores);
     self.mostRecentScores = scores;
@@ -67,33 +69,36 @@
   }
   
   var calculateLeaderboard = function(callback) {
+    
+      console.log('calcLB being called');
 
-      var listenerScores = {};
   
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
         if(err) { console.log("Error! " + err ); return; } 
-        
-        var   left = listeners.length
-            , score
-            , thisListener;
+
+        var listenerScores = {};
+        var   left = listeners.length;
             
         for(var i in listeners) {            
 
          (function(thisListener, score) {
-           console.log(thisListener);
-           console.log(!is_email_address.test(thisListener));
            if(!is_email_address.test(thisListener)) return;
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
            if(err) { console.log("error! " + err); return; }
              score += docs;
+             
+             
              Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
                 if(--left === 0) {
+                  console.log('calcLB is calling saveScores');
                   saveScores(listenerScores);
+                  console.log('calcLB is setting a timeout');
                   setTimeout(function() { 
+                    console.log('timeout function is being called');
                     calculateLeaderboard(saveScores);
                   }, 5000);
                 }
