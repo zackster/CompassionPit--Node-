@@ -62,15 +62,15 @@
       console.log("user email:", user.email);
       
       
-      var conditions = { listener: user.id }
-        , update     = { listener: user.email  }
-        , options    = { multi: true };
-      Feedback.update(conditions, update, options, callback);
-      var callback = function(err, numAffected) {
-        console.log("Credit feedback - callback");
+      var conditions = { listener: user.id };
+      var update     = { listener: user.email };
+      var options    = { multi: true };
+      console.log("Calling the Feedback.update function....");
+      Feedback.update(conditions, update, options, function(err, numAffected) {
+        console.log("Credit feedback - callback invoked! w00t");
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);        
-      } 
+      }); 
     },
     calculateLeaderboard: function(callback) {
 
