@@ -53,7 +53,7 @@
             , thisListener;
             
         for(var i in listeners) {            
-          if(!is_email_address.test(listeners[i])) return;
+          if(!is_email_address.test(listeners[i])) continue;
          (function(thisListener, score) {
 
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
