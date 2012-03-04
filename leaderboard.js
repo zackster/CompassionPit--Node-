@@ -54,7 +54,7 @@
          (function(thisListener, score) {
            console.log(thisListener);
            console.log(!is_email_address.test(thisListener));
-           if(!is_email_address.test(thisListener)) continue;
+           if(!is_email_address.test(thisListener)) return;
            
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
