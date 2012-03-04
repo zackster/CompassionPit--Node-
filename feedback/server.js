@@ -39,7 +39,7 @@
       instance.direction = feedback.direction;
       instance.save(function(err) {
         status = {};
-        if(err.errors) {
+        if(err && err.errors) {
           badFields = [];
           for (badField in err.errors) {
             badFields.push(badField);
