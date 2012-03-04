@@ -55,7 +55,6 @@
            console.log(thisListener);
            console.log(!is_email_address.test(thisListener));
            if(!is_email_address.test(thisListener)) return;
-           console.log(thisListener);
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
            if(err) { console.log("error! " + err); return; }
@@ -64,6 +63,7 @@
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
+                console.log(listenerScores);
                 if(--left === 0) {
                     setTimeout(function() { 
                       calculateLeaderboard(saveScores);
