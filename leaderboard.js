@@ -82,7 +82,10 @@
         for(var i in listeners) {            
 
          (function(thisListener, score) {
-           if(!is_email_address.test(thisListener)) return;
+           if(!is_email_address.test(thisListener)) {
+             length--;
+             return;
+           } 
            
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
              console.log('we returned from pos feed');
