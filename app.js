@@ -73,6 +73,7 @@ process.on('uncaughtException', function(err) {
         };
 
         app.get("/", function (req, res, next) {
+            console.log("Rendering index with getRoomCounts");
             res.render('index', {
                 roomCounts: getRoomCounts(), //TODO: let's make sure this is cached in memory, and displayed on index.jade ;p
                 includeCrazyEgg: true
@@ -348,7 +349,7 @@ process.on('uncaughtException', function(err) {
        * Second parameter is "_" because user is not yet defined
        */
       socketHandlers.register = function (client, _, data, callback) {
-          console.log("Register being called...");
+          console.log("Client is registering with server.");
           if (!data) {
               data = {};
           }
@@ -525,6 +526,7 @@ process.on('uncaughtException', function(err) {
       };
       
       socketHandlers.counts = function (client, user, _, callback) {
+          console.log("Calling back with getRoomCounts");
           callback(getRoomCounts());
       };
 

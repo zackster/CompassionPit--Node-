@@ -57,11 +57,17 @@
       });
     },
     creditFeedback : function(user) {
+      console.log("About to credit feedback");
+      console.log("user id:", user.id);
+      console.log("user email:", user.email);
+      
+      
       var conditions = { listener: user.id }
         , update     = { listener: user.email  }
         , options    = { multi: true };
       Feedback.update(conditions, update, options, callback);
       var callback = function(err, numAffected) {
+        console.log("Credit feedback - callback");
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);        
       } 
