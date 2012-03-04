@@ -29,10 +29,11 @@
   }));
   
   var mostRecentScores = {};
+  var self = this;
   
   var saveScores = function(scores) {
 
-    this.mostRecentScores = scores;
+    self.mostRecentScores = scores;
 
   }
   
