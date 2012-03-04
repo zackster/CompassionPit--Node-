@@ -29,14 +29,11 @@
   
   var saveScores = function(scores) {
 
-    console.log(scores); //debugging only
-    this.mostRecentScores = scores;
+    mostRecentScores = scores;
 
   }
   
   var getMostRecentScores = function(cb) {
-    console.log('called..');
-    console.log('!',mostRecentScores);
     cb(mostRecentScores);
   }
   
