@@ -39,7 +39,8 @@
         
         };      
         
-        this.login = function (username, password, callback) {
+        this.login = function (id, username, password, callback) {
+          var self = this;
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
               if (err) {
@@ -49,7 +50,8 @@
                 callback(false);
                 return;
               }
-              if(password == hashlib.md5(hashlib.md5(password)+results[0].salt)) {
+              if(password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
+                self.logged_in_users[id] = username;
                 callback(true);
                 return;
               }
@@ -60,56 +62,6 @@
             });
           
         }
-              
-        this.login = function (id, email, password, callback) { 
-          if(typeof(callback)!=='function') return;
-          var self = this;
-          Users.find({'email': email, 'password': password}, function(err, docs) {
-            if(err) {
-              console.log('An error occurred: ' + err);
-            }
-            else {          
-              if(docs.length) {
-                self.logged_in_users[id] = email;
-                callback('success');              
-                return true;
-              }
-              else {
-                callback('failure');
-                return false;
-              }
-            }
-          });
-      
-        };
-      
-        this.register = function(id, email, password, callback) {
-          var self=this;
-          var instance = new Users();
-          instance.email = email;
-          instance.password = password;
-          instance.save(function(err) {
-            status = {};
-            if(err && err.errors) {
-              badFields = [];
-              for (badField in err.errors) {
-                badFields.push(badField);
-              };          
-              console.log("registration bad fields" + badFields);
-              callback({success: false, error: badFields});
-            }
-            else if(err) {          
-              callback('duplicate');
-              console.log('registration duplicates' + err);
-              callback({success: false, error: 'duplicate'});
-            }
-            else {
-              self.logged_in_users[id] = email;
-              console.log('registration success');
-              callback({success: true});
-            }
-          });
-        };
     }  
   
 

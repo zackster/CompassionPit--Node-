@@ -31,7 +31,6 @@ process.on('uncaughtException', function(err) {
         connect = require("connect"),
         Room = require("./rooms/models").Room,
         User = require("./users/models").User,
-        Abuse = require("./abusers/models").Abuse,
         guid = require("./utils").guid,
         forceLatency = require("./utils").forceLatency,
         latencyWrap = require("./utils").latencyWrap,
@@ -188,37 +187,26 @@ process.on('uncaughtException', function(err) {
             }
         });
 
-        app.get("/abuse", function (req, res) {
-            res.render("abuse-login");
-        });
 
-        app.post("/abuse", function (req, res) {
-            if (req.body.password !== config.systemPassword) {
-                res.send("Wrong password");
-            }
-            Abuse.getAllAbusers(function (abusers)  {
-                res.render("abuse", {
-                    abusers: abusers
-                });
-            });
-        });
-
-        app.get('/messageChart', function (req, res) {
-            log.LogEntry.find({}, null, { sort: { time: 1 } }, function (err, docs) {
-                var messages = [];
-                docs.forEach(function (doc) {
-                    if (doc.action === "messageSent") {
-                        var count = doc.count || 1;
-                        for (var i = 0; i < count; i += 1) {
-                            messages.push(+new Date(doc.time));
-                        }
-                    }
-                });
-                res.render('messageChart', {
-                    messages: messages
-                });
-            });
-        });
+        // disabling this until we refactor - dont want people who find the source to exploit it! :)
+        
+        
+        // app.get('/messageChart', function (req, res) {
+        //     log.LogEntry.find({}, null, { sort: { time: 1 } }, function (err, docs) {
+        //         var messages = [];
+        //         docs.forEach(function (doc) {
+        //             if (doc.action === "messageSent") {
+        //                 var count = doc.count || 1;
+        //                 for (var i = 0; i < count; i += 1) {
+        //                     messages.push(+new Date(doc.time));
+        //                 }
+        //             }
+        //         });
+        //         res.render('messageChart', {
+        //             messages: messages
+        //         });
+        //     });
+        // });
 
         app.get('/leaderboard', function(req, res) {
           console.log('received request');
@@ -448,7 +436,7 @@ process.on('uncaughtException', function(err) {
        * Request to join a channel based on the provided type
        */
       socketHandlers.join = function (client, user, data, callback) {
-        console.log('join request');
+          console.log('join request');
           var type = data.type;
           if (type !== "venter") {
               type = "listener";
@@ -458,12 +446,7 @@ process.on('uncaughtException', function(err) {
           
           var room = Room.getByUserId(userId);
           if (room) {
-              if (data.isAbuse) {
-                  room.removeUser(userId, "abuse");
-                  room.reportAbuse(userId);
-              } else {
-                  room.removeUser(userId, "request");
-              }
+              room.removeUser(userId, "request");
           }
           console.log("adding user to queue");
           console.log(userId, data.type, data.partnerId, data.priority);
@@ -520,27 +503,6 @@ process.on('uncaughtException', function(err) {
       socketHandlers.counts = function (client, user, _, callback) {
           console.log("Calling back with getRoomCounts");
           callback(getRoomCounts());
-      };
-
-      /**
-       * abuser conversations
-       */
-      socketHandlers.get_abuser_conversations = function (client, user, abuserHashedIPAddress, callback) {
-          Abuse.getConversations(abuserHashedIPAddress, function (data) {
-              callback(data);
-          })
-      };
-
-      socketHandlers.ignore_abuser_conversation = function (client, user, data, callback) {
-          Abuse.removeConversation(data, function () {
-              callback(true);
-          })
-      };
-
-      socketHandlers.ban_abuser = function (client, user, abuserHashedIPAddress, callback) {
-          Abuse.banAbuser(abuserHashedIPAddress, function () {
-              callback(true);
-          })
       };
       
     }
