@@ -18,7 +18,7 @@
     
         this.getEmailFromListenerId = function(id) {
           console.log("Looking up listener id: %s", id);
-          cnosole.log("Returning: %s", this.logged_in_users[id]);
+          console.log("Returning: %s", this.logged_in_users[id]);
           return this.logged_in_users[id];
         
         };      
