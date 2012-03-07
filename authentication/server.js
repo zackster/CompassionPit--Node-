@@ -45,7 +45,7 @@
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
               console.log("Query callback");
-              console.log("ERR: %s");
+              console.log("ERR: %s", err);
               console.log("\nRESULTS:");
               console.log(results);
               console.log("\nFIELDS:");
@@ -57,7 +57,7 @@
                 callback(false);
                 return;
               }
-              if(password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
+              if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
                 self.logged_in_users[id] = username;
                 callback(true);
                 return;
