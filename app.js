@@ -422,6 +422,10 @@ process.on('uncaughtException', function(err) {
           });
           callback(true);
         }
+        else {
+          console.log("Login failed!");
+          callback(false);
+        }
       }            
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
