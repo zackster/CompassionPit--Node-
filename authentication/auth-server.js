@@ -41,30 +41,23 @@
         
         this.login = function (id, username, password, callback) {
           var self = this;
-          console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
-              console.log("Query callback");
-              console.log("ERR: %s", err);
-              console.log("\nRESULTS:");
-              console.log(results);
-              console.log("\nFIELDS:");
-              console.log(fields);
               if (err) {
                 throw err;
               }
               if(!results.length) {
                 callback(false);
-                return;
+                return false;
               }
               if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
                 self.logged_in_users[id] = username;
                 callback(true);
-                return;
+                return true;
               }
               else {
                 callback(false);
-                return;
+                return false;
               }
             });
           

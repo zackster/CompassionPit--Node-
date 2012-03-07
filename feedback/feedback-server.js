@@ -2,7 +2,7 @@
   
 
   var mongoose       = require('mongoose')
-    , authServer     = require('../authentication/server').authServer();
+    , authServer     = require('../authentication/auth-server').authServer();
 
   var Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;

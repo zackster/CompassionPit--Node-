@@ -37,13 +37,15 @@ To get project to run:
 
 * install MongoDB: http://shiftcommathree.com/articles/how-to-install-mongodb-on-os-x
 
-* install node.js (nodejs.org)
+* install node.js (nodejs.org). Please use with version 0.60 or greater..
 
 * install npm (node package manager). one line install:
 
 	`curl http://npmjs.org/install.sh | sh`
 
-* copy "config.js.template" to "config.js". config.js is in the .gitignore file, which git tracks. "static/style.min.css" and "static/script.min.js" are also included in ".gitignore"; those are automatically generated and minified when the application is run.
+* copy "config-sample.js" to "config.js". config.js is in the .gitignore file, which git tracks. "static/style.min.css" and "static/script.min.js" are also included in ".gitignore"; those are automatically generated and minified when the application is run.
+
+* fill out config.js according to your server
 
 * install GeoIP lib:
   
@@ -56,12 +58,18 @@ To get project to run:
 
 * `npm install geoip`
 
-* `cd node_modules/hashlib`
-  
-  `node-waf configure build`
+* `git clone https://github.com/brainfucker/hashlib.git
+   cd hashlib
+   make
+   sudo make install`
 
-* `node app.js`
+* `NODE_ENV=development node app.js`
 
+*  you also need to run the leaderboard calculator, which you should run as a separate process: `NODE_ENV=development node leaderboard.js`
+
+*  N.B. if after running "node app.js", the application complains about you missing any dependencies (e.g. "error, couldn't find module 'mongoose'"), you should be able to install them by simply doing "npm install mongoose"
+
+*  i like to keep the app running with `forever start app.js` and `forever start leaderboard.js`.  you may need to install the npm "gem" forever, first: `npm install forever -g`.  
 
 --------
 
@@ -167,6 +175,3 @@ Fetch status and messages of conversations
                 })
             };
         });
-
-
-// hello_moto!_!

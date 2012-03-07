@@ -39,8 +39,8 @@ process.on('uncaughtException', function(err) {
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
         httpdigest = require('http-digest'),
-        authServer = require('./authentication/server').authServer(),
-        feedbackServer = require('./feedback/server').feedbackServer(),
+        authServer = require('./authentication/auth-server').authServer(),
+        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
         dnode = require("dnode");
 
     var getRoomCounts = function () {
