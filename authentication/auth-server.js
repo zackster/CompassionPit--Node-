@@ -16,10 +16,10 @@
     function Server() {
     }
     
-    Server.prototype.getUsernameFromListenerId = function(id) {
-      console.log("Looking up listener id: %s", id);
-      console.log("Returning: %s", logged_in_users[id]);
-      return logged_in_users.id;
+    Server.prototype.getUsernameFromListenerId = function(listener_id) {
+      console.log("Looking up listener id: %s", listener_id);
+      console.log("Returning: %s", logged_in_users[listener_id]);
+      return logged_in_users[listener_id];
     };
     
     Server.prototype.login = function (id, username, password, callback) {
@@ -37,7 +37,7 @@
           if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
             console.log("Returning true!");
             console.log(logged_in_users);
-            logged_in_users.id = username;
+            logged_in_users[id] = username;
             console.log(logged_in_users);
             callback(true);
           }
