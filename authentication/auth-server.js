@@ -22,6 +22,7 @@
     };
     
     Server.prototype.login = function (id, username, password, callback) {
+      var self = this;
       console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
       client.query(
         'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
@@ -35,7 +36,7 @@
           }
           if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
             console.log("Returning true!");
-            this.logged_in_users.id = username;
+            self.logged_in_users.id = username;
             callback(true);
           }
           else {
