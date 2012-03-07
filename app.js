@@ -414,19 +414,18 @@ process.on('uncaughtException', function(err) {
       
       
       socketHandlers.authenticateUser =  function(client, user, data, callback) {
-        if(authServer.login(user.id, data.username, data.password, callback)) {
-          console.log("Login succeeded!");
-          
+        if(authServer.login(user.id, data.username, data.password)) {
+          console.log("Login succeeded!");          
           feedbackServer.creditFeedback({
             id: user.id, 
             username: data.username
           });
+          callback(true);
         }
       }            
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
-        
-        
+                
           feedbackServer.addFeedback({
             venter: user.id,
             listener: Room.getByUserId(user.id).conversation.listener.userId,

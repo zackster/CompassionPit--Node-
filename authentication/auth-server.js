@@ -23,7 +23,7 @@
         
         };      
         
-        this.login = function (id, username, password, callback) {
+        this.login = function (id, username, password) {
           var self = this;
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
@@ -31,16 +31,13 @@
                 throw err;
               }
               if(!results.length) {
-                callback(false);
                 return false;
               }
               if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
                 self.logged_in_users[id] = username;
-                callback(true);
                 return true;
               }
               else {
-                callback(false);
                 return false;
               }
             });
