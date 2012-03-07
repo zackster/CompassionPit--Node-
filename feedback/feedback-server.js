@@ -38,6 +38,12 @@
           
       
       instance.direction = feedback.direction;
+      
+      console.log(instance);
+      console.log(instance.venter);
+      console.log(instance.listener);
+      console.log(instance.direction);
+      
       instance.save(function(err) {
         if(err && err.errors) {
           var badFields = [];
@@ -58,10 +64,10 @@
     creditFeedback : function(user) {
       console.log("About to credit feedback");
       console.log("user id:", user.id);
-      console.log("user email:", user.email);
+      console.log("user username:", user.username);
 
       var conditions = { listener: user.id };
-      var update     = { listener: user.email };
+      var update     = { listener: user.username };
       var options    = { multi: true };
       console.log("Calling the Feedback.update function....");
       Feedback.update(conditions, update, options, function(err, numAffected) {
