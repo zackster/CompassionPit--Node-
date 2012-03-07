@@ -34,8 +34,11 @@
       instance.venter = feedback.venter;
       
       var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
+      console.log("Listener Account: %s", listener_account);
+      console.log("Feedback.listener: %s", feedback.listener);
+
       instance.listener = listener_account ? listener_account : feedback.listener;
-          
+      console.log("Instance.listener: %s", instance.listener);
       
       instance.direction = feedback.direction;
       
