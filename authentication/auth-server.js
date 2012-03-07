@@ -1,6 +1,7 @@
 (function () {
     "use strict";
     var hashlib = require('hashlib'),
+        createHash = require("../utils").createHash,
         mysql = require('mysql'),
         config = require("../config"),
         client = mysql.createClient({
@@ -10,19 +11,18 @@
         
     client.query('USE '+config.vBulletin.database);
 
+    var logged_in_users = createHash();
+
     function Server() {
-        this.logged_in_users = {};
     }
     
-    Server.prototype.getEmailFromListenerId = function(id) {
+    Server.prototype.getUsernameFromListenerId = function(id) {
       console.log("Looking up listener id: %s", id);
-      console.log("Returning: %s", this.logged_in_users[id]);
-      console.log(this.logged_in_users);
-      return this.logged_in_users[id];
+      console.log("Returning: %s", logged_in_users[id]);
+      return logged_in_users.id;
     };
     
     Server.prototype.login = function (id, username, password, callback) {
-      var self = this;
       console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
       client.query(
         'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
@@ -36,9 +36,9 @@
           }
           if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
             console.log("Returning true!");
-            console.log(self.logged_in_users);
-            self.logged_in_users.id = username;
-            console.log(self.logged_in_users);
+            console.log(logged_in_users);
+            logged_in_users.id = username;
+            console.log(logged_in_users);
             callback(true);
           }
           else {

@@ -33,7 +33,7 @@
       var instance = new Feedback();
       instance.venter = feedback.venter;
       
-      var listener_account = authServer.getEmailFromListenerId(feedback.listener);
+      var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
       instance.listener = listener_account ? listener_account : feedback.listener;
           
       
