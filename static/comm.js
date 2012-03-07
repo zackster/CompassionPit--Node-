@@ -65,7 +65,7 @@
         $("#initializing").append('<br>'+"Socket connection started");
         
         if(/compassionpit\.com/i.test(document.domain)) {
-          var socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";  
+          var socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";
         }
         else {
           var socketio_addr = null;
@@ -76,7 +76,7 @@
         var socket = io.connect(socketio_addr, {
             'max reconnection attempts': 5,
             'force new connection': true,
-        });              
+        });
         window.globalSocket = socket;
         
         var events = {};
@@ -132,10 +132,10 @@
             log("Sent register message: " + JSON.stringify(registerMessage));
             Chat.progressBar();
             $("#initializing").append('<br>'+"Sent register message via socket");
-        }
+        };
 
         socket.on('connect', function () {
-            log("socket connect");            
+            log("socket connect");
             Chat.progressBar();
             $("#initializing").append('<br>'+"Connected to the socket");
             log("We are about to emit connect");
@@ -182,7 +182,6 @@
                     var message = arrayify(data.d);
                     var oldUserId = userId;
                     var serverVersion = message[0];
-                    var i, len;
                     if (serverVersion !== VERSION) {
                         versionIssue();
                     }

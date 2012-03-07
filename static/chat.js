@@ -19,7 +19,7 @@
             value: progressBarPct
         });
         $("span#secondsTilAppLoad").html(Math.max(+$("span#secondsTilAppLoad").html() - 1, 2));
-    }
+    };
 
     exports.create = function () {
       
@@ -29,22 +29,21 @@
         for(var i=1;i<9;i++) {
           setTimeout(function() { self.progressBar(); }, 1500*i);
         }
-        var curtime = new Date();
         
         if ($("#chatWindow").length === 0) {
             return;
-        }                        
+        }
 
 
         $("button#login, button#register").click(function() {
-           $("div.announce").hide() 
+           $("div.announce").hide();
         });
         $("button#login").click(function() {
           var credentials = {
             username: $("#loginUsername").val(),
             password: $("#loginPassword").val()
-          }
-          var callback = function(success) {          
+          };
+          var callback = function(success) {
             hideSpinner();
             if(success) {
               $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
@@ -53,24 +52,24 @@
             }
             else {
               $("div#form_errors").html("Incorrect username/password combination.");
-            }          
-          }
+            }
+          };
           showSpinner('login');
           $("span#currentUser").html(credentials.username);
           comm.request("authenticateUser", credentials, callback);
         });
               
         var showSpinner = function(msg) {
-          $("div#reputationLogin").hide();          
+          $("div#reputationLogin").hide();
           var $spinner = $("div#spinner");
           $spinner.show();
           if(msg==='registration') {
             $spinner.html("Submitting your registration");
           }
           else if(msg === 'login') {
-            $spinner.html("Logging you in");            
+            $spinner.html("Logging you in");
           }
-          $spinner.append($('<br /><br /><img src="img/loadbar.gif" />'));          
+          $spinner.append($('<br /><br /><img src="img/loadbar.gif" />'));
         };
         
         var hideSpinner = function() {
@@ -83,15 +82,15 @@
         $("a.registration_mistake").click(function() {
           $("a#meant_to_login").toggle();
           $("a#register_account").toggle();
-          $(this).hide();          
+          $(this).hide();
           $("button#login").toggle();
-          $("button#register").toggle();          
+          $("button#register").toggle();
         });
 
 
         var CLIENT_TYPE = window.CLIENT_TYPE;
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
-        var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;        
+        var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
 
         if(CLIENT_TYPE == 'listener') {
           $("div#reputationLogin").show();
@@ -137,7 +136,7 @@
         };
 
         log('creating comm object');
-        var comm = Comm.create(); 
+        var comm = Comm.create();
         window.comm = comm;
         log('comm object creation successful');
         var hasPartner = false;
@@ -234,7 +233,7 @@
             }, 0);
         };
         
-        function status(msg, cssClass, checkQueue) {                    
+        function status(msg, cssClass, checkQueue) {
           
             checkingQueue = checkQueue && msg;
 
@@ -354,9 +353,8 @@
         var scrollToBottomOfChat = function () {
             var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
             scrollDiv.scrollTop = scrollDiv.scrollHeight;
-        }
+        };
 
-        var count = 0;
         var i = 0;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg, cssClass) {
@@ -366,7 +364,7 @@
             } else {
                 $td.text(capitalize(from) + ": " + msg);
             }
-            var row = $('#chatWindow > tbody:last')
+            $('#chatWindow > tbody:last')
                 .append($("<tr>")
                     .addClass(cssClass || (from === 'Me' ? 'blue-row' : from === 'System' ? 'off-white-row' : 'white-row'))
                     .append($td));
@@ -431,7 +429,7 @@
 
 
         function sendMessage(msg) {
-            if (msg == '' || !hasPartner) {
+            if (msg === '' || !hasPartner) {
                 return;
             }
 
@@ -441,7 +439,7 @@
 
             comm.request("msg", msg, function (data) {
                 if (data !== true) {
-                    addMessage('System', 'Failed to send message.', 'yellow-row')
+                    addMessage('System', 'Failed to send message.', 'yellow-row');
                 }
             });
             comm.request("typing", {state: 'stop'});
@@ -505,10 +503,7 @@
                 }
                 addMessage('System', message);
             }
-        if(geoInfo) {
-                // sets for slot 1, scope 2 - session scope
-            _gaq.push(['_setCustomVar', 1, 'Show Partner Geo Information?', 'Yes', 2]);
-        }
+
 
         });
         
@@ -565,7 +560,7 @@
             includeLikeButtonScript();
             
             info('Partner disconnected.');
-        });        
+        });
         
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
@@ -575,7 +570,7 @@
             restart: function () {
                 comm.register();
             }
-        }
-    };    
+        };
+    };
     
 }(window.Chat = {}, jQuery));

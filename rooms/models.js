@@ -8,12 +8,10 @@
     var log = require("../log"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
-        forceLatency = require("../utils").forceLatency,
         User = require("../users/models").User,
         hashIPAddress = require("../utils").hashIPAddress,
         async = require( 'async' );
     
-    var has = Object.prototype.hasOwnProperty;
     
     /**
      * The amount of time between activities until the room is considered expired.
@@ -59,16 +57,9 @@
             listener: ConversationPartner,
             messages: [Message]
         }));
-        mongoose.model('Abuser', new Schema({
-            hashedIPAddress: { type: String },
-            banned: { type: Boolean },
-            referrers: [],
-            conversations: []
-        }));
     }());
     
     var Conversation = exports.Conversation = mongoose.model('Conversation');
-    var Abuser = exports.Abuser = mongoose.model('Abuser');
     
     var saveConversation = function (conversation) {
         if (conversation.messages.length) {
@@ -299,7 +290,7 @@
         }
 
         var user = User.getById(userId);
-        if (DEVELOPMENT && (user.getIPAddress() == "" || user.getIPAddress() == "127.0.0.1")) {
+        if (DEVELOPMENT && (user.getIPAddress() === "" || user.getIPAddress() == "127.0.0.1")) {
             // console.log("setting ip for " + type + " " + userId);
             user.setIPAddress(type === "venter" ? "123.123.123.123" : "1.2.3.4");
         }
@@ -407,10 +398,9 @@
                             var venterIP = venter.getIPAddress();
                             var listenerIP = listener.getIPAddress();
 
-                            var hashedVenterIP = hashIPAddress(venterIP); 
+                            var hashedVenterIP = hashIPAddress(venterIP);
                             var hashedListenerIP = hashIPAddress(listenerIP);
                             
-                            console.log('About to enter abuser area');
 //                            console.log('hashed ip', hashedIPAddress);
                             console.log('hashed venter', hashedVenterIP);
                             console.log('hashed listener', hashedListenerIP);
@@ -491,7 +481,7 @@
             otherQueue = venterQueue;
         }
         
-        var result = index;
+
         for (var i = 0; i < index; i += 1) {
             var competitorId = queue[i];
 
@@ -796,70 +786,6 @@
     };
     
     /**
-     * Report abuse move the provided user from the Room.
-     *
-     * @param {String} userId The unique identifer of the user that reports abuse.
-     */
-    Room.prototype.reportAbuse = function (userId) {
-        var self = this;
-        var clientType = this.users[userId];
-        if (clientType) {
-            log.info({
-                event: "Abuse Reported",
-                user: userId,
-                room: this.id,
-                type: clientType || 'unknown'
-            });
-        }
-
-        Object.keys(this.users).forEach(function (otherUserId) {
-            if (otherUserId !== userId) {
-                var user = User.getById(userId);
-                var otherUser = User.getById(otherUserId);
-
-                var abuserType = self.users[otherUserId];
-                var hashedIPAddress = self.conversation[abuserType].hashedIPAddress;
-                Abuser.find({ hashedIPAddress: self.conversation[abuserType].hashedIPAddress }, function (err, abusers) {
-                    if (err) {
-                        log.error({
-                            event: "Cannot retrieve inactive conversations",
-                            error: err.toString()
-                        });
-                    } else {
-                        var abuser = abusers[0];
-                        if (abuser) {
-                            abuser.conversations.push(self.conversation._id);
-                            abuser.referrers.push(otherUser.referrer);
-                        } else {
-                            abuser = new Abuser({
-                                hashedIPAddress: self.conversation[abuserType].hashedIPAddress,
-                                conversations: [ self.conversation._id ],
-                                referrers: [ otherUser.referrer ]
-                            });
-                        }
-                        abuser.save();
-                    }
-                });
-                /* this creates object with "$push" key, eg { "$push": {collections : .. }}, probably bug in mongoose 
-                Abuser.update(
-                    { hashedIPAddress: self.conversation[abuserType].hashedIPAddress },
-                    { $push: { conversations: [ self.conversation._id ] } },
-                    { upsert: true },
-                    function (err) {
-                        if (err) {
-                            log.error({
-                                event: "Cannot update abuser",
-                                error: err.toString()
-                            });
-                            console.log(err.toString())
-                        }
-                    }
-                ); */
-            }
-        });
-    }
-
-    /**
      * Remove the provided user from the Room.
      *
      * @param {String} userId The unique identifer of the user to remove.
@@ -899,7 +825,7 @@
                     if ( reason == 'disconnect' ) {
                         console.log( 'dropping user %s from room', user );
 
-                        delete users[ user ]
+                        delete users[ user ];
                         delete userIdToRoomId[ user ];
 
                         console.log( 'sending partDisconnect message to %s', user );

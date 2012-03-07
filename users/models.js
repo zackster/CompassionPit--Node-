@@ -153,7 +153,7 @@
      */
     User.prototype.setIPAddress = function (ipAddress) {
         return this.ipAddress = ipAddress;
-    }
+    };
     
     var configGeoParts = config.geoLocationParts || [];
     

@@ -4,7 +4,7 @@
 
 /*
 
-current errors: 
+current errors:
   getRoomCounts is undefined
   
 
@@ -28,7 +28,6 @@ process.on('uncaughtException', function(err) {
     var app = module.exports = express.createServer(),
         util = require("util"),
         socketIO = require("socket.io"),
-        connect = require("connect"),
         Room = require("./rooms/models").Room,
         User = require("./users/models").User,
         guid = require("./utils").guid,
@@ -136,7 +135,7 @@ process.on('uncaughtException', function(err) {
                         type: "listener",
                         includeCrazyEgg: true
                     });
-                })
+                });
             } else {
                 res.render("chat", {
                     type: "listener",
@@ -173,7 +172,7 @@ process.on('uncaughtException', function(err) {
             } else {
                 var message = req.body.message;
                 forceLatency(function () {
-                    socket.sockets.json.send({
+                    socketIO.sockets.json.send({
                         t: "sysmsg",
                         d: message
                     });
@@ -249,7 +248,7 @@ process.on('uncaughtException', function(err) {
         //     });
         // });
 
-    }
+    };
     
     function registerSocketIO(app) {
       // let socket.io hook into the existing app
@@ -410,33 +409,35 @@ process.on('uncaughtException', function(err) {
           var userId = user.id;
           var room = Room.getByUserId(userId);
           console.log(room.conversation.messages);
-      }
+      };
       
       
       socketHandlers.authenticateUser =  function(client, user, data, callback) {
-        if(authServer.login(user.id, data.username, data.password)) {
-          console.log("Login succeeded!");          
-          feedbackServer.creditFeedback({
-            id: user.id, 
-            username: data.username
-          });
-          callback(true);
-        }
-        else {
-          console.log("Login failed!");
-          callback(false);
-        }
-      }            
+        authServer.login(user.id, data.username, data.password, function(success) {
+          if(success) {
+            console.log("Login success!");
+            feedbackServer.creditFeedback({
+              id: user.id,
+              username: data.username
+            });
+            callback(true);
+          }
+          else {
+            console.log("Login failed!");
+            callback(false);
+          }
+        });
+      };
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
                 
           feedbackServer.addFeedback({
             venter: user.id,
             listener: Room.getByUserId(user.id).conversation.listener.userId,
-            direction: data['direction']
+            direction: data.direction
           });
                       
-      }
+      };
     
       /**
        * Request to join a channel based on the provided type
@@ -531,8 +532,8 @@ process.on('uncaughtException', function(err) {
         console.log("Registering Socket.IO");
         registerSocketIO(app);
 
-        app.listen(config.port);        
-        util.puts("Server started on port " + config.port);                
+        app.listen(config.port);
+        util.puts("Server started on port " + config.port);
         
     });
     

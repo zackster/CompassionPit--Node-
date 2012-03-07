@@ -21,34 +21,39 @@
           console.log("Returning: %s", this.logged_in_users[id]);
           return this.logged_in_users[id];
         
-        };      
+        };
         
-        this.login = function (id, username, password) {
+        this.login = function (id, username, password, callback) {
           var self = this;
+          console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
+              console.log("err: %s\nresults: %s\nfields: %s\n", err, results, fields);
               if (err) {
                 throw err;
               }
               if(!results.length) {
-                return false;
+                console.log("Returning false bc no users with that username.");
+                callback(false);
               }
               if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
+                console.log("Returning true!");
                 self.logged_in_users[id] = username;
-                return true;
+                callback(true);
               }
               else {
-                return false;
+                console.log("Returning false: wrong pw.");
+                callback(false);
               }
             });
           
-        }
-    }  
+        };
+    }
   
 
   
     exports.authServer = function() {
       return new Server();
-    }
+    };
   
 })();
