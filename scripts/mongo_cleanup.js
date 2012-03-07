@@ -1,6 +1,8 @@
 (function () {
     "use strict";
 
+    // the point of this script is for 32bit mongo dbs - to clean them up to make room for more data. 32bit mongo dbs have a 2gb limit.  only use a 32bit db for development - never for prod!
+
     var CONVERSATIONS_HISTORY = 180 * 24; // hours
     var LOG_ENTRIES_HISTORY = 7 * 24; // hours
     var CLIENT_ERRORS_HISTORY = 1; // hours
