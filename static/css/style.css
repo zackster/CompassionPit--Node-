@@ -1,7 +1,7 @@
 body {
   overflow:scroll;
 }
-a.registration_mistake {
+a.login_mistake {
   display:block;
   margin-top:15px;
 }
@@ -30,7 +30,7 @@ span#currentUser {
 .ui-progressbar-value { background-image: url(jquery-ui-images/pbar-ani.gif) !important; }
 div#initializing { padding: 20px; }
 div#progressbar { margin-top: 10px; }
-button.registration {
+button.login {
   font-size: 1.6em;
 }
 
@@ -426,7 +426,7 @@ ul.footernav li.last			{ padding:0 0 0 ;}
 /* ----------------- Index page ---------------------- */
 
 
-input.registration {
+input.login {
   font-size: 20px;
   width: 220px;
   color: black;

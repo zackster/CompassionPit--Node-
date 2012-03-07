@@ -41,19 +41,15 @@
         div#spinner          
         div#reputationLogin
           div(class="announce")
-            p Listeners can now create accounts to earn reputation as 
-              a(href="/leaderboard",target="_blank") great listeners
-              !              
+            p Listeners can now optionally log in using their CompassionPit forums account!
           div(class="form_errors",id="form_errors")
-          label(class="registration")
-            input(type="text", id="registerEmail", name="registerEmail", class="registration", placeholder="Email")
-          label(class="registration")
-            input(type="text", id="registerPassword", name="registerPassword", class="registration", placeholder="Password") 
-          button(id="login", class="registration") Log In!
-          button(id="register", class="registration") Register
+          label(class="login")
+            input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
+          label(class="login")
+            input(type="text", id="loginPassword", name="loginPassword", class="login", placeholder="Password") 
+          button(id="login", class="login") Log In!
           br
-          a(href="javascript:return false;", id="register_account", class="registration_mistake") Don't have an account? Register one!
-          a(href="javascript:return false;", id="meant_to_login", class="registration_mistake") Accidentally clicked register when you meant to log in?
+          a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
         div#listenerFeedback
           p Is this person a good listener?
             button(id="helpful") Yes!

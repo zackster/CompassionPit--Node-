@@ -1,25 +1,24 @@
 (function (exports, $, undefined) {
 
     $("div#main").hide();
-  
-    progressBarPct = 0;
-    
-    exports.progressBar = function(pct) {
-      if(pct=='init') {
-        $("#progressbar").progressbar({value:5});
-        return;
-      }
-      progressBarPct += 15;
-      if(pct==100) {
-        progressBarPct = 100;        
-        $("#initializing").fadeOut(1000, function() {
-          $("#main").fadeIn(1000);          
-        });        
-      }
-      $( "#progressbar" ).progressbar({
-           value: progressBarPct
-      });
-      $("span#secondsTilAppLoad").html(Math.max(+$("span#secondsTilAppLoad").html() - 1, 2));
+    var progressBarPct = 0;
+
+    exports.progressBar = function (pct) {
+        if (pct === 'init') {
+            $("#progressbar").progressbar({value: 5});
+            return;
+        }
+        progressBarPct += 15;
+        if (pct === 100) {
+            progressBarPct = 100;
+            $("#initializing").fadeOut(1000, function () {
+                $("#main").fadeIn(1000);
+            });
+        }
+        $("#progressbar").progressbar({
+            value: progressBarPct
+        });
+        $("span#secondsTilAppLoad").html(Math.max(+$("span#secondsTilAppLoad").html() - 1, 2));
     }
 
     exports.create = function () {
@@ -42,47 +41,25 @@
         });
         $("button#login").click(function() {
           var credentials = {
-            email: $("#registerEmail").val(),
-            password: $("#registerPassword").val()
+            username: $("#loginUsername").val(),
+            password: $("#loginPassword").val()
           }
-          var callback = function(status) {          
+          var callback = function(success) {          
             hideSpinner();
-            if(status==='success') {
+            if(success) {
               $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
                   $("div#loggedInAs").show();
               });
             }
             else {
-              $("div#form_errors").html("Incorrect email/password combination.");
+              $("div#form_errors").html("Incorrect username/password combination.");
             }          
           }
           showSpinner('login');
-          $("span#currentUser").html(credentials.email);
+          $("span#currentUser").html(credentials.username);
           comm.request("authenticateUser", credentials, callback);
         });
-        
-        
-        $("button#register").click(function() {
-          var credentials = {
-            email: $("#registerEmail").val(),
-            password: $("#registerPassword").val()
-          }
-          var callback = function(status) {
-            hideSpinner();
-            if(status=='success') {
-              $("div#reputationLogin").html("Registration Successful!").fadeOut(4000, function() {
-                  $("div#loggedInAs").show();
-              });
-            }
-            else {
-              $("div#form_errors").html("You need to enter a valid email address, and a password of at least 1 character.");
-            }
-          }
-          showSpinner('registration');
-          $("span#currentUser").html(credentials.email);
-          comm.request("registerUser", credentials, callback);
-        });
-        
+              
         var showSpinner = function(msg) {
           $("div#reputationLogin").hide();          
           var $spinner = $("div#spinner");

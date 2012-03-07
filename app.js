@@ -426,33 +426,13 @@ process.on('uncaughtException', function(err) {
       
       
       socketHandlers.authenticateUser =  function(client, user, data, callback) {
-        if(authServer.login(user.id, data.email, data.password, callback)) {
+        if(authServer.login(user.id, data.username, data.password, callback)) {
           feedbackServer.creditFeedback({
             id: user.id, 
-            email: data.email
+            username: data.username
           });
         }
-      }
-      
-
-      
-      socketHandlers.registerUser = function(client, user, data, callback) {
-        
-        authServer.register(user.id, data.email, data.password, function(registration_results) {
-          if(registration_results.success) {
-            console.log('successful registration... now crediting feedback');
-            feedbackServer.creditFeedback({
-              id: user.id, 
-              email: data.email
-            });
-            callback('success');
-          }
-          else {
-            callback(registration_results.error);
-          }
-        });
-
-      }
+      }            
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
         
