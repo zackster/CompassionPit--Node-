@@ -8,7 +8,7 @@
           password: config.vBulletin.password
         });
         
-        client.query('USE '+config.vBulletin.database);
+    client.query('USE '+config.vBulletin.database);
 
     function Server() {
         this.logged_in_users = {};
