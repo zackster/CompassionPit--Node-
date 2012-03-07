@@ -1,23 +1,6 @@
 (function () {
     "use strict";
-    var mongoose = require('mongoose'),
-        Schema = mongoose.Schema,
-        ObjectId = Schema.ObjectId,
-        Users = mongoose.model('Users', new Schema({
-                        email       : {
-                          type:       String,
-                          validate:   new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'),
-                          index:      {
-                                        unique:     true,
-                                        dropDups:   true
-                                      }
-                        },
-                        password    : {
-                          type:       String,
-                          validate:   [function(str) { return str.length>0; }]
-                        }
-                  })),
-        hashlib = require('hashlib'),
+    var hashlib = require('hashlib'),
         mysql = require('mysql'),
         config = require("../config"),
         client = mysql.createClient({
@@ -34,7 +17,8 @@
         this.logged_in_users = {};
     
         this.getEmailFromListenerId = function(id) {
-        
+          console.log("Looking up listener id: %s", id);
+          cnosole.log("Returning: %s", this.logged_in_users[id]);
           return this.logged_in_users[id];
         
         };      

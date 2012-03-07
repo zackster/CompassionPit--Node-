@@ -29,6 +29,9 @@
 
   var server = {
     addFeedback : function(feedback) {
+      console.log("Adding feedback");
+      console.log(feedback);
+      
       var instance = new Feedback();
       instance.venter = feedback.venter;
       
@@ -48,11 +51,10 @@
           console.log(badFields);
         }
         else if(err) {          
-          console.log("ERROR!");
-          console.log('duplicate');
+          console.log("ERROR! duplicate");
         }
         else {
-          console.log('success');
+          console.log('successfully added feedback');
         }
       });
     },
