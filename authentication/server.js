@@ -41,6 +41,7 @@
         
         this.login = function (id, username, password, callback) {
           var self = this;
+          console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
               if (err) {
