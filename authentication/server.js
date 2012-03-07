@@ -19,7 +19,7 @@
                   })),
         hashlib = require('hashlib'),
         mysql = require('mysql'),
-        config = require("./config"),
+        config = require("../config"),
         client = mysql.createClient({
           user: config.vBulletin.username,
           password: config.vBulletin.password
