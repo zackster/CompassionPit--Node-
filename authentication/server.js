@@ -44,6 +44,12 @@
           console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
           client.query(
             'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
+              console.log("Query callback");
+              console.log("ERR: %s");
+              console.log("\nRESULTS:");
+              console.log(results);
+              console.log("\nFIELDS:");
+              console.log(fields);
               if (err) {
                 throw err;
               }
