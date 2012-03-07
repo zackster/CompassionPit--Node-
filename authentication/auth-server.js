@@ -17,8 +17,8 @@
     Server.prototype.getEmailFromListenerId = function(id) {
       console.log("Looking up listener id: %s", id);
       console.log("Returning: %s", this.logged_in_users[id]);
+      console.log(this.logged_in_users);
       return this.logged_in_users[id];
-    
     };
     
     Server.prototype.login = function (id, username, password, callback) {
@@ -36,7 +36,9 @@
           }
           if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
             console.log("Returning true!");
+            console.log(self.logged_in_users);
             self.logged_in_users.id = username;
+            console.log(self.logged_in_users);
             callback(true);
           }
           else {
