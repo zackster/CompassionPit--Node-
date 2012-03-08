@@ -44,6 +44,7 @@
             password: $("#loginPassword").val()
           };
           var callback = function(success) {
+            log('callback called back with status: %s', success);
             hideSpinner();
             if(success) {
               $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
