@@ -24,6 +24,8 @@
     LogEntries.find({action:'connect'}, ['userid', 'time'], function(err, docs) {
       if(err) {  throw err; }
       for(var i in docs) {
+        console.log(docs);
+        console.log(docs[i]);
         var doc = docs[i];
         var user_connects = connections[doc.userid] || (connections[doc.userid]=[]);
         user_connects.push(doc.time);
@@ -35,6 +37,8 @@
     LogEntries.findOne({action:'disconnect'}, ['userid', 'time'], function(err, docs) {
       if(err) {  throw err; }
       for(var i in docs) {
+        console.log(docs);
+        console.log(docs[i]);
         var doc = docs[i];
         var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid]=[]);
         user_disconnects.push(doc.time);
