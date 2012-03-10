@@ -49,6 +49,7 @@
             if(success) {
               $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
                   $("div#loggedInAs").show();
+                  window.LISTENER_LOGGED_IN = true;
               });
             }
             else {
@@ -92,6 +93,7 @@
         var CLIENT_TYPE = window.CLIENT_TYPE;
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
         var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
+        window.LISTENER_LOGGED_IN = false;
 
         if(CLIENT_TYPE == 'listener') {
           $("div#reputationLogin").show();
@@ -137,7 +139,7 @@
         };
 
         log('creating comm object');
-        var comm = Comm.create();
+        var comm = window.Comm.create();
         window.comm = comm;
         log('comm object creation successful');
         var hasPartner = false;
@@ -455,6 +457,26 @@
                 $("#abuseButtonContainer")
                     .removeClass("hidden");
             }
+        });
+        comm.handler("received-feedback", function(message) {
+          switch (message) {
+            case "positive":
+              if(window.LISTENER_LOGGED_IN) {
+                $('div.announce').html('Your venter has rated you as a good listener!');
+              }
+              else {
+                $('div.announce').html('Your venter has rated you as a good listener! Log in with your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account.');
+              }
+
+              
+              break;
+            case "negative":
+              $('div.announce').html('Your venter has indicated that you are not a good listener.  Perhaps you could ask them how you can be a better listener?');
+              break;
+            default:
+              break;
+          }
+          
         });
         comm.handler("typing", function (type, message) {
             if (type != CLIENT_TYPE && hasPartner) {

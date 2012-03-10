@@ -310,7 +310,7 @@ process.on('uncaughtException', function(err) {
                                           client.json.send(message);
                                       });
                                   }
-                                  console.log("Message: %s\nResult: %s\nUser: %s\nType: %s\nClient: %s\n\n", message, result, user, type, client);
+                                  // console.log("Message: %s\nResult: %s\nUser: %s\nType: %s\nClient: %s\n\n", message, result, user, type, client);
                               });
                           }
                       } else {
@@ -439,15 +439,19 @@ process.on('uncaughtException', function(err) {
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
           
+          var venterId = user.id,
+            room = Room.getByUserId(venterId),
+            listenerId = room.conversation.listener.userId;
           
-          console.log("CLIENT: %s\nUSER: %s\nDATA: %s\nCALLBACK: %s\n\n", client, user, data, callback);
+          // console.log("CLIENT: %s\nUSER: %s\nDATA: %s\nCALLBACK: %s\n\n", client, user, data, callback);
                 
           feedbackServer.addFeedback({
-            venter: user.id,
-            listener: Room.getByUserId(user.id).conversation.listener.userId,
+            venter: venterId,
+            listener: listenerId,
             direction: data.direction
           });
-                      
+                              
+          room.sendToUser(listenerId, "received-feedback", data.direction);
       };
     
       /**

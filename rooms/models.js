@@ -686,6 +686,7 @@
         
         callback(true);
     };
+    
 
     Room.prototype.sendTypeStatus = function (userId, message, callback) {
         this.poke();
