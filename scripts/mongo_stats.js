@@ -30,11 +30,13 @@
             if (err) {
                 throw err;
             }
-            for (var i in docs) {
-                var doc = docs[i];
-                var user_connects = connections[doc.userid] || (connections[doc.userid] = []);
-                user_connects.push(doc.time);
+            if (docs) {
+              for (var i in docs) {
+                  var doc = docs[i];
+                  var user_connects = connections[doc.userid] || (connections[doc.userid] = []);
+                  user_connects.push(doc.time);
 
+              }
             }
 
         });
