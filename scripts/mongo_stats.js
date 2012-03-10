@@ -37,6 +37,7 @@
                   user_connects.push(doc.time);
 
               }
+              console.log('connections: %d', connections.length);
               callback(null);
             }
 
