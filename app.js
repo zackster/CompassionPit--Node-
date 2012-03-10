@@ -325,11 +325,13 @@ process.on('uncaughtException', function(err) {
               client.on('disconnect', latencyWrap(function () {
                   var clientId = client.id;
 
-                  var user = User.getBySocketIOId(clientId);
+                  var user = User.getBySocketIOId(clientId),
+                      uid = user ? user.id : null;
+                  log.store("disconnect", client.id);
                   log.info({
                       event: "Disconnected",
                       client: clientId,
-                      user: user ? user.id : null
+                      user: uid
                   });
                   if (user) {
                       user.setSocketIOId(null);
@@ -341,6 +343,7 @@ process.on('uncaughtException', function(err) {
                   event: "Connected",
                   client: client.id
               });
+              log.store("connect", client.id);
           });
           setInterval(function () {
               User.cleanup();
@@ -473,7 +476,6 @@ process.on('uncaughtException', function(err) {
           console.log("adding user to queue");
           console.log(userId, data.type, data.partnerId, data.priority);
           Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
-      
           callback(true);
       };
   

@@ -18,7 +18,8 @@
      * Represents a single LogEntry that will be stored in MongoDB
      */
     mongoose.model('LogEntry', new Schema({
-        action: { type: String, "enum": ["messageSent"] },
+        userid: { type: String },
+        action: { type: String, "enum": ['messageSent','connect','disconnect','joinRoom','leaveRoom'] },
         time: { type: Date, default: Date.now },
         count: { type: Number, default: 1 }
     }));
@@ -65,10 +66,18 @@
     exports.warn = makeLogFunction("warn");
     exports.error = makeLogFunction("error");
 
-    exports.store = function (action) {
-        var entry = new LogEntry({
-            action: action
-        });
+    exports.store = function (action, userid) {
+        if (userid) {
+          var entry = new LogEntry({
+              action: action,
+              userid: userid
+          });
+        }
+        else {
+          var entry = new LogEntry({
+              action: action
+          });
+        }
         entry.save(function (err) {
             if (err) {
                 exports.error({
@@ -100,7 +109,7 @@
                 if (err) {
                     throw err;
                 }
-                result.errors = errors
+                result.errors = errors;
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify(result));
             });

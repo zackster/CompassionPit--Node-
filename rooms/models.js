@@ -163,6 +163,8 @@
         
         this.addUser(venterId, "venter");
         this.addUser(listenerId, "listener");
+        log.store("joinRoom", venterId);
+        log.store("joinRoom", listenerId);
         
         var venter = User.getById(venterId);
         var listener = User.getById(listenerId);
@@ -528,7 +530,7 @@
             if (userIdToRoomId[userId] === this.id) {
                 delete userIdToRoomId[userId];
             }
-            
+            log.store("leaveRoom", userId);
             Room.addUserToQueue(userId, clientType);
         }
         

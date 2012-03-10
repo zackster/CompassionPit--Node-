@@ -465,7 +465,7 @@
                 $('div.announce').html('Your venter has rated you as a good listener!');
               }
               else {
-                $('div.announce').html('Your venter has rated you as a good listener! Log in with your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account.');
+                $('div.announce').html('Your venter has rated you as a good listener! Use your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account:');
               }
 
               
