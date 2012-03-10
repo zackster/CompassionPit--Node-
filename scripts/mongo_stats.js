@@ -67,14 +67,16 @@
         console.log('grabbing disconnections');
     };
 
-    var analyzeConnections = function() {
+    var analyzeConnections = function(callback) {
         //do something later
         console.log('analyzing connections');
+        callback(null);
     };
 
-    var printResults = function() {
+    var printResults = function(callback) {
         console.log(disconnections.length);
         console.log(connections.length);
+        callback(null);
     };
 
     async.series([
