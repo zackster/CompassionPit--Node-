@@ -3,15 +3,8 @@
     var hashlib = require('hashlib'),
         createHash = require("../utils").createHash,
         mysql = require('mysql'),
-        config = require("../config"),
-        client = mysql.createClient({
-          user: config.vBulletin.username,
-          password: config.vBulletin.password
-        });
+        config = require("../config");
         
-        console.log(client);
-        
-    client.query('USE '+config.vBulletin.database);
 
     var logged_in_users = createHash();
 
@@ -25,9 +18,16 @@
     };
     
     Server.prototype.login = function (id, username, password, callback) {
+      var client = mysql.createClient({
+        user: config.vBulletin.username,
+        password: config.vBulletin.password
+      });
+      client.query('USE '+config.vBulletin.database);
       console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
       client.query(
         'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
+          console.log('ending client');
+          client.end();
           console.log("err: %s\nresults: %s\nfields: %s\n", err, results, fields);
           if (err) {
             throw err;
