@@ -74,6 +74,7 @@
     };
 
     var printResults = function(err, result) {
+      console.log(result);
         var connections = result[0];
         var disconnections = result[1];
         console.log(connections.length);
