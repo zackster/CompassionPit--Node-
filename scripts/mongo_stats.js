@@ -83,11 +83,10 @@
     };
 
     async.series([
-      grabConnections,
-      grabDisconnections,
-      analyzeConnections,
-      printResults
-    ]);
+      grabConnections, 
+      grabDisconnections, 
+      analyzeConnections
+    ], printResults);
 
 
 } ());
