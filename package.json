@@ -24,6 +24,7 @@
   "dependencies": {
     "colors": "*",
     "flatiron": "0.1.x",
+    "date-utils": "1.2.9",
     "optimist": "0.2.x",
     "union": "0.1.x",
     "ecstatic": "0.1.x",
