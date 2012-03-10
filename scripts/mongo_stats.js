@@ -33,9 +33,9 @@
             if (docs) {
               for (var i in docs) {
                   var doc = docs[i];
-                  var user_connects = connections[doc.userid] || (connections[doc.userid] = []);
+                  var user_connects = connections[doc.userid] || [];
                   user_connects.push(doc.time);
-
+                  connections[doc.userid] = user_connects;
               }
               console.log('connections: %d', connections.length);
               callback(null);
