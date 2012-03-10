@@ -31,9 +31,12 @@
                 throw err;
             }
             if (docs) {
+              var doc;
               for (var i in docs) {
-                console.log(docs[i]);
-                  var doc = docs[i];
+                  console.log(docs[i]);
+                  
+                  doc = docs[i];
+                  console.log("DOC", doc);
                   var user_connects = connections[doc.userid] ? connections[doc.userid] : [];
                   console.log(user_connects);
                   console.log(doc.time);
