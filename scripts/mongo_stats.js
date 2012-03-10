@@ -47,11 +47,10 @@
             }
 
         });
-        console.log('grabbing connections');
+        console.log(connections.length);
     };
 
     var grabDisconnections = function(callback) {
-      console.log('begin, next function.');
         LogEntries.find({
             action: 'disconnect'
         },
@@ -65,12 +64,11 @@
                     var doc = docs[i];
                     var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid] = []);
                     user_disconnects.push(doc.time);
-
                 }
                 callback(null);
             }
         });
-        console.log('grabbing disconnections');
+        console.log(disconnections.length);
     };
 
     var analyzeConnections = function(callback) {
