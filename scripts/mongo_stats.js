@@ -43,6 +43,8 @@
                   console.log(user_connects);
                   console.log(doc.time);
                   console.log(doc['time']);
+                  console.log(docs[i]['time']);
+                  console.log(docs[i].userid);
                   console.log(doc[0]);
                   console.log(doc.userid);
                   console.log(new Date(doc.time));
