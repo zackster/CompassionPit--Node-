@@ -44,6 +44,7 @@
     };
 
     var grabDisconnections = function() {
+      console.log('begin, next function.');
         LogEntries.find({
             action: 'disconnect'
         },
