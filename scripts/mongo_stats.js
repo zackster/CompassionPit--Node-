@@ -41,9 +41,7 @@
                   user_connects.push(doc.time.toString());
                   connections[doc.userid] = user_connects;
               }
-              console.log('connections');
-              console.log(connections.length);
-              callback(null);
+              callback(null, connections);
             }
 
         });
@@ -64,8 +62,7 @@
                     var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid] = []);
                     user_disconnects.push(doc.time);
                 }
-                console.log(disconnections.length);
-                callback(null);
+                callback(null, disconnections);
             }
         });
     };
@@ -78,13 +75,12 @@
 
     var printResults = function(err, result) {
         console.log(result);
-        console.log(connections.length);
         console.log(err);
     };
 
     async.series([
-      grabConnections, 
-      grabDisconnections, 
+      grabConnections,
+      grabDisconnections,
       analyzeConnections
     ], printResults);
 
