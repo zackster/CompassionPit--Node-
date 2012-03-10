@@ -25,8 +25,11 @@
       if(err) {  throw err; }
       for(var i in docs) {
         var doc = docs[i];
-        connections[doc.userid].push(doc.time);
+        var user_connects = connections[doc.userid] || (connections[doc.userid]=[]);
+        user_connects.push(doc.time);
+
       }
+
     });
     
     LogEntries.findOne({action:'disconnect'}, ['userid', 'time'], function(err, docs) {
