@@ -76,8 +76,8 @@
         callback(null);
     };
 
-    var printResults = function(callback) {
-        console.log(disconnections.length);
+    var printResults = function(err, result) {
+        console.log(result);
         console.log(connections.length);
         callback(null);
     };
