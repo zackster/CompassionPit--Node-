@@ -32,6 +32,7 @@
             }
             if (docs) {
               for (var i in docs) {
+                console.log(docs[i]);
                   var doc = docs[i];
                   var user_connects = connections[doc.userid] ? connections[doc.userid] : [];
                   user_connects.push(doc.time);
