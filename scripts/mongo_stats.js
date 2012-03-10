@@ -42,12 +42,11 @@
                   connections[doc.userid] = user_connects;
               }
               console.log('connections');
-              console.log(connections);
+              console.log(connections.length);
               callback(null);
             }
 
         });
-        console.log(connections.length);
     };
 
     var grabDisconnections = function(callback) {
@@ -65,10 +64,10 @@
                     var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid] = []);
                     user_disconnects.push(doc.time);
                 }
+                console.log(disconnections.length);
                 callback(null);
             }
         });
-        console.log(disconnections.length);
     };
 
     var analyzeConnections = function(callback) {
