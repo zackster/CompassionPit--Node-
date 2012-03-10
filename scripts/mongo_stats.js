@@ -33,7 +33,8 @@
       if(err) {  throw err; }
       for(var i in docs) {
         var doc = docs[i];
-        disconnections[doc.userid].push(doc.time);
+        var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid]=[]);
+        user_disconnects.push(doc.time);
 
       }
       console.log(disconnections.length);
