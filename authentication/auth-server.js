@@ -9,6 +9,8 @@
           password: config.vBulletin.password
         });
         
+        console.log(client);
+        
     client.query('USE '+config.vBulletin.database);
 
     var logged_in_users = createHash();

@@ -175,8 +175,6 @@
         var requests = {};
         var handlers = {};
         socket.on('message', function (data) {
-          log("Received a message.");
-          log(data);
             if (!isRegistered) {
                 if (data.t === "register") {
                     var message = arrayify(data.d);
