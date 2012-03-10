@@ -79,7 +79,7 @@
     var printResults = function(err, result) {
         console.log(result);
         console.log(connections.length);
-        callback(null);
+        console.log(err);
     };
 
     async.series([
