@@ -38,6 +38,8 @@
                   console.log(user_connects);
                   console.log(doc.time);
                   console.log(doc['time']);
+                  console.log(doc[0]);
+                  console.log(doc.userid);
                   console.log(new Date(doc.time));
                   user_connects.push(doc.time.toString());
                   connections[doc.userid] = user_connects;
