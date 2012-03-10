@@ -21,7 +21,7 @@
 
 
 
-    var grabConnections = function() {
+    var grabConnections = function(callback) {
         LogEntries.find({
             action: 'connect'
         },
@@ -37,13 +37,14 @@
                   user_connects.push(doc.time);
 
               }
+              callback(null);
             }
 
         });
         console.log('grabbing connections');
     };
 
-    var grabDisconnections = function() {
+    var grabDisconnections = function(callback) {
       console.log('begin, next function.');
         LogEntries.find({
             action: 'disconnect'
@@ -60,6 +61,7 @@
                     user_disconnects.push(doc.time);
 
                 }
+                callback(null);
             }
         });
         console.log('grabbing disconnections');
