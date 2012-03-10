@@ -38,6 +38,7 @@
             }
 
         });
+        console.log('grabbing connections');
     };
 
     var grabDisconnections = function() {
@@ -58,10 +59,12 @@
                 }
             }
         });
+        console.log('grabbing disconnections');
     };
 
     var analyzeConnections = function() {
         //do something later
+        console.log('analyzing connections');
     };
 
     var printResults = function() {
