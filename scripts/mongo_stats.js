@@ -31,21 +31,24 @@
         user_connects.push(doc.time);
 
       }
-
+      console.log(connections.length);
     });
     
     LogEntries.find({action:'disconnect'}, ['userid', 'time'], function(err, docs) {
       if(err) {  throw err; }
-      for(var i in docs) {
-        console.log(docs);
-        console.log(docs[i]);
-        var doc = docs[i];
-        var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid]=[]);
-        user_disconnects.push(doc.time);
+        if(docs) {
+        
 
+        for(var i in docs) {
+          console.log(docs);
+          console.log(docs[i]);
+          var doc = docs[i];
+          var user_disconnects = disconnections[doc.userid] || (disconnections[doc.userid]=[]);
+          user_disconnects.push(doc.time);
+
+        }
+        console.log(disconnections.length);
       }
-      console.log(disconnections.length);
-
     });
     
 
