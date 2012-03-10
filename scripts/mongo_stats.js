@@ -37,6 +37,8 @@
                   
                   doc = docs[i];
                   console.log("DOC", doc);
+                  console.log(doc.prototype);
+                  console.log(typeof(doc));
                   var user_connects = connections[doc.userid] ? connections[doc.userid] : [];
                   console.log(user_connects);
                   console.log(doc.time);
