@@ -35,8 +35,11 @@
                 console.log(docs[i]);
                   var doc = docs[i];
                   var user_connects = connections[doc.userid] ? connections[doc.userid] : [];
+                  console.log(user_connects);
+                  
                   user_connects.push(doc.time);
                   connections[doc.userid] = user_connects;
+                  console.log(user_connects);
               }
               console.log('connections');
               console.log(connections);
