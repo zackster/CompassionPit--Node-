@@ -37,7 +37,7 @@
                   user_connects.push(doc.time);
                   connections[doc.userid] = user_connects;
               }
-              console.log('connections: %s', connections.length);
+              console.log('connections: %s', connections);
               callback(null);
             }
 
