@@ -74,11 +74,10 @@
     };
 
     var printResults = function(err, result) {
-      console.log(result[0]);
         var connections = result[0];
         var disconnections = result[1];
-        console.log(connections.length);
-        console.log(disconnections.length);
+        console.log(Object.keys(connections).length);
+        console.log(Object.keys(disconnections).length);
     };
 
     async.series([
