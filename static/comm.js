@@ -1,6 +1,14 @@
 /*jshint eqnull: true browser: true*/
 /*global io: false*/
 
+// Some comments on this code, to help you understand it better.
+//
+// Whenever a message is sent to socket.io, we simply issue a "comm.request(type,callback)" in, say, chat.js
+// Whenever a message is received FROM socket.io, we look up the handlers for that message type and call the local callbacks.
+//
+// Standard Observer pattern stuff.
+
+
 (function (exports, $, undefined) {
     "use strict";
     
@@ -62,6 +70,7 @@
     }());
 
     exports.create = function () {
+      var socketio_addr;
         $("#initializing").append('<br>'+"Socket connection started");
         
         if(/compassionpit\.com/i.test(document.domain)) {
@@ -130,13 +139,13 @@
             }
             socket.json.send(registerMessage);
             log("Sent register message: " + JSON.stringify(registerMessage));
-            Chat.progressBar();
+            window.Chat.progressBar();
             $("#initializing").append('<br>'+"Sent register message via socket");
         };
 
         socket.on('connect', function () {
             log("socket connect");
-            Chat.progressBar();
+            window.Chat.progressBar();
             $("#initializing").append('<br>'+"Connected to the socket");
             log("We are about to emit connect");
             emit("connect");
@@ -195,7 +204,7 @@
                     isRegistered = true;
                     log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
                     $("#initializing").append('<br>'+"Received register message via socket");
-                    Chat.progressBar();
+                    window.Chat.progressBar();
                     
                     checkSend(lastReceivedMessage);
                     
