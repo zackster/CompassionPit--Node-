@@ -37,7 +37,7 @@
                   var user_connects = connections[doc.userid] ? connections[doc.userid] : [];
                   console.log(user_connects);
                   
-                  user_connects.push(doc.time);
+                  user_connects.push(doc.time.toString());
                   connections[doc.userid] = user_connects;
                   console.log(user_connects);
               }
