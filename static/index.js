@@ -4,8 +4,7 @@
             return;
         }
         
-        var comm = Comm.create();
-        comm.register();
+
 
         var hasFocus = true;
         
@@ -27,23 +26,23 @@
         var timeoutId = null;
         var requestCounts = function() {
             timeoutId = null;
-            comm.request("counts", null, updateCounts);
+            $.getJSON('/counts', updateCounts);
 
             $('#counts').addClass("loading");
             if (hasFocus) {
                 timeoutId = setTimeout(requestCounts, 10 * 1000);
             }
-        }
+        };
         requestCounts();
         $(window).bind("blur", function() {
-        	hasFocus = false;
+          hasFocus = false;
         });
         $(window).bind("focus", function() {
-        	hasFocus = true;
-        	
-        	if (!timeoutId) {
-        	    requestCounts();
-        	}
+          hasFocus = true;
+
+          if (!timeoutId) {
+            requestCounts();
+          }
         });
     });
 }(jQuery));

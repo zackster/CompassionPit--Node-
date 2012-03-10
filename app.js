@@ -83,6 +83,11 @@ process.on('uncaughtException', function(err) {
                 includeCrazyEgg: true
             });
         });
+        
+        app.get("/counts", function(req,res) {
+          res.setHeader('content-type', 'application/json');
+          res.end(JSON.stringify(getRoomCounts()));
+        });
 
         app.get("/index.html", function (req, res) {
             res.redirect("/", 301);
@@ -128,8 +133,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
-            //middleware http basic auth - password set in config.js - useful for forkers who want privacy
-            if (config.listenerAuthentication) {
+            if (config.listenerAuthentication) {  //middleware http basic auth - password set in config.js - useful for forkers who want privacy
                 httpdigest.http_digest_auth(req, res, config.listenerAuthentication.username, config.listenerAuthentication.password, function (req, res) {
                     res.render("chat", {
                         type: "listener",
@@ -287,12 +291,15 @@ process.on('uncaughtException', function(err) {
                                   user.lastReceivedMessageIndex = data.i;
                               }
                               handler(client, user, data.d, function (result) {
+
                                   var message;
                                   if (type === "register") {
                                       message = {t: "register"};
                                   } else {
                                       message = {i: data.i};
                                   }
+                                                                    
+                                  // message.d is the variable callback passed in from the handler, and will get applied client-side by comm.js
                                   if (result !== null && result !== undefined) {
                                       message.d = result;
                                   }
@@ -303,6 +310,7 @@ process.on('uncaughtException', function(err) {
                                           client.json.send(message);
                                       });
                                   }
+                                  console.log("Message: %s\nResult: %s\nUser: %s\nType: %s\nClient: %s\n\n", message, result, user, type, client);
                               });
                           }
                       } else {
@@ -430,6 +438,9 @@ process.on('uncaughtException', function(err) {
       };
     
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
+          
+          
+          console.log("CLIENT: %s\nUSER: %s\nDATA: %s\nCALLBACK: %s\n\n", client, user, data, callback);
                 
           feedbackServer.addFeedback({
             venter: user.id,

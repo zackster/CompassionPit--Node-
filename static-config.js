@@ -15,7 +15,6 @@ module.exports = function (config) {
         "socket.io/socket.io.js",
         "comm.js",
         "chat.js",
-        "abuse.js",
         "index.js",
         "logs.js",
         "messageChart.js"
