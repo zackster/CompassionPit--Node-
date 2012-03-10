@@ -34,7 +34,7 @@
 
     });
     
-    LogEntries.findOne({action:'disconnect'}, ['userid', 'time'], function(err, docs) {
+    LogEntries.find({action:'disconnect'}, ['userid', 'time'], function(err, docs) {
       if(err) {  throw err; }
       for(var i in docs) {
         console.log(docs);
