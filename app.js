@@ -212,9 +212,7 @@ process.on('uncaughtException', function(err) {
         // });
 
         app.get('/leaderboard', function(req, res) {
-          console.log('received request');
           
-          // by uncommenting this..... and letting dnode be down... and then trying to talk.... i think THAT can force a disconnect.
           try {
             dnode.connect(5050, function(remote) {
               console.log('connected to remote');
@@ -231,9 +229,10 @@ process.on('uncaughtException', function(err) {
             console.log("Ran into an exception though...");
           }
 
-          // feedbackServer.calculateLeaderboard(function(leaderboard) {
-          //   res.render('leaderboard', { leaderboard: leaderboard });
-          // });
+          feedbackServer.calculateLeaderboard(function(leaderboard) {
+            res.render('leaderboard', { leaderboard: leaderboard });
+          });
+          
         });
 
         // import in the room-based actions

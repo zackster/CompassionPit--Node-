@@ -148,6 +148,10 @@
         var setHasPartner = function (value) {
             hasPartner = !!value;
             if (value) {
+                if(window.CLIENT_TYPE === 'venter') {
+                   $("#reportAbuse").show();
+                }
+              
                 setTimeout(function () {
                     if (hasPartner) {
                         $("#newPartner")
@@ -161,8 +165,8 @@
             } else {
                 $("#newPartner")
                     .addClass("disabled");
-                $("#abuseButtonContainer")
-                    .addClass("hidden");
+                $("#reportAbuse")
+                    .hide();
                 $("#typing_status").text('');
                 currentPartnerId = null;
             }
@@ -323,6 +327,7 @@
             }
             requestNewChatPartner(false, true);
             refocusInformInput();
+            window.alert("This listener has been reported as abusive.");
             return false;
         });
 

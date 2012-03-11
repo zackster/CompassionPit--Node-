@@ -1,3 +1,14 @@
+#reportAbuse {
+  box-shadow:none !important;
+  background: white !important;
+  display: none;
+}
+
+#reportAbuse a {
+  color: red !important;
+  text-decoration: none !important;  
+}
+
 body {
   overflow:scroll;
 }
