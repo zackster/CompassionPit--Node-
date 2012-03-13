@@ -34,7 +34,6 @@
         if(err) { console.log("Error! " + err ); return; }
         var listenerScores = [];
         var   left = listeners.length;
-        console.log(left);
         for(var i in listeners) {
           
          (function(thisListener) {
@@ -130,9 +129,6 @@
   
   exports.getLeaderboard = function() {
     return function(cb) {
-      console.log("getLB being called....");
-      console.log("self.mRS = ", self.mostRecentScores);
-      
       cb(self.mostRecentScores);
     };
   };
