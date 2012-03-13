@@ -213,6 +213,7 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           feedbackServer.getLeaderboard(function() {
+            console.log(this.mostRecentScores.length);
             res.render('leaderboard', { leaderboard: this.mostRecentScores });
           });
           
