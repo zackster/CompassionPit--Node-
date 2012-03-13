@@ -113,7 +113,7 @@
       });
     },
     getLeaderboard: function(cb) {
-      console.log(cb);
+      console.log(cb.toString());
       // console.log(this.mostRecentScores);
       cb(this.mostRecentScores);
     }
