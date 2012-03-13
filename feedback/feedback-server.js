@@ -27,6 +27,7 @@
   var saveScores = function(scores) {
     scores.sort();
     self.mostRecentScores = scores;
+    console.log("save scores says: self.mRS.length = ", self.mostRecentScores.length);
   };
   
   var calculateLeaderboard = function(callback) {
