@@ -112,6 +112,7 @@
       });
     },
     getLeaderboard: function(cb) {
+      console.log(this.mostRecentScores);
       cb(server.mostRecentScores);
     }
 
