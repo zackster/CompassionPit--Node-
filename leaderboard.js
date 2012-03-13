@@ -32,6 +32,7 @@
   
   var saveScores = function(scores) {
     
+    console.log(scores);
     scores.sort();
     self.mostRecentScores = scores;
 
@@ -52,16 +53,16 @@
         console.log('we returned from distinct listeners');
         var listenerScores = [];
         var   left = listeners.length;
-            
+        console.log(left);
         for(var i in listeners) {
-
+          
          (function(thisListener) {
            var score = 0;
            // if(!is_email_address.test(thisListener)) {
            //   left--;
            //   return;
            // }
-           
+           console.log("this listener?", thisListener);
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
              console.log('we returned from pos feed');
            if(err) { console.log("error! " + err); return; }
