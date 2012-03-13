@@ -113,6 +113,7 @@
       });
     },
     getLeaderboard: function(cb) {
+      console.log("inside getlb, ", this.mostRecentScores.length);
       cb.apply(this, this.mostRecentScores);
     }
 
