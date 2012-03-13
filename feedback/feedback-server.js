@@ -34,7 +34,7 @@
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
         if(err) { console.log("Error! " + err ); return; }
         var listenerScores = [];
-        var   left = listeners.length;
+        var   left = listeners.length;        
         for(var i in listeners) {
           
          (function(thisListener) {
@@ -51,6 +51,7 @@
                 score -= docs;
                 listenerScores[thisListener]=score;
                 if(--left === 0) {
+                  console.log(listenerScores);
                   callback(listenerScores);
                   setTimeout(function() {
                     calculateLeaderboard(saveScores);
