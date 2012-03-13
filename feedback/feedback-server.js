@@ -116,11 +116,7 @@
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);
       });
-    },
-    getMostRecentScores : function(cb) {
-      cb(self.mostRecentScores);
     }
-    
 
   };
   
@@ -130,6 +126,12 @@
   
   exports.feedbackServer = function() {
     return server;
+  };
+  
+  exports.getLeaderboard = function() {
+    return function(cb) {
+      cb(self.mostRecentScores);
+    };
   };
   
   
