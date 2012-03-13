@@ -104,6 +104,7 @@
                     setTimeout(function() {
                       self.calculateLeaderboard();
                     }, 5000);
+                    console.log("setting self.mrs (length)", listenerScores.length);
                     self.mostRecentScores = listenerScores;
                   }
               });
