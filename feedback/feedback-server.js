@@ -117,8 +117,8 @@
         console.log("numAffected: ", numAffected);
       });
     },
-    getMostRecentScores : function() {
-      return self.mostRecentScores;
+    getMostRecentScores : function(cb) {
+      cb(self.mostRecentScores);
     }
     
 
