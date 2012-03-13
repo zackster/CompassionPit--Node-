@@ -217,6 +217,7 @@ process.on('uncaughtException', function(err) {
             dnode.connect(5050, function(remote) {
               console.log('connected to remote');
               remote.getMostRecentScores(function(leaderboard) {
+                console.log(leaderboard);
                 leaderboard = leaderboard || {};
                 console.log('getmostrecentscores called back');
                 console.log(leaderboard);

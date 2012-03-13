@@ -39,7 +39,9 @@
   };
   
   var getMostRecentScores = function(cb) {
-
+    
+    console.log(self.mostRecentScores);
+    console.log('gMRS called.');
     cb(self.mostRecentScores);
   };
   
