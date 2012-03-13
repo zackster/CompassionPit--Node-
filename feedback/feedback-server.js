@@ -101,9 +101,9 @@
                   listenerScores[thisListener]=score;
                   if(--left === 0) {
                     setTimeout(function() {
-                      server.calculateLeaderboard();
+                      this.calculateLeaderboard();
                     }, 5000);
-                    server.mostRecentScores = listenerScores;
+                    this.mostRecentScores = listenerScores;
                   }
               });
             });
@@ -113,7 +113,7 @@
     },
     getLeaderboard: function(cb) {
       console.log(this.mostRecentScores);
-      cb(server.mostRecentScores);
+      cb(this.mostRecentScores);
     }
 
   };
