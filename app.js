@@ -37,7 +37,6 @@ process.on('uncaughtException', function(err) {
         log = require("./log"),
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
-        httpdigest = require('http-digest'),
         authServer = require('./authentication/auth-server').authServer(),
         feedbackServer = require('./feedback/feedback-server').feedbackServer(),
         dnode = require("dnode");
@@ -134,6 +133,7 @@ process.on('uncaughtException', function(err) {
 
         app.get("/listen", function (req, res) {
             if (config.listenerAuthentication) {  //middleware http basic auth - password set in config.js - useful for forkers who want privacy
+                var httpdigest = require('http-digest');
                 httpdigest.http_digest_auth(req, res, config.listenerAuthentication.username, config.listenerAuthentication.password, function (req, res) {
                     res.render("chat", {
                         type: "listener",
