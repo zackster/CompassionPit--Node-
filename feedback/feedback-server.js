@@ -54,7 +54,7 @@
                   console.log(listenerScores);
                   callback(listenerScores);
                   setTimeout(function() {
-                    calculateLeaderboard(saveScores);
+                    calculateLeaderboard(callback);
                   }, 5000);
                 }
             });
