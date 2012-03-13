@@ -3,7 +3,7 @@
     
     /*global setTimeout: false */
     
-    var hashlib = require('hashlib');
+    var hashlib = require('hashlib2');
     
     /**
      * Generate a 4-character random hex string

@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-    var hashlib = require('hashlib'),
+    var hashlib = require('hashlib2'),
         createHash = require("../utils").createHash,
         mysql = require('mysql'),
         config = require("../config");

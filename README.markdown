@@ -58,11 +58,6 @@ To get project to run:
 
 * `npm install geoip`
 
-* `git clone https://github.com/brainfucker/hashlib.git
-   cd hashlib
-   make
-   sudo make install`
-
 * `NODE_ENV=development node app.js`
 
 *  you also need to run the leaderboard calculator, which you should run as a separate process: `NODE_ENV=development node leaderboard.js`

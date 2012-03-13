@@ -36,7 +36,7 @@
     "marked": "0.2.1",
     "jade": "0.20.3",
     "http-digest": "0.1.0",
-    "hashlib": "1.0.2",
+    "hashlib2": "1.0.3",
     "geoip": "0.4.5",
     "express": "2.5.8",
     "dnode": "0.9.6",

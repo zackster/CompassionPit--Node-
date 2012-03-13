@@ -5,7 +5,7 @@
         uglify = require('uglify-js'),
         sqwish = require('sqwish'),
         config = require('./config'),
-        hashlib = require('hashlib');
+        hashlib = require('hashlib2');
     
     module.exports = function (finishCallback) {
         var scripts = config.scripts;
