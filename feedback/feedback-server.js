@@ -116,7 +116,11 @@
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);
       });
+    },
+    getMostRecentScores : function() {
+      return self.mostRecentScores;
     }
+    
 
   };
   
@@ -128,9 +132,6 @@
     return server;
   };
   
-  exports.getMostRecentScores = function(cb) {
-    return self.mostRecentScores;
-  };
-
+  
   
 })();
