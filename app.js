@@ -38,8 +38,7 @@ process.on('uncaughtException', function(err) {
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
         authServer = require('./authentication/auth-server').authServer(),
-        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
-        dnode = require("dnode");
+        feedbackServer = require('./feedback/feedback-server').feedbackServer();
 
     var getRoomCounts = function () {
         var result = Room.calculateCounts();
@@ -212,25 +211,8 @@ process.on('uncaughtException', function(err) {
         // });
 
         app.get('/leaderboard', function(req, res) {
-          
-          try {
-            dnode.connect(5050, function(remote) {
-              console.log('connected to remote');
-              remote.getMostRecentScores(function(leaderboard) {
-                console.log(leaderboard);
-                leaderboard = leaderboard || {};
-                console.log('getmostrecentscores called back');
-                console.log(leaderboard);
-                res.render('leaderboard', { leaderboard: leaderboard });
-              });
-            });
-            
-          }
-          catch(e) {
-            console.log("Ran into an exception though...");
-          }
 
-          feedbackServer.calculateLeaderboard(function(leaderboard) {
+          feedbackServer.getMostRecentScores(function(leaderboard) {
             res.render('leaderboard', { leaderboard: leaderboard });
           });
           

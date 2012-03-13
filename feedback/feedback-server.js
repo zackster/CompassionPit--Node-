@@ -22,8 +22,56 @@
                       }
   }));
 
-  
+  var self = this;
+    
+  var saveScores = function(scores) {
+    
+    scores.sort();
+    self.mostRecentScores = scores;
 
+  };
+  
+  var calculateLeaderboard = function(callback) {
+      Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
+        if(err) { console.log("Error! " + err ); return; }
+        console.log('we returned from distinct listeners');
+        var listenerScores = [];
+        var   left = listeners.length;
+        console.log(left);
+        for(var i in listeners) {
+          
+         (function(thisListener) {
+           var score = 0;
+           // if(!is_email_address.test(thisListener)) {
+           //   left--;
+           //   return;
+           // }
+           console.log("this listener?", thisListener);
+           Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
+             console.log('we returned from pos feed');
+           if(err) { console.log("error! " + err); return; }
+             score += docs;
+             Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
+               console.log('we returned from ned feed');
+                if(err) { console.log("error! " + err); return; }
+                score -= docs;
+                listenerScores[thisListener]=score;
+                console.log("left is now at %d", left);
+                if(--left === 0) {
+                  console.log('calcLB is calling saveScores');
+                  callback(listenerScores);
+                  console.log('calcLB is setting a timeout');
+                  setTimeout(function() {
+                    console.log('timeout function is being called');
+                    calculateLeaderboard(saveScores);
+                  }, 5000);
+                }
+            });
+          });
+        })(listeners[i]);
+      }
+    });
+  };
 
   var server = {
     addFeedback : function (feedback) {
@@ -78,48 +126,21 @@
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);
       });
-    },
-    calculateLeaderboard: function(callback) {
-
-      var listenerScores = {};
-  
-
-      Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
-        if(err) {
-          console.log("Error! " + err );
-          return;
-        }
-        
-        var   left = listeners.length,
-            score;
-            
-        for(var i in listeners) {
-
-          (function(thisListener, score) {
-
-            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
-              if(err) { console.log("error! " + err); return; }
-              score += docs;
-              Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
-                if(err) { console.log("error! " + err); return; }
-                score -= docs;
-                listenerScores[thisListener]=score;
-                if(--left === 0) {
-                    callback(listenerScores);
-                }
-              });
-            });
-          })(listeners[i], score=0);
-        }
-      });
     }
 
   };
+  
+  
+  calculateLeaderboard(saveScores);
+  
   
   exports.feedbackServer = function() {
     return server;
   };
   
+  exports.getMostRecentScores = function(cb) {
+    return self.mostRecentScores;
+  };
 
   
 })();
