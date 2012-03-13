@@ -25,16 +25,13 @@
   var self = this;
     
   var saveScores = function(scores) {
-    
     scores.sort();
     self.mostRecentScores = scores;
-
   };
   
   var calculateLeaderboard = function(callback) {
       Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
         if(err) { console.log("Error! " + err ); return; }
-        console.log('we returned from distinct listeners');
         var listenerScores = [];
         var   left = listeners.length;
         console.log(left);
@@ -46,23 +43,16 @@
            //   left--;
            //   return;
            // }
-           console.log("this listener?", thisListener);
            Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
-             console.log('we returned from pos feed');
-           if(err) { console.log("error! " + err); return; }
+             if(err) { console.log("error! " + err); return; }
              score += docs;
              Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
-               console.log('we returned from ned feed');
                 if(err) { console.log("error! " + err); return; }
                 score -= docs;
                 listenerScores[thisListener]=score;
-                console.log("left is now at %d", left);
                 if(--left === 0) {
-                  console.log('calcLB is calling saveScores');
                   callback(listenerScores);
-                  console.log('calcLB is setting a timeout');
                   setTimeout(function() {
-                    console.log('timeout function is being called');
                     calculateLeaderboard(saveScores);
                   }, 5000);
                 }
