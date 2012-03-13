@@ -214,8 +214,7 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           getLeaderboard(function(scores) {
-            console.log("getLb called back with 'scores'", scores);
-            res.render('leaderboard', { leaderboard: scores });
+            res.render('leaderboard', { 'leaderboard': scores });
           });
           
         });
