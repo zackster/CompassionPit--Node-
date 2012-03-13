@@ -80,6 +80,7 @@
       });
     },
     calculateLeaderboard: function() {
+        var self = this;
         Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
           if(err) { console.log("Error! " + err ); return; }
           var listenerScores = [];
@@ -101,9 +102,9 @@
                   listenerScores[thisListener]=score;
                   if(--left === 0) {
                     setTimeout(function() {
-                      this.calculateLeaderboard();
+                      self.calculateLeaderboard();
                     }, 5000);
-                    this.mostRecentScores = listenerScores;
+                    self.mostRecentScores = listenerScores;
                   }
               });
             });
