@@ -213,8 +213,8 @@ process.on('uncaughtException', function(err) {
 
         app.get('/leaderboard', function(req, res) {
 
-          getLeaderboard(function(scores) {
-            res.render('leaderboard', { 'leaderboard': scores });
+          getLeaderboard(function(leaderboard) {
+            res.render('leaderboard', { leaderboard: leaderboard });
           });
           
         });
