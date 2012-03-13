@@ -129,7 +129,8 @@
   
   exports.getLeaderboard = function() {
     return function(cb) {
-      console.log(self.mostRecentScores.length);
+      console.log("self.mRS.length = ", self.mostRecentScores.length);
+      
       cb(self.mostRecentScores);
     };
   };
