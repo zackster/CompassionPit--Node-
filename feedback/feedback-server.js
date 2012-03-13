@@ -130,6 +130,9 @@
   
   exports.getLeaderboard = function() {
     return function(cb) {
+      console.log("getLB being called....");
+      console.log("self.mRS = ", self.mostRecentScores);
+      
       cb(self.mostRecentScores);
     };
   };
