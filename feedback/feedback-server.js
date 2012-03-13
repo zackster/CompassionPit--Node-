@@ -22,48 +22,10 @@
                       }
   }));
 
-  var self = this;
-    
-  var saveScores = function(scores) {
-    scores.sort();
-    self.mostRecentScores = scores;
-    console.log("save scores says: self.mRS.length = ", self.mostRecentScores.length);
-  };
-  
-  var calculateLeaderboard = function(callback) {
-      Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
-        if(err) { console.log("Error! " + err ); return; }
-        var listenerScores = [];
-        var   left = listeners.length;        
-        for(var i in listeners) {
-          
-         (function(thisListener) {
-           var score = 0;
-           // if(!is_email_address.test(thisListener)) {
-           //   left--;
-           //   return;
-           // }
-           Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
-             if(err) { console.log("error! " + err); return; }
-             score += docs;
-             Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
-                if(err) { console.log("error! " + err); return; }
-                score -= docs;
-                listenerScores[thisListener]=score;
-                if(--left === 0) {
-                  setTimeout(function() {
-                    calculateLeaderboard(callback);
-                  }, 5000);
-                  callback(listenerScores);                  
-                }
-            });
-          });
-        })(listeners[i]);
-      }
-    });
-  };
+
 
   var server = {
+    mostRecentScores: [],
     addFeedback : function (feedback) {
       console.log("Adding feedback");
       console.log(feedback);
@@ -116,25 +78,52 @@
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);
       });
+    },
+    calculateLeaderboard: function() {
+        Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
+          if(err) { console.log("Error! " + err ); return; }
+          var listenerScores = [];
+          var left = listeners.length;
+          for(var i in listeners) {
+
+           (function(thisListener) {
+             var score = 0;
+             // if(!is_email_address.test(thisListener)) {
+             //   left--;
+             //   return;
+             // }
+             Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
+               if(err) { console.log("error! " + err); return; }
+               score += docs;
+               Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
+                  if(err) { console.log("error! " + err); return; }
+                  score -= docs;
+                  listenerScores[thisListener]=score;
+                  if(--left === 0) {
+                    setTimeout(function() {
+                      server.calculateLeaderboard();
+                    }, 5000);
+                    server.mostRecentScores = listenerScores;
+                  }
+              });
+            });
+          })(listeners[i]);
+        }
+      });
+    },
+    getLeaderboard: function(cb) {
+      cb(server.mostRecentScores);
     }
 
   };
   
   
-  calculateLeaderboard(saveScores);
-  
   
   exports.feedbackServer = function() {
+    server.calculateLeaderboard();
     return server;
   };
   
-  exports.getLeaderboard = function() {
-    return function(cb) {
-      console.log("self.mRS.length = ", self.mostRecentScores.length);
-      
-      cb(self.mostRecentScores);
-    };
-  };
   
   
   

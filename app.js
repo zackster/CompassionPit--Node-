@@ -38,8 +38,7 @@ process.on('uncaughtException', function(err) {
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
         authServer = require('./authentication/auth-server').authServer(),
-        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
-        getLeaderboard = require('./feedback/feedback-server').getLeaderboard();
+        feedbackServer = require('./feedback/feedback-server').feedbackServer();
 
     var getRoomCounts = function () {
         var result = Room.calculateCounts();
@@ -213,7 +212,7 @@ process.on('uncaughtException', function(err) {
 
         app.get('/leaderboard', function(req, res) {
 
-          getLeaderboard(function(leaderboard) {
+          feedbackServer.getLeaderboard(function(leaderboard) {
             console.log("leaderboard length=", leaderboard.length);
             res.render('leaderboard', { leaderboard: leaderboard });
           });
