@@ -51,11 +51,10 @@
                 score -= docs;
                 listenerScores[thisListener]=score;
                 if(--left === 0) {
-                  console.log(listenerScores);
-                  callback(listenerScores);
                   setTimeout(function() {
                     calculateLeaderboard(callback);
                   }, 5000);
+                  callback(listenerScores);                  
                 }
             });
           });
