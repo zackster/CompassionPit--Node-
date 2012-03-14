@@ -89,11 +89,9 @@
                   score -= docs;
                   listenerScores[thisListener]=score;
                   if(--left === 0) {
-                    console.log(listenerScores);
                     setTimeout(function() {
                       server_object_context.calculateLeaderboard();
                     }, 5000);
-                    console.log("setting self.mrs (length)", listenerScores.length);
                     self.mostRecentScores = listenerScores;
                   }
               });
@@ -103,7 +101,7 @@
       });
     },
     getLeaderboard: function(cb) {
-      console.log("inside getlb, ", self.mostRecentScores.length);
+      console.log("inside getlb, ", self.mostRecentScores);
       cb.call(null, self.mostRecentScores);
     }
 
