@@ -1,9 +1,9 @@
 #main
   #leaderboard
     p
-      #{leaderboard}
+      #{scores}
     table(cellpadding=5, bordered="true")
-      each score, leader in leaderboard
+      each score, leader in scores
         tr
           td=leader
           td=score
