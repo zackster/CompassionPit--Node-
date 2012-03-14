@@ -16,13 +16,15 @@
                                             type:       String,
                                             validate:   [function(str) { return (str === 'positive' || str === 'negative'); }]
                                           }
-                                  })),
-    self = this;
+                                  }));
 
 
 
-  var server = {
-    addFeedback : function (feedback) {
+  var Server = function() {
+    
+    var self = this;
+    
+    this.addFeedback = function (feedback) {
       console.log("Adding feedback");
       console.log(feedback);
       
@@ -51,8 +53,9 @@
           console.log('successfully added feedback');
         }
       });
-    },
-    creditFeedback : function(user) {
+    };
+    
+    this.creditFeedback = function(user) {
       console.log("About to credit feedback");
       console.log("user id:", user.id);
       console.log("user username:", user.username);
@@ -66,8 +69,10 @@
         console.log("error: ", err);
         console.log("numAffected: ", numAffected);
       });
-    },
-    calculateLeaderboard: function() {
+    };
+    
+    
+    this.calculateLeaderboard = function() {
         var server_object_context = this;
         Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
           if(err) { console.log("Error! " + err ); return; }
@@ -99,18 +104,20 @@
           })(listeners[i]);
         }
       });
-    },
-    getLeaderboard: function(cb) {
+    };
+    
+    this.getLeaderboard = function(cb) {
       console.log("self.mRS is ...");
       console.log(self.mostRecentScores);
-      cb(Object.create(self.mostRecentScores));
-    }
+      cb(self.mostRecentScores);
+    };
 
   };
   
   
   
   exports.feedbackServer = function() {
+    var server = new Server();
     server.calculateLeaderboard();
     return server;
   };
