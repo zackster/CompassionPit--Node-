@@ -108,7 +108,7 @@
     
     this.getLeaderboard = function(cb) {
       console.log("self.mRS is ...");
-      console.log(self.mostRecentScores.keys().length);
+      console.log(Object.keys(self.mostRecentScores).length);
       cb.call(this, self.mostRecentScores);
     };
 
