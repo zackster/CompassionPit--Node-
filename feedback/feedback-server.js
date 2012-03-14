@@ -101,7 +101,6 @@
       });
     },
     getLeaderboard: function(cb) {
-      console.log("inside getlb, ", self.mostRecentScores);
       cb.call(null, self.mostRecentScores);
     }
 

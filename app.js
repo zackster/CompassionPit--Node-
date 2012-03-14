@@ -199,7 +199,8 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           feedbackServer.getLeaderboard(function(scores) {
-            console.log(scores.length);
+            console.log("callback Called back.");
+            console.log(scores);
             res.render('leaderboard', { leaderboard: scores });
           });
           
