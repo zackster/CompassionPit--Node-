@@ -89,6 +89,7 @@
                   score -= docs;
                   listenerScores[thisListener]=score;
                   if(--left === 0) {
+                    console.log(listenerScores);
                     setTimeout(function() {
                       server_object_context.calculateLeaderboard();
                     }, 5000);
