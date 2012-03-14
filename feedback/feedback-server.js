@@ -1,31 +1,27 @@
 (function () {
 
   var mongoose       = require('mongoose'),
-    authServer     = require('../authentication/auth-server').authServer();
-
-  var Schema = mongoose.Schema;
-
-  // db.feedbacks.ensureIndex({venter: 1, listener: 1}, {unique: true});
-    
-  var Feedback = mongoose.model('Feedback', new Schema({
-        listener:     {
-                        type:       String,
-                        validate:   [function(str) { return str.length>0; }]
-                      },
-      venter:       {
-                        type:       String,
-                        validate:   [function(str) { return str.length>0; }]
-                      },
-     direction:    {
-                        type:       String,
-                        validate:   [function(str) { if(str==='positive' || str==='negative') { return true; } else { return false; }}]
-                      }
-  }));
+    authServer     = require('../authentication/auth-server').authServer(),
+    Schema = mongoose.Schema,
+    Feedback = mongoose.model('Feedback', new Schema({
+                            listener:     {
+                                            type:       String,
+                                            validate:   [function(str) { return str.length>0; }]
+                                          },
+                            venter:       {
+                                            type:       String,
+                                            validate:   [function(str) { return str.length>0; }]
+                                          },
+                            direction:    {
+                                            type:       String,
+                                            validate:   [function(str) { return (str === 'positive' || str === 'negative'); }]
+                                          }
+                                  })),
+    self = this;
 
 
 
   var server = {
-    mostRecentScores: [],
     addFeedback : function (feedback) {
       console.log("Adding feedback");
       console.log(feedback);
@@ -34,18 +30,10 @@
       instance.venter = feedback.venter;
       
       var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
-      console.log("Listener Account: %s", listener_account);
-      console.log("Feedback.listener: %s", feedback.listener);
 
       instance.listener = listener_account ? listener_account : feedback.listener;
-      console.log("Instance.listener: %s", instance.listener);
-      
       instance.direction = feedback.direction;
       
-      console.log(instance);
-      console.log(instance.venter);
-      console.log(instance.listener);
-      console.log(instance.direction);
       
       instance.save(function(err) {
         if(err && err.errors) {
@@ -80,7 +68,7 @@
       });
     },
     calculateLeaderboard: function() {
-        var self = this;
+        var server_object_context = this;
         Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
           if(err) { console.log("Error! " + err ); return; }
           var listenerScores = [];
@@ -102,7 +90,7 @@
                   listenerScores[thisListener]=score;
                   if(--left === 0) {
                     setTimeout(function() {
-                      self.calculateLeaderboard();
+                      server_object_context.calculateLeaderboard();
                     }, 5000);
                     console.log("setting self.mrs (length)", listenerScores.length);
                     self.mostRecentScores = listenerScores;
@@ -114,8 +102,8 @@
       });
     },
     getLeaderboard: function(cb) {
-      console.log("inside getlb, ", this.mostRecentScores.length);
-      cb.apply(this, this.mostRecentScores);
+      console.log("inside getlb, ", self.mostRecentScores.length);
+      cb.call(null, self.mostRecentScores);
     }
 
   };

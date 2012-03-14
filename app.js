@@ -2,14 +2,6 @@
 /*global setInterval: false */
 
 
-/*
-
-current errors:
-  getRoomCounts is undefined
-  
-
-*/
-
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
 //todo - modify log.js to insert this into the database .
 process.on('uncaughtException', function(err) {
@@ -23,7 +15,6 @@ process.on('uncaughtException', function(err) {
     "use strict";
     
     var express = require("express");
-
     
     var app = module.exports = express.createServer(),
         util = require("util"),
@@ -52,11 +43,6 @@ process.on('uncaughtException', function(err) {
 
         app.dynamicHelpers({
             base: function () {
-                // return the app's mount-point
-                // so that urls can adjust. For example
-                // if you run this example /post/add works
-                // however if you run the mounting example
-                // it adjusts to /blog/post/add
                 return '/' === app.route ? '' : app.route;
             }
         });
@@ -213,9 +199,8 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           feedbackServer.getLeaderboard(function(scores) {
-            console.log(this.mostRecentScores.length);
             console.log(scores.length);
-            res.render('leaderboard', { leaderboard: this.mostRecentScores });
+            res.render('leaderboard', { leaderboard: scores });
           });
           
         });
@@ -399,14 +384,7 @@ process.on('uncaughtException', function(err) {
       socketHandlers.queue = function (client, user, _, callback) {
           callback(Room.getQueuePosition(user.id));
       };
-      
-      socketHandlers.saveConvoToPDF = function (client, user, data, callback) {
-          var userId = user.id;
-          var room = Room.getByUserId(userId);
-          console.log(room.conversation.messages);
-      };
-      
-      
+                  
       socketHandlers.authenticateUser =  function(client, user, data, callback) {
         authServer.login(user.id, data.username, data.password, function(success) {
           if(success) {
@@ -429,9 +407,7 @@ process.on('uncaughtException', function(err) {
           var venterId = user.id,
             room = Room.getByUserId(venterId),
             listenerId = room.conversation.listener.userId;
-          
-          // console.log("CLIENT: %s\nUSER: %s\nDATA: %s\nCALLBACK: %s\n\n", client, user, data, callback);
-                
+                          
           feedbackServer.addFeedback({
             venter: venterId,
             listener: listenerId,
