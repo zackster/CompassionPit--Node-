@@ -199,6 +199,8 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           feedbackServer.getLeaderboard(function(scores) {
+            console.log("Called back");
+            console.log(this.self.mostRecentScores);
             console.log("Scores is...", JSON.stringify(scores));
             console.log("Self.mrs iz...", JSON.stringify(this.mostRecentScores));
             scores = JSON.stringify(scores);
