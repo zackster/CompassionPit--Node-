@@ -201,7 +201,7 @@ process.on('uncaughtException', function(err) {
           feedbackServer.getLeaderboard(function(scores) {
             console.log("Scores!");
             console.log(Object.keys(scores).length);
-            res.render('leaderboard', { scores: JSON.stringify(scores) });
+            res.render('leaderboard', { scores: scores });
           });
           
         });

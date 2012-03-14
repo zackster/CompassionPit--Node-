@@ -76,7 +76,7 @@
         var server_object_context = this;
         Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
           if(err) { console.log("Error! " + err ); return; }
-          var listenerScores = [];
+          var listenerScores = {};
           var left = listeners.length;
           for(var i in listeners) {
 
