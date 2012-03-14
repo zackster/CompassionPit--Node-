@@ -103,7 +103,7 @@
     getLeaderboard: function(cb) {
       console.log("self.mRS is ...");
       console.log(self.mostRecentScores);
-      cb.call(self, self.mostRecentScores);
+      cb(self.mostRecentScores);
     }
 
   };
