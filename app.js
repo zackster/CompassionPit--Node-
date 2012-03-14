@@ -198,14 +198,8 @@ process.on('uncaughtException', function(err) {
 
         app.get('/leaderboard', function(req, res) {
 
-          feedbackServer.getLeaderboard(function(scores) {
-            console.log("Called back");
-            console.log("Arguments");
-            console.log(arguments);
-            console.log("Scores is...", JSON.stringify(scores));
-            console.log("Self.mrs iz...", JSON.stringify(this.mostRecentScores));
-            scores = JSON.stringify(scores);
-            res.render('leaderboard', { scores: scores });
+          feedbackServer.getLeaderboard(function() {
+            res.render('leaderboard', { scores: arguments[0] });
           });
           
         });
