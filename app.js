@@ -199,7 +199,9 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           feedbackServer.getLeaderboard(function(scores) {
-            res.render('leaderboard', { scores: JSON.stringify(scores) });
+            console.log("Scores is...", JSON.stringify(scores));
+            scores = JSON.stringify(scores);
+            res.render('leaderboard', { scores: scores });
           });
           
         });
