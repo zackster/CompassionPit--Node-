@@ -47,6 +47,9 @@
             console.log("Returning false: wrong pw.");
             callback(false);
           }
+          client.end(function() {
+            console.log("Closing mysql connection...");
+          });
         });
       
     };
