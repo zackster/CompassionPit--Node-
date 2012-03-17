@@ -10,9 +10,13 @@
     require('date-utils');
     var mongoose = require('mongoose'),
     config = require("../config");
-
-    mongoose.connect(config.mongodb.uri);
-    console.log(config.mongodb.uri);
+    mongoose.connect(config.mongodb.uri, function(err) {
+      if(err) { 
+        throw err;
+      }
+      
+      console.log('Connect call-back!');
+    });
     //    var Conversation = mongoose.model('Conversation', new mongoose.Schema({}));
     var LogEntries = mongoose.model('LogEntries', new mongoose.Schema({
       userid: { type: String },

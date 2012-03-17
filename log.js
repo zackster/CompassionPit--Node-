@@ -9,9 +9,14 @@
         Schema = mongoose.Schema,
         ObjectId = Schema.ObjectId;
     
-    mongoose.connect(config.mongodb.uri);
+    mongoose.connect(config.mongodb.uri, function(err) {
+      if(err) { 
+        throw err;
+      }
+      
+      console.log('Mongoose Connect call-back!');
+    });
     
-    console.log('connected to mongoose...');
     
     // TODO: write some merging app that will merge the LogEntries
     /**
