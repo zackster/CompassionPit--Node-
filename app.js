@@ -204,7 +204,7 @@ process.on('uncaughtException', function(err) {
             var user_scores = [];
             _.each(scores, function(score, username, list) {
               if(username.length != 24) {
-                var user = {username: score};
+                var user = {username: username, score: score};
                 user_scores.push(user);
               }
             });

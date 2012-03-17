@@ -4,9 +4,11 @@
       #{scores}
     table(cellpadding=5, bordered="true")
       each score, leader in scores
+        var i = 1        
         tr
+          td=i++
           td=leader
-          td=score
+          td=score.username
     
     :markdown
       Leaderboard
