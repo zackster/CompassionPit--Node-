@@ -209,6 +209,8 @@ process.on('uncaughtException', function(err) {
               }
             });
             user_scores = _.sortBy(user_scores, function(score, username, list) {
+              console.log("username", username);
+              console.log("Score", score);
               return -score;
             });
             
