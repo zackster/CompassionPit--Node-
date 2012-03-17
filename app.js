@@ -208,10 +208,8 @@ process.on('uncaughtException', function(err) {
                 user_scores.push(user);
               }
             });
-            user_scores = _.sortBy(user_scores, function(score, username, list) {
-              console.log("username", username);
-              console.log("Score", score);
-              return -score;
+            user_scores = _.sortBy(user_scores, function(user, position, list) {
+              return -user.score; // sortBy sorts by value returned in descending order
             });
             
             res.render('leaderboard', { scores: user_scores });
