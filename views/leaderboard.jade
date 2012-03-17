@@ -1,14 +1,15 @@
 #main
   #leaderboard
-    p
-      #{scores}
+    - var i = 1;
     table(cellpadding=5, bordered="true")
-      each score, leader in scores
-        - var i = 1        
+      each user, position in scores
+        - position_number = '#' + (i++)
         tr
-          td=i++
-          td=leader
-          td=score.username
+          td=user
+          td=position_number
+          td=user.position
+          td=user.username
+          td=user.score
     
     :markdown
       Leaderboard
