@@ -96,7 +96,7 @@
     Server.prototype.getSession = function(req, hash, callback) {
 
       var user_agent = req.headers['user-agent'];
-      var ip_address = req.connection.remoteAddress;
+      var ip_address = req.headers['x-forwarded-for']; // because of nginx proxying
       
 
       
