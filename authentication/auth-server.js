@@ -63,6 +63,7 @@
           callback.call(null, true);
         }
         else {
+          console.log("We are invokign self.getSession");
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
             console.log('call back of getSession');
             console.log(user);
@@ -92,7 +93,9 @@
           var dbpass = row.password;
           // vb might change the salt from time to time. can be found in the /includes/functions.php file
           if(hashlib.md5(dbpass + '0d582e0835ec6697262764ae6cb467fb') == pass){
-            callback.call(this, id);
+            callback.call(self, id);
+            client.end();
+            return;
           }
         }
         callback.call(self, false);
