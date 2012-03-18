@@ -27,6 +27,7 @@
           throw err;
         }
         callback.call(null, results[0]);
+        client.end();
       });
     };
 
@@ -41,7 +42,7 @@
             throw err;
           }
           if((epoch_in_seconds - uinfo.lastactivity) > 900) {
-            client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user]);
+            client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user]); // do we need to move client.end inside here?
           }
           client.end();
         });
@@ -63,9 +64,9 @@
             console.log(user);
             if(user) {
               self.markLoggedIn(user);
-              callback.call(null, true);
+              callback.call(self, true);
             }
-            callback.call(null, false);
+            callback.call(self, false);
           });
         }
       });
@@ -73,6 +74,7 @@
 
     Server.prototype.getCookie = function(id, pass, callback) {
 
+      var self = this;
       var client = this.getMySQLClient();
 
       client.query("SELECT * FROM user WHERE userid = ? LIMIT 1", [id], function selectCb(err, results, fields) {
@@ -84,10 +86,10 @@
           var dbpass = row.password;
           // vb might change the salt from time to time. can be found in the /includes/functions.php file
           if(hashlib.md5(dbpass + '0d582e0835ec6697262764ae6cb467fb') == pass){
-            callback.call(null, id);
+            callback.call(this, id);
           }
         }
-        callback.call(null, false);
+        callback.call(self, false);
 
         client.end();
       });
@@ -100,7 +102,7 @@
 
       var user_agent = req.headers['user-agent'];
       var ip_address = req.headers['x-forwarded-for']; // because of nginx proxying
-      
+      var self = this;
 
       
       var ip = ip_address.split('.').slice(0, 3).join('.');
@@ -131,9 +133,9 @@
           var userid = row.userid;
           var lastactive = row.lastactivity;
           var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
-          callback.call(null, (idhash == newidhash && (epoch_in_seconds - lastactive) < 900) ? userid : false);
+          callback.call(self, (idhash == newidhash && (epoch_in_seconds - lastactive) < 900) ? userid : false);
         }
-        callback.call(null, false);
+        callback.call(self, false);
 
         client.end();
 
