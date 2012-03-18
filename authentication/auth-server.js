@@ -48,8 +48,7 @@
 
     Server.prototype.checkLogin = function(req, callback) {
       var self = this; // Server context
-      console.log(req.cookies);
-      console.log(req);
+
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         if(user) {
           self.markLoggedIn(req.cookies.bb_userid);
@@ -57,6 +56,8 @@
         }
         else {
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
+            console.log('call back of getSession');
+            console.log(user);
             if(user) {
               self.markLoggedIn(user);
               callback.call(null, true);
@@ -96,14 +97,23 @@
 
       var user_agent = req.headers['user-agent'];
       var ip_address = req.connection.remoteAddress;
+      
 
+      
       var ip = ip_address.split('.').slice(0, 4).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
-
+      console.log("user agent", user_agent);
+      console.log("ip addr", ip_address);
+      console.log("ip", ip);
+      console.log("new id hash", newidhash);
 
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
-
+        
+        console.log("callback from getSession SQL ...");
+        console.log(err, results, fields);
+        
+        
         if(err) {
           throw err;
         }
