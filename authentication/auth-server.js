@@ -32,17 +32,20 @@
     };
 
     Server.prototype.markLoggedIn = function(user) {
+      var self = this;
       this.userInfo(user, function(uinfo) {
         console.log("Mark logged in being callled");
         console.log("Uinfo", uinfo);
-        var client = this.getMySQLClient();
+        var client = self.getMySQLClient();
         var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
         client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [epoch_in_seconds, user], function updateCb(err, results, fields) {
           if(err) {
             throw err;
           }
           if((epoch_in_seconds - uinfo.lastactivity) > 900) {
-            client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user]); // do we need to move client.end inside here?
+            client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user], function() {
+                client.end();
+            });
           }
           client.end();
         });
