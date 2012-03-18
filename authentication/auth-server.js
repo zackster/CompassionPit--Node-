@@ -42,7 +42,7 @@
           if(err) {
             throw err;
           }
-          if((epoch_in_seconds - uinfo.lastactivity) > 900) {
+          if((epoch_in_seconds - uinfo.lastactivity) > 604800) {
             client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user], function() {
                 client.end();
             });
@@ -142,7 +142,7 @@
           var userid = row.userid;
           var lastactive = row.lastactivity;
           var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
-          callback.call(self, (idhash == newidhash && (epoch_in_seconds - lastactive) < 900) ? userid : false);
+          callback.call(self, (idhash == newidhash && (epoch_in_seconds - lastactive) < 604800) ? userid : false);
           client.end();
           return;
         }
