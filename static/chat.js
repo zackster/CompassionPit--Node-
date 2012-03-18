@@ -148,9 +148,7 @@
         var setHasPartner = function (value) {
             hasPartner = !!value;
             if (value) {
-                if(window.CLIENT_TYPE === 'venter') {
-                   $("#reportAbuse").show();
-                }
+               $("#reportAbuse").show();
               
                 setTimeout(function () {
                     if (hasPartner) {
@@ -257,8 +255,12 @@
             queryQueuePosition();
         }
 
-        $('#chat_input').submit(function () {
-            sendMessage($("#inform").val());
+        var spaces_only = /^\s+$/img;
+        $('#chat_input').submit(function (event) {
+            var chat_string = $(this).find("#inform").val();
+            if(chat_string.length > 0 && !spaces_only.test(chat_string)) {
+              sendMessage($("#inform").val());
+            }
             refocusInformInput();
             return false;
         });
@@ -366,14 +368,14 @@
         var i = 0;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg, cssClass) {
-            var $td = $("<td>");
+            var $td = $("<span>");
             if (msg instanceof $) {
                 $td.append(msg);
             } else {
                 $td.text(capitalize(from) + ": " + msg);
             }
-            $('#chatWindow > tbody:last')
-                .append($("<tr>")
+            $('#chatWindow > div:last')
+                .append($("<div>")
                     .addClass(cssClass || (from === 'Me' ? 'blue-row' : from === 'System' ? 'off-white-row' : 'white-row'))
                     .append($td));
             scrollToBottomOfChat();
@@ -536,9 +538,9 @@
         });
         
         var includeLikeButtonScript = function () {
-            $('#chatWindow > tbody:last')
-                .append($('<tr class="off-white-row">')
-                    .append($("<td>")
+            $('#chatWindow > div:last')
+                .append($('<div class="off-white-row">')
+                    .append($("<span>")
                         .append($("<iframe>", {
                             allowTransparency: "true",
                             frameborder: 0,
@@ -547,9 +549,9 @@
                             src: "http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=24"
                         }))));
                         
-            $('#chatWindow > tbody:last')
-                .append($('<tr class="off-white-row">')
-                    .append($("<td>")
+            $('#chatWindow > div:last')
+                .append($('<div class="off-white-row">')
+                    .append($("<span>")
                         .append($('<a href="https://twitter.com/share" data-url="http://www.CompassionPit.com" data-text="CompassionPit: get it off your chest without it biting you in the ass" data-count="horizontal" data-via="CompassionPit" class="twitter-share-button">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>'))));
             scrollToBottomOfChat();
         };

@@ -1,6 +1,17 @@
 (function () {
     "use strict";
     
+    var email_regex = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?');
+    var Regexp = function() {
+      return {
+        email: email_regex
+      };
+    };
+    exports.regexp = function() {
+      return new Regexp();
+    };
+    
+    
     /*global setTimeout: false */
     
     var hashlib = require('hashlib2');

@@ -5,18 +5,13 @@
       each user, position in scores
         - position_number = '#' + (i++)
         tr
-          td=user
           td=position_number
-          td=user.position
           td=user.username
           td=user.score
     
-    :markdown
-      Leaderboard
-      -------------------
-      This is a leaderboard.
-      
-      Improve your rank
-      -----------------
-      You can improve your position on the leaderboard by becoming a better listener or completing one of the training modules.
-      Training modules are coming soon!
+    h2.leaderboard The Top 15
+    p The list is automatically updated every 15 minutes.
+    
+    h2.leaderboard Improve your rank
+    p You can improve your position on the leaderboard by becoming a better listener or completing one of the training modules.
+    p Training modules are coming soon!

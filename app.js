@@ -13,9 +13,9 @@ process.on('uncaughtException', function(err) {
 
 (function () {
     "use strict";
-    
+
     var express = require("express");
-    
+
     var app = module.exports = express.createServer(),
         util = require("util"),
         socketIO = require("socket.io"),
@@ -29,8 +29,9 @@ process.on('uncaughtException', function(err) {
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
         authServer = require('./authentication/auth-server').authServer(),
-        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
-        _ = require("underscore");
+        feedbackServer = require('./feedback/feedback-server').feedbackServer();
+
+    require("./database/singleton");
 
     var getRoomCounts = function () {
         var result = Room.calculateCounts();
@@ -38,7 +39,7 @@ process.on('uncaughtException', function(err) {
     };
 
     var registerAppRoutes = function(app) {
-      
+
         app.sessionId = guid();
         app.geoipCity = new geoip.City(__dirname + '/GeoLiteCity.dat');
 
@@ -55,6 +56,7 @@ process.on('uncaughtException', function(err) {
         app.configure(function () {
             app.use(express.static(__dirname + '/static'));
             app.use(express.bodyParser());
+            app.use(express.cookieParser());
             app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         });
 
@@ -68,7 +70,7 @@ process.on('uncaughtException', function(err) {
                 includeCrazyEgg: true
             });
         });
-        
+
         app.get("/counts", function(req,res) {
           res.setHeader('content-type', 'application/json');
           res.end(JSON.stringify(getRoomCounts()));
@@ -178,8 +180,8 @@ process.on('uncaughtException', function(err) {
 
 
         // disabling this until we refactor - dont want people who find the source to exploit it! :)
-        
-        
+
+
         // app.get('/messageChart', function (req, res) {
         //     log.LogEntry.find({}, null, { sort: { time: 1 } }, function (err, docs) {
         //         var messages = [];
@@ -197,24 +199,17 @@ process.on('uncaughtException', function(err) {
         //     });
         // });
 
+
         app.get('/leaderboard', function(req, res) {
 
-          feedbackServer.getLeaderboard(function(scores) {
-            
-            var user_scores = [];
-            _.each(scores, function(score, username, list) {
-              if(username.length != 24) {
-                var user = {username: username, score: score};
-                user_scores.push(user);
-              }
+          authServer.checkLogin(req, function(login_result) {
+
+            feedbackServer.getLeaderboard(function(top15) {
+              res.render('leaderboard', { scores: top15 });
             });
-            user_scores = _.sortBy(user_scores, function(user, position, list) {
-              return -user.score; // sortBy sorts by value returned in descending order
-            });
-            
-            res.render('leaderboard', { scores: user_scores });
+
           });
-          
+
         });
 
         // import in the room-based actions
@@ -234,7 +229,7 @@ process.on('uncaughtException', function(err) {
         // });
 
     };
-    
+
     function registerSocketIO(app) {
       // let socket.io hook into the existing app
       var socket;
@@ -242,9 +237,9 @@ process.on('uncaughtException', function(err) {
 
       // disable debug logging in socket.io
       socket.set( 'log level', 1 );
-  
+
       var socketHandlers = Object.create(null);
-      
+
       socket.configure(function () {
           socket.set('authorization', function (handshakeData, callback) {
               var headers = handshakeData.headers;
@@ -256,7 +251,7 @@ process.on('uncaughtException', function(err) {
               }
               callback(null, true);
           });
-          
+
           socket.sockets.on('connection', function (client) {
 
               client.on('message', latencyWrap(function (data) {
@@ -279,7 +274,7 @@ process.on('uncaughtException', function(err) {
                                   } else {
                                       message = {i: data.i};
                                   }
-                                                                    
+
                                   // message.d is the variable callback passed in from the handler, and will get applied client-side by comm.js
                                   if (result !== null && result !== undefined) {
                                       message.d = result;
@@ -331,7 +326,7 @@ process.on('uncaughtException', function(err) {
               Room.checkQueues();
           }, 5000);
       });
-      
+
       /**
        * Register the client with the server
        * Second parameter is "_" because user is not yet defined
@@ -347,7 +342,7 @@ process.on('uncaughtException', function(err) {
               userAgent = data.a || null,
               referrer = data.r || null;
           var clientId = client.id;
-          
+
           var user = userId && User.getById(userId);
           var isNewUser = !user;
           if (isNewUser) {
@@ -389,14 +384,14 @@ process.on('uncaughtException', function(err) {
           callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex]);
           Room.checkQueues();
       };
-      
+
       /**
        * Request the current position the client is in the queue for
        */
       socketHandlers.queue = function (client, user, _, callback) {
           callback(Room.getQueuePosition(user.id));
       };
-                  
+
       socketHandlers.authenticateUser =  function(client, user, data, callback) {
         authServer.login(user.id, data.username, data.password, function(success) {
           if(success) {
@@ -413,22 +408,22 @@ process.on('uncaughtException', function(err) {
           }
         });
       };
-    
+
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
-          
+
           var venterId = user.id,
             room = Room.getByUserId(venterId),
             listenerId = room.conversation.listener.userId;
-                          
+
           feedbackServer.addFeedback({
             venter: venterId,
             listener: listenerId,
             direction: data.direction
           });
-                              
+
           room.sendToUser(listenerId, "received-feedback", data.direction);
       };
-    
+
       /**
        * Request to join a channel based on the provided type
        */
@@ -440,7 +435,7 @@ process.on('uncaughtException', function(err) {
           }
 
           var userId = user.id;
-          
+
           var room = Room.getByUserId(userId);
           if (room) {
               room.removeUser(userId, "request");
@@ -450,13 +445,13 @@ process.on('uncaughtException', function(err) {
           Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
           callback(true);
       };
-  
+
       /**
        * Send a chat message to the room the client is current in.
        */
       socketHandlers.msg = function (client, user, message, callback) {
           var userId = user.id;
-          
+
           var room = Room.getByUserId(userId);
           if (!room) {
               callback(false);
@@ -471,7 +466,7 @@ process.on('uncaughtException', function(err) {
        */
       socketHandlers.typing = function (client, user, message, callback) {
           var userId = user.id;
-          
+
           var room = Room.getByUserId(userId);
           if (!room) {
               callback(false);
@@ -479,7 +474,7 @@ process.on('uncaughtException', function(err) {
           }
           room.sendTypeStatus(userId, message, callback);
       };
-  
+
       /**
        * Send a "ping" to let the server know the client is still active
        */
@@ -495,20 +490,20 @@ process.on('uncaughtException', function(err) {
               callback("pong");
           }
       };
-      
+
       socketHandlers.counts = function (client, user, _, callback) {
           console.log("Calling back with getRoomCounts");
           callback(getRoomCounts());
       };
-      
+
     }
-    
+
     if (!config.serveMerged) {
         mergeStatic = function (callback) {
             callback("", "");
         };
     }
-    
+
     mergeStatic(function (jsHash, cssHash) {
 
         app.helpers({
@@ -523,8 +518,8 @@ process.on('uncaughtException', function(err) {
 
         app.listen(config.port);
         util.puts("Server started on port " + config.port);
-        
+
     });
-    
-       
+
+
 }());

@@ -1,6 +1,8 @@
 (function () {
 
   var mongoose       = require('mongoose'),
+    _ = require('underscore'),
+    regexp = require(".././utils").regexp,
     authServer     = require('../authentication/auth-server').authServer(),
     Schema = mongoose.Schema,
     Feedback = mongoose.model('Feedback', new Schema({
@@ -23,6 +25,7 @@
   var Server = function() {
     
     var self = this;
+    self.listenerScores = {};
     
     this.addFeedback = function (feedback) {
       console.log("Adding feedback");
@@ -72,47 +75,79 @@
     };
     
     
-    this.calculateLeaderboard = function() {
-        var server_object_context = this;
-        Feedback.distinct('listener', { listener: { $exists:true} }, function(err, listeners) {
-          if(err) { console.log("Error! " + err ); return; }
-          var listenerScores = {};
-          var left = listeners.length;
-          for(var i in listeners) {
+   this.calculateLeaderboard = function() {
+      console.log("We are calculating the leaderboard.");
+      var server_object_context = this;
+      Feedback.distinct('listener', {
+          listener: {
+              $exists: true
+          }
+      },
+      function(err, listeners) {
+          if (err) {
+              console.log("Error! " + err);
+              return;
+          }
+          for (var i in listeners) {
+              
+              (function() {
+                
+              
+                var thisListener = listeners[i];
+              
 
-           (function(thisListener) {
-             var score = 0;
-             // if(!is_email_address.test(thisListener)) {
-             //   left--;
-             //   return;
-             // }
-             Feedback.count({listener:thisListener, direction:'positive'}, function(err, docs) {
-               if(err) { console.log("error! " + err); return; }
-               score += docs;
-               Feedback.count({listener:thisListener, direction:'negative'}, function(err, docs) {
-                  if(err) { console.log("error! " + err); return; }
-                  score -= docs;
-                  listenerScores[thisListener]=score;
-                  if(--left === 0) {
-                    setTimeout(function() {
-                      server_object_context.calculateLeaderboard();
-                    }, 5000);
-                    self.mostRecentScores = listenerScores;
-                  }
-              });
-            });
-          })(listeners[i]);
-        }
+                Feedback.count({
+                    listener: thisListener,
+                    direction: 'positive'
+                },
+                function(err, docs) {
+                    if (err) {
+                        console.log("error! " + err);
+                        return;
+                    }
+                    self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (5 * docs);
+                });
+
+                Feedback.count({
+                    listener: thisListener,
+                    direction: 'negative'
+                },
+                function(err, docs) {
+                    if (err) {
+                        console.log("error! " + err);
+                        return;
+                    }
+                    self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (-6 * docs);
+                });
+              
+              }());
+                                
+          }
+          
+          setTimeout(function() {
+              server_object_context.calculateLeaderboard();
+          },
+          5000*1000);
       });
-    };
+  };
     
     this.getLeaderboard = function(cb) {
-      console.log("self.mRS is ...");
-      console.log(Object.keys(self.mostRecentScores).length);
-      // cb.call((function() {
-      //   return self.mostRecentScores;
-      // }()));
-      cb.call(null, self.mostRecentScores);
+      var scores = self.listenerScores;
+      var user_scores = [];
+      _.each(scores, function(score, username, list) {
+
+        if(username.length != 24 && !regexp().email.test(username)) {
+          var user = {username: username, score: score};
+          user_scores.push(user);
+        }
+      });
+      user_scores = _.sortBy(user_scores, function(user, position, list) {
+        return -user.score; // sortBy sorts by value returned in descending order
+      });
+      
+      
+      
+      cb.call(null, user_scores.slice(0,15));
     };
 
   };
@@ -121,6 +156,7 @@
   
   exports.feedbackServer = function() {
     var server = new Server();
+    console.log("We are calling calculate leaderboard!");
     server.calculateLeaderboard();
     return server;
   };
