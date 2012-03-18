@@ -203,6 +203,8 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           authServer.checkLogin(req, function(login_result) {
+            
+            console.log("Login Result", login_result);
 
             feedbackServer.getLeaderboard(function(top15) {
               res.render('leaderboard', { scores: top15 });

@@ -59,6 +59,7 @@
               self.markLoggedIn(user);
               callback.call(null, true);
             }
+            callback.call(null, false);
           });
         }
       });
@@ -82,9 +83,7 @@
         }
         callback.call(null, false);
 
-        client.end(function() {
-          console.log("Closing mysql connection...");
-        });
+        client.end();
       });
 
 
@@ -118,9 +117,7 @@
         }
         callback.call(null, false);
 
-        client.end(function() {
-          console.log("Closing mysql connection...");
-        });
+        client.end();
 
       });
 
@@ -161,9 +158,7 @@
             console.log("Returning false: wrong pw.");
             callback(false);
           }
-          client.end(function() {
-            console.log("Closing mysql connection...");
-          });
+          client.end();
         });
 
     };
