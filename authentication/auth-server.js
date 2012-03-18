@@ -128,6 +128,9 @@
           var userid = row.userid;
           var lastactive = row.lastactivity;
 
+          console.log("Well we found a result");
+          console.log(Date.now());
+          console.log(lastactive);
           callback.call(null, (idhash == newidhash && (Date.now() - lastactive) < 900) ? userid : false);
         }
         callback.call(null, false);
