@@ -143,9 +143,10 @@
           var lastactive = row.lastactivity;
           var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
           callback.call(self, (idhash == newidhash && (epoch_in_seconds - lastactive) < 900) ? userid : false);
+          client.end();
+          return;
         }
         callback.call(self, false);
-
         client.end();
 
       });
