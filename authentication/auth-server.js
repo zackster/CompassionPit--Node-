@@ -47,15 +47,16 @@
     };
 
     Server.prototype.checkLogin = function(req, callback) {
+      var self = this; // Server context
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         if(user) {
-          this.markLoggedIn(req.cookies.bb_userid);
+          self.markLoggedIn(req.cookies.bb_userid);
           callback.call(null, true);
         }
         else {
-          this.getSession(req, req.cookies.bb_sessionhash, function(user) {
+          self.getSession(req, req.cookies.bb_sessionhash, function(user) {
             if(user) {
-              this.markLoggedIn(user);
+              self.markLoggedIn(user);
               callback.call(null, true);
             }
           });
