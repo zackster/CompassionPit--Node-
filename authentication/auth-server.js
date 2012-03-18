@@ -100,7 +100,7 @@
       
 
       
-      var ip = ip_address.split('.').slice(0, 4).join('.');
+      var ip = ip_address.split('.').slice(0, 3).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
       console.log("user agent", user_agent);
       console.log("ip addr", ip_address);
