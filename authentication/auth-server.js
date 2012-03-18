@@ -69,7 +69,9 @@
               self.markLoggedIn(user);
               callback.call(self, true);
             }
-            callback.call(self, false);
+            else {
+              callback.call(self, false);
+            }
           });
         }
       });
