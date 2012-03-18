@@ -16,6 +16,7 @@
          user: config.vBulletin.username,
          password: config.vBulletin.password
       });
+      client.query('USE '+config.vBulletin.database);
       return client;
     };
 
