@@ -32,12 +32,15 @@
 
     Server.prototype.markLoggedIn = function(user) {
       this.userInfo(user, function(uinfo) {
+        console.log("Mark logged in being callled");
+        console.log("Uinfo", uinfo);
         var client = this.getMySQLClient();
-        client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [Date.now(), user], function updateCb(err, results, fields) {
+        var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
+        client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [epoch_in_seconds, user], function updateCb(err, results, fields) {
           if(err) {
             throw err;
           }
-          if((Date.now() - uinfo.lastactivity) > 900) {
+          if((epoch_in_seconds - uinfo.lastactivity) > 900) {
             client.query("UPDATE user SET lastvisit = ? WHERE userid = ? LIMIT 1", [uinfo.lastactivity, user]);
           }
           client.end();
@@ -127,11 +130,8 @@
           var idhash = row.idhash;
           var userid = row.userid;
           var lastactive = row.lastactivity;
-
-          console.log("Well we found a result");
-          console.log(Date.now());
-          console.log(lastactive);
-          callback.call(null, (idhash == newidhash && (Date.now() - lastactive) < 900) ? userid : false);
+          var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
+          callback.call(null, (idhash == newidhash && (epoch_in_seconds - lastactive) < 900) ? userid : false);
         }
         callback.call(null, false);
 
