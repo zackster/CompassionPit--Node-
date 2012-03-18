@@ -35,7 +35,7 @@
       var self = this;
       this.userInfo(user, function(uinfo) {
         console.log("Mark logged in being callled");
-        // console.log("Uinfo", uinfo);
+        console.log("Uinfo", uinfo);
         var client = self.getMySQLClient();
         var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
         client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [epoch_in_seconds, user], function updateCb(err, results, fields) {
