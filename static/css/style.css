@@ -1,3 +1,7 @@
+span#currentUser {
+  font-weight: bold;
+}
+
 #leaderboardPage {
   padding: 20px;
 }
