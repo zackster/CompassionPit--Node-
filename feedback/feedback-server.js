@@ -3,7 +3,7 @@
   var mongoose       = require('mongoose'),
     _ = require('underscore'),
     regexp = require(".././utils").regexp,
-    User = require("./users/models").User,
+    User = require(".././users/models").User,
     authServer     = require('../authentication/auth-server').authServer(),
     Schema = mongoose.Schema,
     Feedback = mongoose.model('Feedback', new Schema({
