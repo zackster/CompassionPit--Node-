@@ -153,12 +153,13 @@
         }
       });
       console.log("uzer scores", user_scores);
-      user_scores = _.sortBy(user_scores, function(user_to_sort, position, list) {
+      var user_scores_sorted = _.sortBy(user_scores, function(user_to_sort, position, list) {
         console.log("uzer, ", user_to_sort);
         return -user_to_sort.score; // sortBy sorts by value returned in descending order
       });
+      console.log("user scores sorted", user_scores_sorted);
       var user_position = -1;
-      _.each(user_scores, function(user, position, list) {
+      _.each(user_scores_sorted, function(user, position, list) {
         if(user.username == loggedInUser) {
           user_position = position + 1;
         }
@@ -169,11 +170,11 @@
       if(user_position !== 0) { // user is on leaderboard
         var logged_in_user_score = user_scores[user_position-1].score;
         for(var i=user_position-2; i>=0; i--) {
-          console.log("user scores", user_scores);
+          console.log("user scores", user_scores_sorted);
           console.log("i", i);
-          console.log("user scores i", user_scores[i]);
-          if(user_scores[i].score > logged_in_user_score) {
-            diff_needed_to_move_up = user_scores[i].score - logged_in_user_score;
+          console.log("user scores i", user_scores_sorted[i]);
+          if(user_scores_sorted[i].score > logged_in_user_score) {
+            diff_needed_to_move_up = user_scores_sorted[i].score - logged_in_user_score;
             break;
           }
         }
