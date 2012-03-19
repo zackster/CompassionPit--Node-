@@ -31,6 +31,8 @@
 
     Server.prototype.markLoggedIn = function(user, callback) {
       var self = this;
+      console.log("user", user);
+      
       this.userInfo(user, function(uinfo) {
         console.log("Mark logged in being callled");
         console.log("Uinfo", uinfo);
