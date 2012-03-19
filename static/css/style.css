@@ -404,7 +404,7 @@ input#submit {
 .fltrht 					{ float:right }
 .clear 						{ clear:both; font-size:0px; line-height:0px; padding:0px; margin:0px; height:0px; }
 .clrBlock					{ clear:both; font-size:0px; line-height:0px; display:block;}
-body						{ font: 87.5% Arial, Helvetica, sans-serif; color:#000000; background: url(../img/bg.png) no-repeat; background-size: 100%;
+body						{ font: 87.5% Arial, Helvetica, sans-serif; color:#000000; background: url(../img/bg.png) center top repeat; background-size: 100%;
           -o-background-size: 100%;
           -webkit-background-size: 100%;
           -moz-background-size: 100%;

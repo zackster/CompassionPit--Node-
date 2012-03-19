@@ -1,5 +1,22 @@
+
+
 - make authServer and feedbackServer into singletons
 - let user save conversation to PDF
 - neg feedback responsivity?
 - bans? reprimands? encouragement to learn?
 -301 redirect on /forum and /forums and /forums/
+-Mandatory Registration for listeners
+
+		"You need a compassionpit forums account to be a listener"
+		"This is so we can teach you the ropes and help you be a more supportive listener"
+		"Once registered you can still choose to be anonymous to your venter"
+
+
+		Sign in with your forums account here:
+
+		-username
+		-password
+
+
+
+
