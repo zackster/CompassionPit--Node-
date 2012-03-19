@@ -350,11 +350,7 @@ process.on('uncaughtException', function(err) {
               referrer = data.r || null;
           var clientId = client.id;
 
-          var req = client.manager.handshaken[clientId.toString()];
-          console.log("WRECK");
-          console.log(req);
 
-          req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
 
           var user = userId && User.getById(userId);
           var isNewUser = !user;
@@ -389,13 +385,19 @@ process.on('uncaughtException', function(err) {
               });
           }
 
-          authServer.checkLogin(req, function(username) {
-            if(username!== false) {
-               authServer.logged_in_users[user.id] = username;
-            }
-            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
-          });
-
+          var req = client.manager.handshaken[clientId.toString()];
+          if(req.headers && req.headers.cookie) {
+            req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
+            authServer.checkLogin(req, function(username) {
+              if(username!== false) {
+                 authServer.logged_in_users[user.id] = username;
+              }
+              callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
+            });
+          }
+          else {
+            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);
+          }
           Room.checkQueues();
       };
 
