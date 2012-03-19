@@ -152,16 +152,16 @@
           user_scores.push(valid_user);
         }
       });
-      console.log("uzer scores", user_scores);
+      // console.log("uzer scores", user_scores);
       var user_scores_sorted = _.sortBy(user_scores, function(user_to_sort, position, list) {
-        console.log("uzer, ", user_to_sort);
+        // console.log("uzer, ", user_to_sort);
         return -user_to_sort.score; // sortBy sorts by value returned in descending order
       });
-      console.log("user scores sorted", user_scores_sorted);
+      // console.log("user scores sorted", user_scores_sorted);
       var user_position = -1;
       _.each(user_scores_sorted, function(user, position, list) {
-        console.log("username being eached", user.username);
-        console.log("our user", loggedInUser);
+        // console.log("username being eached", user.username);
+        // console.log("our user", loggedInUser);
         if(user.username == loggedInUser) {
           user_position = position + 1;
         }
@@ -170,12 +170,12 @@
 
       var diff_needed_to_move_up = 'N/A :)';
       if(user_position !== -1) { // user is on leaderboard
-        console.log("user position", user_position);
+        // console.log("user position", user_position);
         var logged_in_user_score = user_scores_sorted[user_position-1].score;
         for(var i=user_position-2; i>=0; i--) {
-          console.log("user scores", user_scores_sorted);
-          console.log("i", i);
-          console.log("user scores i", user_scores_sorted[i]);
+          // console.log("user scores", user_scores_sorted);
+          // console.log("i", i);
+          // console.log("user scores i", user_scores_sorted[i]);
           if(user_scores_sorted[i].score > logged_in_user_score) {
             diff_needed_to_move_up = user_scores_sorted[i].score - logged_in_user_score;
             break;
@@ -222,7 +222,7 @@
 
   exports.feedbackServer = function() {
     var server = new Server();
-    console.log("We are calling calculate leaderboard!");
+    // console.log("We are calling calculate leaderboard!");
     server.calculateLeaderboard();
     return server;
   };
