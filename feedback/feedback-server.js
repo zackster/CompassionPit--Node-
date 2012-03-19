@@ -160,6 +160,8 @@
       console.log("user scores sorted", user_scores_sorted);
       var user_position = -1;
       _.each(user_scores_sorted, function(user, position, list) {
+        console.log("username being eached", user.username);
+        console.log("our user", loggedInUser);
         if(user.username == loggedInUser) {
           user_position = position + 1;
         }
