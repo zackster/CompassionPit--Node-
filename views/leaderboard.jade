@@ -15,15 +15,17 @@
           td=user.score
 
     div#userLeaderboard
-      - if(username)
+      - if(username && userLeaderboard)
         div#username
           #{username} - #{userLeaderboard.score} points          
         div#rank
           p You are ranked ##{userLeaderboard.rank}
           - if(userLeaderboard.diff !== 'N/A :)')
             p In order to move up one spot, you need #{userLeaderboard.diff} points.
-
-          
+      - else
+        p Register a forums account here --> 
+          a(href="http://www.compassionpit.com/forums/", target="_blank") The CompassionPit Forums
+        p That way you can earn points too!
 
           
         
