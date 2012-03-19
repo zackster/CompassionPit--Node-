@@ -169,7 +169,7 @@
 
 
       var diff_needed_to_move_up = 'N/A :)';
-      if(user_position !== 0) { // user is on leaderboard
+      if(user_position !== -1) { // user is on leaderboard
         console.log("user position", user_position);
         var logged_in_user_score = user_scores_sorted[user_position-1].score;
         for(var i=user_position-2; i>=0; i--) {
