@@ -114,8 +114,8 @@
 
     Server.prototype.getSession = function(req, hash, callback) {
 
-      console.log("Inside get session....");
-      console.log(req);
+      // console.log("Inside get session....");
+      // console.log(req);
 
 
       var user_agent = req.headers['user-agent'];
@@ -132,12 +132,11 @@
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
 
-        console.log("callback from getSession SQL ...");
-        console.log("We searched on the hash,", hash);
-        console.log("---cookies---");
-        console.log(req.cookies);
-        console.log(err, results);
-
+        // console.log("callback from getSession SQL ...");
+        // console.log("We searched on the hash,", hash);
+        // console.log("---cookies---");
+        // console.log(req.cookies);
+        // console.log(err, results);
 
         if(err) {
           throw err;
