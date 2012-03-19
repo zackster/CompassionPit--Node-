@@ -169,6 +169,9 @@
       if(user_position !== 0) { // user is on leaderboard
         var logged_in_user_score = user_scores[user_position-1].score;
         for(var i=user_position-2; i>=0; i--) {
+          console.log("user scores", user_scores);
+          console.log("i", i);
+          console.log("user scores i", user_scores[i]);
           if(user_scores[i].score > logged_in_user_score) {
             diff_needed_to_move_up = user_scores[i].score - logged_in_user_score;
             break;
