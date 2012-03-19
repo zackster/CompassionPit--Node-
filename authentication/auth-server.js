@@ -117,7 +117,7 @@
       
 
       var user_agent = req.headers['user-agent'];
-      var ip_address = req.headers['x-forwarded-for'] || '127.0.0.1'; // because of nginx proxying
+      var ip_address = (req.headers['x-forwarded-for'] || req.address.address) || '127.0.0.1'; // because of nginx proxying
       var self = this;
 
       var ip = ip_address.split('.').slice(0, 3).join('.');

@@ -247,8 +247,6 @@ process.on('uncaughtException', function(err) {
             console.log("Do we have client info?");
 
             console.log(this.client);
-            console.log("Socket...");
-            console.log(socket);
 
             /// cookies = handshakeData.headers.cookie
 
