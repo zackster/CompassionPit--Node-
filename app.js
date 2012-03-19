@@ -202,11 +202,10 @@ process.on('uncaughtException', function(err) {
 
           authServer.checkLogin(req, function(username) {
             
-            console.log("username", username);
             feedbackServer.getLeaderboard(function(top15) {
               if(username) {
                 feedbackServer.getLeaderboardForUser(username, function(userStats) {
-                  console.log("user stats", userStats);
+                  // console.log("user stats", userStats);
                     res.render('leaderboard', { scores: top15, username: username, userLeaderboard: userStats});
                 });
               }

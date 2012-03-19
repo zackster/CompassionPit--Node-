@@ -124,10 +124,10 @@
 
       var ip = ip_address.split('.').slice(0, 3).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
-      console.log("user agent", user_agent);
-      console.log("ip addr", ip_address);
-      console.log("ip", ip);
-      console.log("new id hash", newidhash);
+      // console.log("user agent", user_agent);
+      // console.log("ip addr", ip_address);
+      // console.log("ip", ip);
+      // console.log("new id hash", newidhash);
 
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
@@ -162,8 +162,8 @@
 
 
     Server.prototype.getUsernameFromListenerId = function(listener_id) {
-      console.log("Looking up listener id: %s", listener_id);
-      console.log("Returning: %s", this.logged_in_users[listener_id]);
+      // console.log("Looking up listener id: %s", listener_id);
+      // console.log("Returning: %s", this.logged_in_users[listener_id]);
       return this.logged_in_users[listener_id];
     };
 
