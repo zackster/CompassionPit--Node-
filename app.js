@@ -352,9 +352,12 @@ process.on('uncaughtException', function(err) {
               referrer = data.r || null;
           var clientId = client.id;
 
+          console.log(client);
+
+
           var req = client.manager.handshaken.clientId.headers;
           req.cookies = require('connect').utils.parseCookie(req.cookie);
-          
+
           var user = userId && User.getById(userId);
           var isNewUser = !user;
           if (isNewUser) {
@@ -390,7 +393,7 @@ process.on('uncaughtException', function(err) {
 
           authServer.checkLogin(req, function(username) {
             authServer.logged_in_users[user.id] = username;
-            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);            
+            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
           });
 
           Room.checkQueues();
