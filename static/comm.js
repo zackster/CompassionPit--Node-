@@ -198,6 +198,7 @@
                     var lastReceivedMessage = message[4];
                     var forums_username = message[5];
                     if(forums_username !== false && window.CLIENT_TYPE=='listener') {
+                      console.log(forums_username);
                       $("span#currentUser").html(forums_username);
                       $("div#reputationLogin").hide();
                       $("div#loggedInAs").show();
