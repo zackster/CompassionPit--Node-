@@ -60,7 +60,7 @@
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         console.log("Get cookie calling back with user, ", user);
         if(user) {
-          self.markLoggedIn(req.cookies.bb_userid, function(username) {            
+          self.markLoggedIn(req.cookies.bb_userid, function(username) {
             callback.call(self, username);
           });
         }
@@ -72,7 +72,7 @@
             if(user) {
               console.log("WRECK");
               console.log(req);
-              self.markLoggedIn(req.cookies.bb_userid, function(username) {
+              self.markLoggedIn(user, function(username) {
                 callback.call(self, username);
               });
             }
