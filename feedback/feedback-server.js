@@ -148,15 +148,14 @@
       _.each(scores, function(score, username, list) {
 
         if(username.length != 24 && !regexp().email.test(username)) {
-          var user = {username: username, score: score};
-          user_scores.push(user);
+          var valid_user = {username: username, score: score};
+          user_scores.push(valid_user);
         }
       });
       console.log("uzer scores", user_scores);
-      user_scores = _.sortBy(user_scores, function(user, position, list) {
-        console.log(";)");
-        console.log("uzer, ", user);
-        return -user.score; // sortBy sorts by value returned in descending order
+      user_scores = _.sortBy(user_scores, function(user_to_sort, position, list) {
+        console.log("uzer, ", user_to_sort);
+        return -user_to_sort.score; // sortBy sorts by value returned in descending order
       });
       var user_position = -1;
       _.each(user_scores, function(user, position, list) {
