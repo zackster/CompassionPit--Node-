@@ -111,6 +111,10 @@
     };
 
     Server.prototype.getSession = function(req, hash, callback) {
+      
+      console.log("Inside get session....");
+      console.log(req);
+      
 
       var user_agent = req.headers['user-agent'];
       var ip_address = req.headers['x-forwarded-for'] || '127.0.0.1'; // because of nginx proxying
