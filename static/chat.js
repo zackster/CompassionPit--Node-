@@ -99,7 +99,7 @@
           $("div#reputationLogin").show();
         }
         else {
-          $("div#main").css('height','360px').css('overflow-y','hidden');
+          $("div#main").css('height','405px').css('overflow-y','hidden');
         }
 
         $("div#listenerFeedback button").click(function() {
