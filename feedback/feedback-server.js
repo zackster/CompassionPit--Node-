@@ -126,7 +126,7 @@
                         console.log("error! " + err);
                         return;
                     }
-                    self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (-6 * docs);
+                    self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (-3 * docs);
                 });
 
               }());

@@ -23,6 +23,9 @@
             p You are ranked ##{userLeaderboard.rank}
             - if(userLeaderboard.diff !== 'N/A :)')
               p In order to move up one spot, you need #{userLeaderboard.diff} points.
+        - else
+          div#rank
+            p You are unranked.
       - else 
         p Create an account to improve your position on the leaderboard!
         p Just register on 
