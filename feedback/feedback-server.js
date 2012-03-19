@@ -142,6 +142,7 @@
 
 
     this.getLeaderboardForUser = function(loggedInUser, cb) {
+      console.log("glfu");
       var scores = self.listenerScores;
       var user_scores = [];
       _.each(scores, function(score, username, list) {
