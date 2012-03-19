@@ -152,7 +152,9 @@
           user_scores.push(user);
         }
       });
+      console.log("uzer scores", user_scores);
       user_scores = _.sortBy(user_scores, function(user, position, list) {
+        console.log(";)");
         console.log("uzer, ", user);
         return -user.score; // sortBy sorts by value returned in descending order
       });
