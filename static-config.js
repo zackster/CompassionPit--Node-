@@ -12,7 +12,6 @@ module.exports = function (config) {
         "jquery.ui.datetime.src.js",
         "jquery.ui.progressbar.js",
         "jquery.html5-placeholder-shim.js",
-        "jquery.cookies.2.2.0.min.js",
         "socket.io/socket.io.js",
         "comm.js",
         "chat.js",
