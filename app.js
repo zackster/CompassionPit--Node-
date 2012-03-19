@@ -353,6 +353,7 @@ process.on('uncaughtException', function(err) {
           var clientId = client.id;
 
           var req = client.manager.handshaken[clientId.toString()].headers;
+          console.log(req);
           req.cookies = require('connect').utils.parseCookie(req.cookie);
 
           var user = userId && User.getById(userId);
