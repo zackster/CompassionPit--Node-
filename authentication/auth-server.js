@@ -5,10 +5,8 @@
         mysql = require('mysql'),
         config = require("../config");
 
-
-    var logged_in_users = createHash();
-
     function Server() {
+      this.logged_in_users = createHash();
     }
 
     Server.prototype.getMySQLClient = function() {
@@ -111,10 +109,10 @@
     };
 
     Server.prototype.getSession = function(req, hash, callback) {
-      
+
       console.log("Inside get session....");
       console.log(req);
-      
+
 
       var user_agent = req.headers['user-agent'];
       var ip_address = (req.headers['x-forwarded-for'] || req.address.address) || '127.0.0.1'; // because of nginx proxying
@@ -129,14 +127,14 @@
 
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
-        
+
         console.log("callback from getSession SQL ...");
         console.log("We searched on the hash,", hash);
         console.log("---cookies---");
         console.log(req.cookies);
         console.log(err, results);
-        
-        
+
+
         if(err) {
           throw err;
         }
@@ -162,15 +160,14 @@
 
     Server.prototype.getUsernameFromListenerId = function(listener_id) {
       console.log("Looking up listener id: %s", listener_id);
-      console.log("Returning: %s", logged_in_users[listener_id]);
-      return logged_in_users[listener_id];
+      console.log("Returning: %s", this.logged_in_users[listener_id]);
+      return this.logged_in_users[listener_id];
     };
 
     Server.prototype.login = function (id, username, password, callback) {
       var client = this.getMySQLClient();
-
       client.query('USE '+config.vBulletin.database);
-      console.log("ID: %s\nUSERNAME: %s\nPASSWORD: %s", id, username, password);
+      var self = this;
       client.query(
         'SELECT username, password, salt FROM user WHERE username=?', [username], function selectCb(err, results, fields) {
           console.log('ending client');
@@ -185,9 +182,9 @@
           }
           if(results[0].password === hashlib.md5(hashlib.md5(password)+results[0].salt)) {
             console.log("Returning true!");
-            console.log(logged_in_users);
-            logged_in_users[id] = username;
-            console.log(logged_in_users);
+            console.log(self.logged_in_users);
+            self.logged_in_users[id] = username;
+            console.log(self.logged_in_users);
             callback(true);
           }
           else {

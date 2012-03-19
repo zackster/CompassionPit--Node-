@@ -387,6 +387,9 @@ process.on('uncaughtException', function(err) {
           }
 
           authServer.checkLogin(req, function(username) {
+            console.log("Auth server");
+            console.log(authServer);
+            
             authServer.logged_in_users[user.id] = username;
             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
           });
