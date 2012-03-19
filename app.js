@@ -352,7 +352,8 @@ process.on('uncaughtException', function(err) {
               referrer = data.r || null;
           var clientId = client.id;
 
-          console.log(client);
+          console.log("client ID", clientId);
+          console.log(client.manager.handshaken);
 
 
           var req = client.manager.handshaken.clientId.headers;
