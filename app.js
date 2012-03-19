@@ -353,7 +353,7 @@ process.on('uncaughtException', function(err) {
           var clientId = client.id;
 
           console.log("client ID", clientId);
-          console.log(client.manager.handshaken);
+          console.log(client.manager.handshaken.clientId);
 
 
           var req = client.manager.handshaken.clientId.headers;
