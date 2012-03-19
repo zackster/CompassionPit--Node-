@@ -91,9 +91,9 @@
 
 
         var CLIENT_TYPE = window.CLIENT_TYPE;
+        
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
         var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
-        window.LISTENER_LOGGED_IN = false;
 
         if(CLIENT_TYPE == 'listener') {
           $("div#reputationLogin").show();

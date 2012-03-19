@@ -1,5 +1,5 @@
+- make authServer and feedbackServer into singletons
 - let user save conversation to PDF
-- post stackoverflow question about how to make a pckage.json for my app
-- update README so contributors can contribute
-- make a config-sample.js file, and explain it in the readme
+- neg feedback responsivity?
+- bans? reprimands? encouragement to learn?
 

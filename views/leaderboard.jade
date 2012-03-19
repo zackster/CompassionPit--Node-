@@ -1,16 +1,34 @@
 #main
-  #leaderboard
+  #leaderboardPage
+    
+    h2.top The Top 15
+    p.top The list is automatically updated every 15 minutes.
+    
     - var i = 1;
-    table(cellpadding=5, bordered="true")
+    table(cellpadding=5, bordered="true", id="leaderboard")
       each user, position in scores
         - position_number = '#' + (i++)
+        - if(username === user.username) { var user_position = position_number; }
         tr
           td=position_number
-          td=user.username
+          td.username=user.username
           td=user.score
-    
-    h2.leaderboard The Top 15
-    p The list is automatically updated every 15 minutes.
+
+    div#userLeaderboard
+      - if(username)
+        div#username
+          #{username} - #{userLeaderboard.score} points          
+        div#rank
+          p You are ranked ##{userLeaderboard.rank}
+          - if(userLeaderboard.diff !== 'N/A :)')
+            p In order to move up one spot, you need #{userLeaderboard.diff} points.
+
+          
+
+          
+        
+      - else 
+        Create an account to improve your position on the leaderboard!
     
     h2.leaderboard Improve your rank
     p You can improve your position on the leaderboard by becoming a better listener or completing one of the training modules.

@@ -1,6 +1,35 @@
+#leaderboardPage {
+  padding: 20px;
+}
+#userLeaderboard {
+  float: left;
+  border: 1px solid #000;
+  padding: 5px;
+  margin-left: 45px;
+  margin-top: 25px;  
+}
+
+#leaderboard {
+  float: left;
+}
+td.username {
+  padding-left: 20px;
+  padding-right: 20px;
+}
 h2.leaderboard {
-  margin-top: 20px;
+  padding-top: 10px;
+  margin-top: 10px;
   font-size: 1.5em;
+  clear: both;
+}
+h2.top {
+  font-size: 1.5em;
+  clear: both;
+  padding-bottom: 5px;
+}
+p.top {
+  margin-bottom: 10px;
+  padding-bottom: 10px;    
 }
 
 #reportAbuse {

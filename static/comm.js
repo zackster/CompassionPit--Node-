@@ -196,6 +196,12 @@
                     userId = message[2];
                     publicUserId = message[3];
                     var lastReceivedMessage = message[4];
+                    var forums_username = message[5];
+                    if(forums_username !== false && window.CLIENT_TYPE=='listener') {
+                      $("div#reputationLogin").hide();
+                      $("div#loggedInAs").show();
+                      window.LISTENER_LOGGED_IN = true;
+                    }
                     
                     if (oldUserId && (isNewUser || userId !== oldUserId)) {
                         unregister();

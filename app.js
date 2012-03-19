@@ -9,8 +9,6 @@ process.on('uncaughtException', function(err) {
   console.log(err);
 });
 
-
-
 (function () {
     "use strict";
 
@@ -202,12 +200,21 @@ process.on('uncaughtException', function(err) {
 
         app.get('/leaderboard', function(req, res) {
 
-          authServer.checkLogin(req, function(login_result) {
-            
-            console.log("Login Result", login_result);
+          authServer.checkLogin(req, function(username) {
+
+            username = 'zack';
 
             feedbackServer.getLeaderboard(function(top15) {
-              res.render('leaderboard', { scores: top15 });
+              if(username) {
+                console.log('personal stats');
+                feedbackServer.getLeaderboardForUser(username, function(userStats) {
+                    res.render('leaderboard', { scores: top15, username: username, userLeaderboard: userStats});
+                });
+              }
+              else {
+                res.render('leaderboard', { scores: top15, username: username });
+              }
+
             });
 
           });
@@ -219,16 +226,6 @@ process.on('uncaughtException', function(err) {
 
         // add the log-based actions
         log.addActions(app);
-
-        // commenting this out until I can really learn what this does......
-        // process.on('uncaughtException', function (err) {
-        //     console.error(JSON.stringify(err));
-        //     log.error({
-        //         event: "Uncaught exception",
-        //         error: String(err.message),
-        //         stack: String(err.stack)
-        //     });
-        // });
 
     };
 
@@ -244,6 +241,17 @@ process.on('uncaughtException', function(err) {
 
       socket.configure(function () {
           socket.set('authorization', function (handshakeData, callback) {
+            console.log('calling authorization inside socketio');
+            console.log(handshakeData);
+            console.log(callback);
+            console.log("Do we have client info?");
+
+            console.log(this.client);
+            console.log("Socket...");
+            console.log(socket);
+
+            /// cookies = handshakeData.headers.cookie
+
               var headers = handshakeData.headers;
               if (headers) {
                   var ipAddress = headers['x-forwarded-for'];
@@ -334,7 +342,6 @@ process.on('uncaughtException', function(err) {
        * Second parameter is "_" because user is not yet defined
        */
       socketHandlers.register = function (client, _, data, callback) {
-          console.log("Client is registering with server.");
           if (!data) {
               data = {};
           }
@@ -345,6 +352,9 @@ process.on('uncaughtException', function(err) {
               referrer = data.r || null;
           var clientId = client.id;
 
+          var req = client.manager.handshaken.clientId.headers;
+          req.cookies = require('connect').utils.parseCookie(req.cookie);
+          
           var user = userId && User.getById(userId);
           var isNewUser = !user;
           if (isNewUser) {
@@ -368,11 +378,6 @@ process.on('uncaughtException', function(err) {
                       user: user.id
                   });
               });
-              log.info({
-                  event: "New user",
-                  client: clientId,
-                  user: user.id
-              });
               user.setSocketIOId(client.id, lastMessageReceived);
           } else {
               user.setSocketIOId(client.id, lastMessageReceived);
@@ -383,7 +388,11 @@ process.on('uncaughtException', function(err) {
               });
           }
 
-          callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex]);
+          authServer.checkLogin(req, function(username) {
+            authServer.logged_in_users[user.id] = username;
+            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);            
+          });
+
           Room.checkQueues();
       };
 

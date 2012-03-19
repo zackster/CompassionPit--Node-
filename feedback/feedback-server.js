@@ -3,6 +3,7 @@
   var mongoose       = require('mongoose'),
     _ = require('underscore'),
     regexp = require(".././utils").regexp,
+    User = require("./users/models").User,
     authServer     = require('../authentication/auth-server').authServer(),
     Schema = mongoose.Schema,
     Feedback = mongoose.model('Feedback', new Schema({
@@ -23,23 +24,31 @@
 
 
   var Server = function() {
-    
+
     var self = this;
     self.listenerScores = {};
-    
+
     this.addFeedback = function (feedback) {
       console.log("Adding feedback");
       console.log(feedback);
-      
+
       var instance = new Feedback();
       instance.venter = feedback.venter;
-      
+
       var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
 
       instance.listener = listener_account ? listener_account : feedback.listener;
       instance.direction = feedback.direction;
+
+      var venter_ip = User.getById(feedback.venter).getIPAddress();
+      var listener_ip = User.getById(feedback.listener).getIPAddress();
+            
+      if(venter_ip === listener_ip) {
+        console.log("We aren't adding feedback since both listener and venter share an IP address.");
+        return;
+      }
       
-      
+            
       instance.save(function(err) {
         if(err && err.errors) {
           var badFields = [];
@@ -57,7 +66,7 @@
         }
       });
     };
-    
+
     this.creditFeedback = function(user) {
       console.log("About to credit feedback");
       console.log("user id:", user.id);
@@ -73,8 +82,8 @@
         console.log("numAffected: ", numAffected);
       });
     };
-    
-    
+
+
    this.calculateLeaderboard = function() {
       console.log("We are calculating the leaderboard.");
       var server_object_context = this;
@@ -89,12 +98,12 @@
               return;
           }
           for (var i in listeners) {
-              
+
               (function() {
-                
-              
+
+
                 var thisListener = listeners[i];
-              
+
 
                 Feedback.count({
                     listener: thisListener,
@@ -119,18 +128,66 @@
                     }
                     self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (-6 * docs);
                 });
-              
+
               }());
-                                
+
           }
-          
+
           setTimeout(function() {
               server_object_context.calculateLeaderboard();
           },
           5000*1000);
       });
   };
-    
+
+
+    this.getLeaderboardForUser = function(loggedInUser, cb) {
+      var scores = self.listenerScores;
+      var user_scores = [];
+      _.each(scores, function(score, username, list) {
+
+        if(username.length != 24 && !regexp().email.test(username)) {
+          var user = {username: username, score: score};
+          user_scores.push(user);
+        }
+      });
+      user_scores = _.sortBy(user_scores, function(user, position, list) {
+        return -user.score; // sortBy sorts by value returned in descending order
+      });
+      var user_position = -1;
+      _.each(user_scores, function(user, position, list) {
+        if(user.username == loggedInUser) {
+          user_position = position + 1;
+        }
+      });
+
+
+      var diff_needed_to_move_up = 'N/A :)';
+      if(user_position !== 0) { // user is on leaderboard
+        var logged_in_user_score = user_scores[user_position-1].score;
+        for(var i=user_position-2; i>=0; i--) {
+          if(user_scores[i] .score > logged_in_user_score) {
+            diff_needed_to_move_up = user_scores[i].score - logged_in_user_score;
+            break;
+          }
+        }
+        cb.call(null, {
+          rank: user_position,
+          score: logged_in_user_score,
+          diff: diff_needed_to_move_up
+        });
+        return;
+      }
+      else {
+        cb.call(null, {
+          rank: 'Not On Leaderboard',
+          score: 'No Score',
+          diff: 'N/A'
+        });
+      }
+
+    };
+
     this.getLeaderboard = function(cb) {
       var scores = self.listenerScores;
       var user_scores = [];
@@ -144,24 +201,23 @@
       user_scores = _.sortBy(user_scores, function(user, position, list) {
         return -user.score; // sortBy sorts by value returned in descending order
       });
-      
-      
-      
+
       cb.call(null, user_scores.slice(0,15));
+
     };
 
   };
-  
-  
-  
+
+
+
   exports.feedbackServer = function() {
     var server = new Server();
     console.log("We are calling calculate leaderboard!");
     server.calculateLeaderboard();
     return server;
   };
-  
-  
-  
-  
+
+
+
+
 })();

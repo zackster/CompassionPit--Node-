@@ -31,7 +31,7 @@
       });
     };
 
-    Server.prototype.markLoggedIn = function(user) {
+    Server.prototype.markLoggedIn = function(user, callback) {
       var self = this;
       this.userInfo(user, function(uinfo) {
         console.log("Mark logged in being callled");
@@ -47,6 +47,7 @@
                 client.end();
             });
           }
+          callback.call(self, uinfo.username);
           client.end();
         });
 
@@ -59,8 +60,9 @@
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         console.log("Get cookie calling back with user, ", user);
         if(user) {
-          self.markLoggedIn(req.cookies.bb_userid);
-          callback.call(null, true);
+          self.markLoggedIn(req.cookies.bb_userid, function(username) {
+            callback.call(self, username);
+          });
         }
         else {
           console.log("We are invokign self.getSession");
@@ -68,8 +70,9 @@
             console.log('call back of getSession');
             console.log(user);
             if(user) {
-              self.markLoggedIn(user);
-              callback.call(self, true);
+              self.markLoggedIn(req.cookies.bb_userid, function(username) {
+                callback.call(self, username);
+              });
             }
             else {
               callback.call(self, false);
@@ -92,7 +95,7 @@
           var row = results[0];
           var dbpass = row.password;
           // vb might change the salt from time to time. can be found in the /includes/functions.php file
-          if(hashlib.md5(dbpass + '0d582e0835ec6697262764ae6cb467fb') == pass){
+          if(hashlib.md5(dbpass + 'CpnsPhJPwVeQgmKX5Wdz8JOz4TV') == pass){
             callback.call(self, id);
             client.end();
             return;
@@ -110,10 +113,9 @@
     Server.prototype.getSession = function(req, hash, callback) {
 
       var user_agent = req.headers['user-agent'];
-      var ip_address = req.headers['x-forwarded-for']; // because of nginx proxying
+      var ip_address = req.headers['x-forwarded-for'] || '127.0.0.1'; // because of nginx proxying
       var self = this;
 
-      
       var ip = ip_address.split('.').slice(0, 3).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
       console.log("user agent", user_agent);
