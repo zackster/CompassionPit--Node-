@@ -240,12 +240,11 @@ process.on('uncaughtException', function(err) {
 
       socket.configure(function () {
           socket.set('authorization', function (handshakeData, callback) {
-            console.log('calling authorization inside socketio');
-            console.log(handshakeData);
-            console.log(callback);
-            console.log("Do we have client info?");
-
-            console.log(this.client);
+            // console.log('calling authorization inside socketio');
+            // console.log(handshakeData);
+            // console.log(callback);
+            // console.log("Do we have client info?");
+            // console.log(this.client);
 
             /// cookies = handshakeData.headers.cookie
 

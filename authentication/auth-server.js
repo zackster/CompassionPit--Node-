@@ -34,8 +34,8 @@
       console.log("user", user);
       
       this.userInfo(user, function(uinfo) {
-        console.log("Mark logged in being callled");
-        console.log("Uinfo", uinfo);
+        // console.log("Mark logged in being callled");
+        // console.log("Uinfo", uinfo);
         var client = self.getMySQLClient();
         var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
         client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [epoch_in_seconds, user], function updateCb(err, results, fields) {
@@ -58,20 +58,20 @@
       var self = this; // Server context
 
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
-        console.log("Get cookie calling back with user, ", user);
+        // console.log("Get cookie calling back with user, ", user);
         if(user) {
           self.markLoggedIn(req.cookies.bb_userid, function(username) {
             callback.call(self, username);
           });
         }
         else {
-          console.log("We are invokign self.getSession");
+          // console.log("We are invokign self.getSession");
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
-            console.log('call back of getSession');
-            console.log(user);
+            // console.log('call back of getSession');
+            // console.log(user);
             if(user) {
-              console.log("WRECK");
-              console.log(req);
+              // console.log("WRECK");
+              // console.log(req);
               self.markLoggedIn(user, function(username) {
                 callback.call(self, username);
               });
