@@ -17,11 +17,12 @@
     div#userLeaderboard
       - if(username && userLeaderboard)
         div#username
-          #{username} - #{userLeaderboard.score} points          
-        div#rank
-          p You are ranked ##{userLeaderboard.rank}
-          - if(userLeaderboard.diff !== 'N/A :)')
-            p In order to move up one spot, you need #{userLeaderboard.diff} points.
+          #{username} - #{userLeaderboard.score} points
+        - if(userLeaderboard.score !== 'No Score')            
+          div#rank
+            p You are ranked ##{userLeaderboard.rank}
+            - if(userLeaderboard.diff !== 'N/A :)')
+              p In order to move up one spot, you need #{userLeaderboard.diff} points.
       - else 
         p Create an account to improve your position on the leaderboard!
         p Just register on 
