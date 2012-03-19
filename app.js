@@ -352,6 +352,7 @@ process.on('uncaughtException', function(err) {
 
           var req = client.manager.handshaken[clientId.toString()];
           console.log('cookie parsing..');
+          console.log(req);
           req.cookies = require('connect').utils.parseCookie(req.cookie);
 
           var user = userId && User.getById(userId);
