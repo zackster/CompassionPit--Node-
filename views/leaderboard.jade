@@ -22,15 +22,11 @@
           p You are ranked ##{userLeaderboard.rank}
           - if(userLeaderboard.diff !== 'N/A :)')
             p In order to move up one spot, you need #{userLeaderboard.diff} points.
-      - else
-        p Register a forums account here --> 
-          a(href="http://www.compassionpit.com/forums/", target="_blank") The CompassionPit Forums
-        p That way you can earn points too!
-
-          
-        
       - else 
-        Create an account to improve your position on the leaderboard!
+        p Create an account to improve your position on the leaderboard!
+        p Just register on 
+          a(href="http://www.compassionpit.com/forums/", target="_blank") The CompassionPit Forums
+          , and you can log in the next time you're a listener.
     
     h2.leaderboard Improve your rank
     p You can improve your position on the leaderboard by becoming a better listener or completing one of the training modules.
