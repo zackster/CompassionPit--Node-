@@ -70,6 +70,8 @@
             console.log('call back of getSession');
             console.log(user);
             if(user) {
+              console.log("WRECK");
+              console.log(req);
               self.markLoggedIn(req.cookies.bb_userid, function(username) {
                 callback.call(self, username);
               });
