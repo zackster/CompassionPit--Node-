@@ -3,6 +3,24 @@ script
   if (!document.cookie.match(/referrer=http/)) {
       document.cookie = "referrer=" + encodeURIComponent(document.referrer);
   }
+  
+- if(loggedOut) {
+  script
+    (function($) {
+    
+      $(document).ready(function() {
+        $("body")
+          .prepend($("<div>")
+            .attr("id", "version-bar")
+                .click(function () {
+                    window.showBrowserCloseMessage = false;
+                })
+                .append($("<p>")
+                    .text("You have been logged out.")));
+      });
+    }(jQuery));
+
+- }
 
 .cont_lft.fltlft
   h1#counts Currently Online: 

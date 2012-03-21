@@ -426,7 +426,7 @@ input#submit {
 }
 
 
-#version-bar a, #version-bar a:link, #version-bar a:visited, #version-bar a:active {
+#version-bar, #version-bar a, #version-bar a:link, #version-bar a:visited, #version-bar a:active {
   display: block;
   color:#000;
   background:#ffffe1;

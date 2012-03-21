@@ -40,18 +40,19 @@ div(id="main",style="display:none")
             input(type="checkbox", id="enable_typing")
             #{" Visible Typing"}
         #typing_status
-        div#spinner          
-        div#reputationLogin
-          div(class="announce")
-            p Listeners can now optionally log in using their CompassionPit forums account!
-          div(class="form_errors",id="form_errors")
-          label(class="login")
-            input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
-          label(class="login")
-            input(type="text", id="loginPassword", name="loginPassword", class="login", placeholder="Password") 
-          button(id="login", class="login") Log In!
-          br
-          a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
+        //-
+          div#spinner          
+          div#reputationLogin
+            div(class="announce")
+              p Listeners can now optionally log in using their CompassionPit forums account!
+            div(class="form_errors",id="form_errors")
+            label(class="login")
+              input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
+            label(class="login")
+              input(type="text", id="loginPassword", name="loginPassword", class="login", placeholder="Password") 
+            button(id="login", class="login") Log In!
+            br
+            a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
         div#listenerFeedback
           p Is this person a good listener?
             button(id="helpful") Yes!
@@ -59,7 +60,7 @@ div(id="main",style="display:none")
         div#loggedInAs
           p Currently logged in as:&nbsp;
           span#currentUser
-            
+          a(href="/logout/true")Log Out  
         
 script
   //- Google Website Optimizer Tracking Script
@@ -76,4 +77,3 @@ script
   window.CLIENT_TYPE = !{JSON.stringify(type)};
   
 script(src="chat-init.js")
-script(src="js/registration.js")

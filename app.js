@@ -62,11 +62,17 @@ process.on('uncaughtException', function(err) {
         app.set('view engine', 'jade');
 
         app.get("/", function (req, res, next) {
-            console.log("Rendering index with getRoomCounts");
-            res.render('index', {
-                roomCounts: getRoomCounts(), //TODO: let's make sure this is cached in memory, and displayed on index.jade ;p
-                includeCrazyEgg: true
-            });
+          console.log(req.query);
+          var opts = {
+            loggedOut: false,
+            roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
+            
+          };
+          if (req.query && req.query.logout==='true') {
+            console.log("Xxx");
+            opts.loggedOut = true;
+          }
+          res.render('index', opts);
         });
 
         app.get("/counts", function(req,res) {
@@ -110,23 +116,28 @@ process.on('uncaughtException', function(err) {
             res.redirect("/terms-of-service", 301);
         });
 
+        app.get("/logout/true", function (req, res) {
+            res.cookie('bb_userid', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
+            res.cookie('bb_password', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
+            res.cookie('bb_sessionhash', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
+            res.redirect("/?logout=true");
+        });
+
         app.get("/vent", function (req, res) {
             res.render("chat", {
-                type: "venter",
-                includeCrazyEgg: true
+                type: "venter"
             });
         });
 
         app.get("/listen", function (req, res) {
 
             authServer.checkLogin(req, function(username) {
-              
-              console.log("username", username);
+
+              // console.log("username", username);
 
               if(username) {
                 res.render("chat", {
-                    type: "listener",
-                    includeCrazyEgg: true
+                    type: "listener"
                 });
               }
               else {
