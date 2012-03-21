@@ -120,9 +120,18 @@ process.on('uncaughtException', function(err) {
         app.get("/logout/true", function (req, res) {
             console.log(req.cookie);
             
-            res.clearCookie('bb_userid');
-            res.clearCookie('bb_password');
-            res.clearCookie('bb_sessionhash');
+            var paths = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
+            for (var i in paths) {
+              res.clearCookie('bb_userid', {
+                path: paths[i]
+              });
+              res.clearCookie('bb_password', {
+                path: paths[i]
+              });
+              res.clearCookie('bb_sessionhash', {
+                path: paths[i]
+              });
+            }
 
             res.redirect("/?logout=true");
         });
