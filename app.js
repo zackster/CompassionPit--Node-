@@ -119,61 +119,64 @@ process.on('uncaughtException', function(err) {
 
         app.get("/logout/true", function (req, res) {
             console.log(req.cookies);
-
-            var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
-            for (var i in domains) {
-              try {
-                res.clearCookie('bb_userid', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_password', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_sessionhash', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_userid', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_password', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_sessionhash', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-            }
+            res.cookie('bb_userid', undefined);
+            res.cookie('bb_password', undefined);
+            res.cookie('bb_sessionhash', 1);
+            console.log(req.cookies);
+            // var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
+            // for (var i in domains) {
+            //   try {
+            //     res.clearCookie('bb_userid', 1, {
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            //   try {
+            //     res.clearCookie('bb_password', 1, {
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            //   try {
+            //     res.clearCookie('bb_sessionhash', 1, {
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            //   try {
+            //     res.clearCookie('bb_userid', 1, {
+            //       domain: domains[i],
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            //   try {
+            //     res.clearCookie('bb_password', 1, {
+            //       domain: domains[i],
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            //   try {
+            //     res.clearCookie('bb_sessionhash', 1, {
+            //       domain: domains[i],
+            //       httpOnly: true
+            //     });
+            //   }
+            //   catch(e) {
+            //     console.log("EXCEPTION", e);
+            //   }
+            // }
 
             res.redirect("/?logout=true");
         });
