@@ -60,7 +60,7 @@ div(id="main",style="display:none")
         div#loggedInAs
           p Currently logged in as:&nbsp;
           span#currentUser
-          a(href="/logout/true") Log Out  
+          a(style="display:block", href="/logout/true", onclick="javascript:window.onbeforeunload=undefined;") Log Out  
         
 script
   //- Google Website Optimizer Tracking Script
