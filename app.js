@@ -118,76 +118,10 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
-          console.log(req);
-            console.log(req.cookie);
-            res.cookie('bb_userid', undefined);
-            res.cookie('bb_password', undefined);
-            res.cookie('bb_sessionhash', 1);
-            console.log(req.cookies);
-            
-            for(var key in req.cookies) {
-              if (req.cookies.hasOwnProperty(key) && req.cookies[key].indexOf('bb_')!==-1) {
-                console.log(req.cookies[key]);
-                req.cookies[key] = undefined;
-              }
-            }
-            
-            var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
-            for (var i in domains) {
-              try {
-                res.clearCookie('bb_userid', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_password', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_sessionhash', 1, {
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_userid', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_password', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-              try {
-                res.clearCookie('bb_sessionhash', 1, {
-                  domain: domains[i],
-                  httpOnly: true
-                });
-              }
-              catch(e) {
-                console.log("EXCEPTION", e);
-              }
-            }
-
-            res.redirect("/?logout=true");
+          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/'});
+          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: false});
+          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: true});
+          res.redirect("/?logout=true");
         });
 
         app.get("/vent", function (req, res) {
