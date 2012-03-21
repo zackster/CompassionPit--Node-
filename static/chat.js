@@ -33,6 +33,11 @@
         if ($("#chatWindow").length === 0) {
             return;
         }
+        
+        window.LISTENER_LOGGED_IN = false;
+
+        var comm = window.Comm.create();
+        comm.register();
 
 
         $("button#login, button#register").click(function() {
@@ -44,7 +49,7 @@
             password: $("#loginPassword").val()
           };
           var callback = function(success) {
-            log('callback called back with status: %s', success);
+            window.log('callback called back with status: %s', success);
             hideSpinner();
             if(success) {
               $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
@@ -58,9 +63,10 @@
           };
           showSpinner('login');
           $("span#currentUser").html(credentials.username);
-          comm.request("authenticateUser", credentials, callback);
+          console.log(credentials);
+          window.comm.request("authenticateUser", credentials, callback);
         });
-              
+
         var showSpinner = function(msg) {
           $("div#reputationLogin").hide();
           var $spinner = $("div#spinner");
@@ -73,14 +79,14 @@
           }
           $spinner.append($('<br /><br /><img src="img/loadbar.gif" />'));
         };
-        
+
         var hideSpinner = function() {
           $("div#spinner").hide();
           $("div#reputationLogin").show();
-                    
+
         };
-        
-        
+
+
         $("a.registration_mistake").click(function() {
           $("a#meant_to_login").toggle();
           $("a#register_account").toggle();

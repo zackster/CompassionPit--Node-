@@ -1,3 +1,50 @@
+span.announcement {
+  background-color: yellow;
+  font-size: 1.3em;
+}
+
+.pushdown20 {
+  margin-bottom: 20px;
+}
+.pushdown40 {
+  margin-bottom: 40px;
+}
+
+#reputationLogin a:link {
+  color: blue;
+  text-decoration: none;  
+}
+#reputationLogin a:visited {
+  color: blue;
+  text-decoration: none;  
+}
+
+#main.left-padded {
+  width: 95%;
+}
+
+h4.faq {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.left-padded {
+  padding-left: 20px;
+}
+
+#main h2 {
+  margin-top: 5px;
+  font-size: 22px;
+  font-family:     "Courier New",
+                     Courier,
+                     monospace;
+  text-transform: uppercase;
+}
+#main h1 {
+  font-size: 30px;
+  padding: 10px 0px 10px 0px;
+}
+
 span#currentUser {
   font-weight: bold;
 }

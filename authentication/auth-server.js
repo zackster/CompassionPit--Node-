@@ -32,7 +32,7 @@
     Server.prototype.markLoggedIn = function(user, callback) {
       var self = this;
       // console.log("user", user);
-      
+
       this.userInfo(user, function(uinfo) {
         // console.log("Mark logged in being callled");
         // console.log("Uinfo", uinfo);
@@ -65,12 +65,15 @@
           });
         }
         else {
-          // console.log("We are invokign self.getSession");
+          console.log("We are invokign self.getSession");
+          console.log(req.cookies);
+          console.log(req);
+          
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
-            // console.log('call back of getSession');
-            // console.log(user);
+            console.log('call back of getSession');
+            console.log(user);
             if(user) {
-              // console.log("WRECK");
+              console.log("WRECK");
               // console.log(req);
               self.markLoggedIn(user, function(username) {
                 callback.call(self, username);
@@ -114,29 +117,35 @@
 
     Server.prototype.getSession = function(req, hash, callback) {
 
-      // console.log("Inside get session....");
-      // console.log(req);
+      var ip_address;
+
+      if ("development" === (process.env.NODE_ENV || "development")) {
+        ip_address = '127.0.0.1';
+      }
+      else {
+        ip_address = req.headers['x-forwarded-for'] || req.address.address;
+      }
+      
 
 
       var user_agent = req.headers['user-agent'];
-      var ip_address = (req.headers['x-forwarded-for'] || req.address.address) || '127.0.0.1'; // because of nginx proxying
       var self = this;
 
       var ip = ip_address.split('.').slice(0, 3).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
-      // console.log("user agent", user_agent);
-      // console.log("ip addr", ip_address);
-      // console.log("ip", ip);
-      // console.log("new id hash", newidhash);
+      console.log("user agent", user_agent);
+      console.log("ip addr", ip_address);
+      console.log("ip", ip);
+      console.log("new id hash", newidhash);
 
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
 
-        // console.log("callback from getSession SQL ...");
-        // console.log("We searched on the hash,", hash);
-        // console.log("---cookies---");
-        // console.log(req.cookies);
-        // console.log(err, results);
+        console.log("callback from getSession SQL ...");
+        console.log("We searched on the hash,", hash);
+        console.log("---cookies---");
+        console.log(req.cookies);
+        console.log(err, results);
 
         if(err) {
           throw err;
@@ -168,6 +177,7 @@
     };
 
     Server.prototype.login = function (id, username, password, callback) {
+      console.log('login called...');
       var client = this.getMySQLClient();
       client.query('USE '+config.vBulletin.database);
       var self = this;

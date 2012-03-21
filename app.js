@@ -118,20 +118,22 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
-            if (config.listenerAuthentication) {  //middleware http basic auth - password set in config.js - useful for forkers who want privacy
-                var httpdigest = require('http-digest');
-                httpdigest.http_digest_auth(req, res, config.listenerAuthentication.username, config.listenerAuthentication.password, function (req, res) {
-                    res.render("chat", {
-                        type: "listener",
-                        includeCrazyEgg: true
-                    });
-                });
-            } else {
+
+            authServer.checkLogin(req, function(username) {
+              
+              console.log("username", username);
+
+              if(username) {
                 res.render("chat", {
                     type: "listener",
                     includeCrazyEgg: true
                 });
-            }
+              }
+              else {
+                res.render("listener-registration");
+              }
+            });
+
         });
 
         app.get("/chat.html", function (req, res) {
@@ -201,7 +203,7 @@ process.on('uncaughtException', function(err) {
         app.get('/leaderboard', function(req, res) {
 
           authServer.checkLogin(req, function(username) {
-            
+
             feedbackServer.getLeaderboard(function(top15) {
               if(username) {
                 feedbackServer.getLeaderboardForUser(username, function(userStats) {
