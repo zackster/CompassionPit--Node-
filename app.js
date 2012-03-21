@@ -118,9 +118,9 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout", function (req, res) {
-          res.cookie('bb_sessionhash', '');
-          res.cookie('bb_userid', '');
-          res.cookie('bb_password', '');
+          res.cookie('bb_sessionhash', '', {maxAge: 1});
+          res.cookie('bb_userid', '', {maxAge: 1});
+          res.cookie('bb_password', '', {maxAge: 1});
           
           var opts = {
             loggedOut: true,
