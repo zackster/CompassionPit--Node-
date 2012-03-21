@@ -126,21 +126,47 @@ process.on('uncaughtException', function(err) {
                 res.clearCookie('bb_userid', 1, {
                   httpOnly: false
                 });
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
+              try {
                 res.clearCookie('bb_password', 1, {
                   httpOnly: false
                 });
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
+              try {
                 res.clearCookie('bb_sessionhash', 1, {
                   httpOnly: false
                 });
-
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
+              try {
                 res.clearCookie('bb_userid', 1, {
                   domain: domains[i],
                   httpOnly: false
                 });
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
+              try {
                 res.clearCookie('bb_password', 1, {
                   domain: domains[i],
                   httpOnly: false
                 });
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
+              try {
+
+
                 res.clearCookie('bb_sessionhash', 1, {
                   domain: domains[i],
                   httpOnly: false
