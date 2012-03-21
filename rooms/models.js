@@ -335,7 +335,7 @@
         }
         delete queueRequestedPartners[userId];
 
-        console.log( 'dropped user ' + userId + ' from queue' );
+        // console.log( 'dropped user ' + userId + ' from queue' );
     };
     
     /**
@@ -358,7 +358,7 @@
 
             if (venter && venter.isClientConnected()) {
                 // venter exists and the client is still connected
-                console.log("venter exists and the client is still connected");
+                // console.log("venter exists and the client is still connected");
                 
                 var venterRequestedPartner = queueRequestedPartners[venterId];
                 if (venterRequestedPartner) {
@@ -404,8 +404,8 @@
                             var hashedListenerIP = hashIPAddress(listenerIP);
                             
 //                            console.log('hashed ip', hashedIPAddress);
-                            console.log('hashed venter', hashedVenterIP);
-                            console.log('hashed listener', hashedListenerIP);
+                            // console.log('hashed venter', hashedVenterIP);
+                            // console.log('hashed listener', hashedListenerIP);
                             
                             new Room(guid(), venterId, listenerId);
                             setTimeout(function() {

@@ -73,7 +73,7 @@
             console.log('call back of getSession');
             console.log(user);
             if(user) {
-              console.log("WRECK");
+              // console.log("WRECK");
               // console.log(req);
               self.markLoggedIn(user, function(username) {
                 callback.call(self, username);
@@ -143,9 +143,9 @@
 
         console.log("callback from getSession SQL ...");
         console.log("We searched on the hash,", hash);
-        console.log("---cookies---");
-        console.log(req.cookies);
-        console.log(err, results);
+        // console.log("---cookies---");
+        // console.log(req.cookies);
+        // console.log(err, results);
 
         if(err) {
           throw err;
