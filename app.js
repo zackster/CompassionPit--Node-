@@ -118,6 +118,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
+          res.cookie('zack', 'haha');
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/'});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: false});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: true});
