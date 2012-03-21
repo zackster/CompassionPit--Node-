@@ -125,7 +125,7 @@ process.on('uncaughtException', function(err) {
             res.cookie('bb_sessionhash', 1);
             console.log(req.cookies);
             
-            for(key in req.cookies) {
+            for(var key in req.cookies) {
               if (req.cookies.hasOwnProperty(key) && req.cookies.key.indexOf('bb_')!==-1) {
                 console.log(req.cookies[key]);
                 req.cookies[key] = undefined;
