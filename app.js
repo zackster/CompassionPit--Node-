@@ -118,15 +118,9 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout", function (req, res) {
-          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/'});
-          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: false});
-          res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: true});
-          res.cookie('bb_userid', '', {expires: new Date(1), path: '/'});
-          res.cookie('bb_userid', '', {expires: new Date(1), path: '/', httpOnly: false});
-          res.cookie('bb_userid', '', {expires: new Date(1), path: '/', httpOnly: true});
-          res.cookie('bb_password', '', {expires: new Date(1), path: '/'});
-          res.cookie('bb_password', '', {expires: new Date(1), path: '/', httpOnly: false});
-          res.cookie('bb_password', '', {expires: new Date(1), path: '/', httpOnly: true});
+          res.cookie('bb_sessionhash', '');
+          res.cookie('bb_userid', '');
+          res.cookie('bb_password', '');
           
           var opts = {
             loggedOut: true,
