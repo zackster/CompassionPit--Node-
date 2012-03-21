@@ -67,7 +67,7 @@
         else {
           console.log("We are invokign self.getSession");
           console.log(req.cookies);
-          console.log(req);
+          // console.log(req);
           
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
             console.log('call back of getSession');

@@ -383,17 +383,17 @@
                         }
                         
                         if (!userInteractions[venterId] || userInteractions[venterId].indexOf(listenerId) === -1) {
-                            console.log("the venter is new or has not talked with the listener before..");
+                            // console.log("the venter is new or has not talked with the listener before..");
                             // the venter is either new (and can be paired with anyone) or has not talked with the listener
                             // before
                             
                             if (venterRequestedPartner && User.getByPublicId(venterRequestedPartner.partnerId) !== listener) {
                                 // the venter wants a partner, this is not the right listener.
-                                console.log("The venter wants a partner, this is not the right listener.");
+                                // console.log("The venter wants a partner, this is not the right listener.");
                                 continue;
                             } else if (listenerRequestedPartner && User.getByPublicId(listenerRequestedPartner.partnerId) !== venter) {
                                 // the listener wants a partner, this is not the right venter.
-                                console.log("the listener wants a partner, this is not the right venter.");
+                                // console.log("the listener wants a partner, this is not the right venter.");
                                 continue;
                             }
 
