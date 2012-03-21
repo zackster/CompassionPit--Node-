@@ -122,28 +122,33 @@ process.on('uncaughtException', function(err) {
 
             var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
             for (var i in domains) {
-              res.clearCookie('bb_userid', 1, {
-                httpOnly: false
-              });
-              res.clearCookie('bb_password', 1, {
-                httpOnly: false
-              });
-              res.clearCookie('bb_sessionhash', 1, {
-                httpOnly: false
-              });
+              try {
+                res.clearCookie('bb_userid', 1, {
+                  httpOnly: false
+                });
+                res.clearCookie('bb_password', 1, {
+                  httpOnly: false
+                });
+                res.clearCookie('bb_sessionhash', 1, {
+                  httpOnly: false
+                });
 
-              res.clearCookie('bb_userid', 1, {
-                domain: domains[i],
-                httpOnly: false
-              });
-              res.clearCookie('bb_password', 1, {
-                domain: domains[i],
-                httpOnly: false
-              });
-              res.clearCookie('bb_sessionhash', 1, {
-                domain: domains[i],
-                httpOnly: false
-              });
+                res.clearCookie('bb_userid', 1, {
+                  domain: domains[i],
+                  httpOnly: false
+                });
+                res.clearCookie('bb_password', 1, {
+                  domain: domains[i],
+                  httpOnly: false
+                });
+                res.clearCookie('bb_sessionhash', 1, {
+                  domain: domains[i],
+                  httpOnly: false
+                });
+              }
+              catch(e) {
+                console.log("EXCEPTION", e);
+              }
             }
 
             res.redirect("/?logout=true");
