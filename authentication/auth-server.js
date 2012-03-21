@@ -141,8 +141,8 @@
       var client = this.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function selectCb(err, results, fields) {
 
-        console.log("callback from getSession SQL ...");
-        console.log("We searched on the hash,", hash);
+        // console.log("callback from getSession SQL ...");
+        // console.log("We searched on the hash,", hash);
         // console.log("---cookies---");
         // console.log(req.cookies);
         // console.log(err, results);

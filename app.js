@@ -470,8 +470,8 @@ process.on('uncaughtException', function(err) {
           if (room) {
               room.removeUser(userId, "request");
           }
-          console.log("adding user to queue");
-          console.log(userId, data.type, data.partnerId, data.priority);
+          // console.log("adding user to queue");
+          // console.log(userId, data.type, data.partnerId, data.priority);
           Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
           callback(true);
       };

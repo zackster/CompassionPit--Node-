@@ -298,7 +298,7 @@
         }
 
         var queue = type === "venter" ? venterQueue : listenerQueue;
-        console.log( 'adding user ' + userId + ' to queue ' + type );
+        // console.log( 'adding user ' + userId + ' to queue ' + type );
 
         if (priority) {
             console.log( 'prioritizing user ' + userId );
