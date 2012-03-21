@@ -1,0 +1,42 @@
+#main.left-padded
+  span.announcement NOTICE
+  p.pushdown20 A CompassionPit forums account is now <b>required</b> in order to be a listener.
+  
+    form(action="http://www.compassionpit.com/forum/login.php?do=login", method="post", onsubmit="md5hash(vb_login_password, vb_login_md5password, vb_login_md5password_utf, 0)")
+      script(type="text/javascript", src="http://www.compassionpit.com/forum/clientscript/vbulletin_md5.js?v=380")
+      table(cellpadding="0", cellspacing="0", border="0", class="logintab")
+        tbody
+          tr
+            td(style="padding-right:5px;")
+              label(class="login")
+                input(type="text", class="login", name="vb_login_username", id="navbar_username", size="10", accesskey="u", tabindex="101", onfocus="if (this.value == 'User Name') this.value = '';", placeholder="Username")
+            td(style="padding-right:5px;")
+              label(class="login")
+                input(type="password", class="login", name="vb_login_password", id="navbar_password", size="10", tabindex="102", placeholder="Password")
+            td
+              input(type="submit", class="login", value="Login", tabindex="104", title="Enter your username and password in the boxes provided to login, or click the 'register' button to create a profile for yourself.", accesskey="s")
+      input(type="hidden", name="s", value="")
+      input(type="hidden", name="securitytoken", value="guest")
+      input(type="hidden", name="do", value="login")
+      input(type="hidden", name="vb_login_md5password")
+      input(type="hidden", name="vb_login_md5password_utf")
+      input(type="checkbox", name="cookieuser", value="1", tabindex="103", id="cb_cookieuser_navbar", accesskey="c", style="margin-right:3px;", checked="checked", style="display:none")
+      a(href="http://www.compassionpit.com/forum/register.php") Not registered?
+      &nbsp;|
+      a(href="http://www.compassionpit.com/forum/login.php?do=lostpw") Forgot Password
+    div.pushdown40
+
+
+  
+  
+  :markdown
+      Will I still be anonymous?
+      --------------------------
+      Yes, of course.  Though now you will have the option of revealing your forums username to your venter, so he or she may contact you in case you accidentally disconnect.
+    
+      Why is registration mandatory?
+      ------------------------------
+      Two reasons. The first is so we can teach you the ropes and help you be a more supportive listener. The second is so we can ensure a high level of support, and quality of the listeners.
+    
+    
+
