@@ -143,6 +143,8 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
+          
+          console.log(req.cookie);
 
             authServer.checkLogin(req, function(username) {
 
