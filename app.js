@@ -120,29 +120,35 @@ process.on('uncaughtException', function(err) {
         app.get("/logout/true", function (req, res) {
             console.log(req.cookies);
 
-            var paths = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
-            for (var i in paths) {
-              res.cookie('bb_userid', 1, {
-                expires: new Date(Date.now() - 604800)
+            var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
+            for (var i in domains) {
+              res.clearCookie('bb_userid', 1, {
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
-              res.cookie('bb_password', 1, {
-                expires: new Date(Date.now() - 604800)
+              res.clearCookie('bb_password', 1, {
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
-              res.cookie('bb_sessionhash', 1, {
-                expires: new Date(Date.now() - 604800)
+              res.clearCookie('bb_sessionhash', 1, {
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
 
-              res.cookie('bb_userid', 1, {
-                path: paths[i],
-                expires: new Date(Date.now() - 604800)
+              res.clearCookie('bb_userid', 1, {
+                domain: domains[i],
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
-              res.cookie('bb_password', 1, {
-                path: paths[i],
-                expires: new Date(Date.now() - 604800)
+              res.clearCookie('bb_password', 1, {
+                domain: domains[i],
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
-              res.cookie('bb_sessionhash', 1, {
-                path: paths[i],
-                expires: new Date(Date.now() - 604800)
+              res.clearCookie('bb_sessionhash', 1, {
+                domain: domains[i],
+                expires: new Date(Date.now() - 604800),
+                httpOnly: false
               });
             }
 
