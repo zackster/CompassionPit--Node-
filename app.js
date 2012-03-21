@@ -63,7 +63,7 @@ process.on('uncaughtException', function(err) {
 
         app.get("/", function (req, res, next) {
           console.log(req.query);
-          console.log(req.cookie);
+          console.log(req.cookies);
           var opts = {
             loggedOut: false,
             roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
@@ -118,7 +118,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
-            console.log(req.cookie);
+            console.log(req.cookies);
             
             var paths = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
             for (var i in paths) {
@@ -144,7 +144,7 @@ process.on('uncaughtException', function(err) {
 
         app.get("/listen", function (req, res) {
           
-          console.log(req.cookie);
+          console.log(req.cookies);
 
             authServer.checkLogin(req, function(username) {
 
