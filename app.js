@@ -122,6 +122,10 @@ process.on('uncaughtException', function(err) {
             
             var paths = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
             for (var i in paths) {
+              res.clearCookie('bb_userid');
+              res.clearCookie('bb_password');
+              res.clearCookie('bb_sessionhash');
+              
               res.clearCookie('bb_userid', {
                 path: paths[i]
               });
