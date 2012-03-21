@@ -117,9 +117,13 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
-            res.cookie('bb_userid', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
-            res.cookie('bb_password', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
-            res.cookie('bb_sessionhash', '1', new Date(Date.now() - 3600), '/', '.compassionpit.com');
+            var expireOpts = {
+              expires: new Date(Date.now() - 3600)
+            };
+            res.cookie('bb_userid', '1', expireOpts);
+            res.cookie('bb_password', '1', expireOpts);
+            res.cookie('bb_sessionhash', '1', expireOpts);
+                        
             res.redirect("/?logout=true");
         });
 
