@@ -117,12 +117,16 @@ process.on('uncaughtException', function(err) {
             res.redirect("/terms-of-service", 301);
         });
 
-        app.get("/logout/true", function (req, res) {
+        app.get("/logout", function (req, res) {
           res.cookie('zack', 'haha');
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/'});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: false});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: true});
-          res.redirect("/?logout=true");
+          var opts = {
+            loggedOut: true,
+            roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
+          };
+          res.render('index', opts);
         });
 
         app.get("/vent", function (req, res) {
