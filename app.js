@@ -118,10 +118,16 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout", function (req, res) {
-          res.cookie('zack', 'haha');
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/'});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: false});
           res.cookie('bb_sessionhash', '', {expires: new Date(1), path: '/', httpOnly: true});
+          res.cookie('bb_userid', '', {expires: new Date(1), path: '/'});
+          res.cookie('bb_userid', '', {expires: new Date(1), path: '/', httpOnly: false});
+          res.cookie('bb_userid', '', {expires: new Date(1), path: '/', httpOnly: true});
+          res.cookie('bb_password', '', {expires: new Date(1), path: '/'});
+          res.cookie('bb_password', '', {expires: new Date(1), path: '/', httpOnly: false});
+          res.cookie('bb_password', '', {expires: new Date(1), path: '/', httpOnly: true});
+          
           var opts = {
             loggedOut: true,
             roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
