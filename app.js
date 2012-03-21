@@ -119,21 +119,30 @@ process.on('uncaughtException', function(err) {
 
         app.get("/logout/true", function (req, res) {
             console.log(req.cookies);
-            
+
             var paths = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
             for (var i in paths) {
-              res.clearCookie('bb_userid');
-              res.clearCookie('bb_password');
-              res.clearCookie('bb_sessionhash');
-              
-              res.clearCookie('bb_userid', {
-                path: paths[i]
+              res.cookie('bb_userid', 1, {
+                expires: new Date(Date.now() - 604800)
               });
-              res.clearCookie('bb_password', {
-                path: paths[i]
+              res.cookie('bb_password', 1, {
+                expires: new Date(Date.now() - 604800)
               });
-              res.clearCookie('bb_sessionhash', {
-                path: paths[i]
+              res.cookie('bb_sessionhash', 1, {
+                expires: new Date(Date.now() - 604800)
+              });
+
+              res.cookie('bb_userid', 1, {
+                path: paths[i],
+                expires: new Date(Date.now() - 604800)
+              });
+              res.cookie('bb_password', 1, {
+                path: paths[i],
+                expires: new Date(Date.now() - 604800)
+              });
+              res.cookie('bb_sessionhash', 1, {
+                path: paths[i],
+                expires: new Date(Date.now() - 604800)
               });
             }
 
@@ -147,7 +156,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
-          
+
           console.log(req.cookies);
 
             authServer.checkLogin(req, function(username) {
