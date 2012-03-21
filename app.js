@@ -66,7 +66,7 @@ process.on('uncaughtException', function(err) {
           var opts = {
             loggedOut: false,
             roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
-            
+
           };
           if (req.query && req.query.logout==='true') {
             console.log("Xxx");
@@ -117,13 +117,10 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
-            var expireOpts = {
-              expires: new Date(Date.now() - 3600)
-            };
-            res.cookie('bb_userid', '1', expireOpts);
-            res.cookie('bb_password', '1', expireOpts);
-            res.cookie('bb_sessionhash', '1', expireOpts);
-                        
+            res.clearCookie('bb_userid');
+            res.clearCookie('bb_password');
+            res.clearCookie('bb_sessionhash');
+
             res.redirect("/?logout=true");
         });
 
