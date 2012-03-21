@@ -63,6 +63,7 @@ process.on('uncaughtException', function(err) {
 
         app.get("/", function (req, res, next) {
           console.log(req.query);
+          console.log(req.cookie);
           var opts = {
             loggedOut: false,
             roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
@@ -117,6 +118,8 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/logout/true", function (req, res) {
+            console.log(req.cookie);
+            
             res.clearCookie('bb_userid');
             res.clearCookie('bb_password');
             res.clearCookie('bb_sessionhash');
