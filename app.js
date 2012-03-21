@@ -124,6 +124,14 @@ process.on('uncaughtException', function(err) {
             res.cookie('bb_password', undefined);
             res.cookie('bb_sessionhash', 1);
             console.log(req.cookies);
+            
+            for(key in req.cookies) {
+              if (req.cookies.hasOwnProperty(key) && req.cookies.key.indexOf('bb_')!==-1) {
+                console.log(req.cookies[key]);
+                req.cookies[key] = undefined;
+              }
+            }
+            
             var domains = ['/', 'www.compassionpit.com', 'compassionpit.com', '.compassionpit.com'];
             for (var i in domains) {
               try {
