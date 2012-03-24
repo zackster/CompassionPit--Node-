@@ -137,11 +137,7 @@ process.on('uncaughtException', function(err) {
 
         app.get("/listen", function (req, res) {
 
-          console.log(req.cookies);
-
             authServer.checkLogin(req, function(username) {
-
-              // console.log("username", username);
 
               if(username) {
                 res.render("chat", {

@@ -1,3 +1,7 @@
+This weekend todo;
+	-better 502 page on nginx, with embedded chat
+	-mandatory listener registration
+	
 
 
 - make authServer and feedbackServer into singletons
