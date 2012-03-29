@@ -74,10 +74,10 @@
         $("#initializing").append('<br>'+"Socket connection started");
         
         if(/compassionpit\.com/i.test(document.domain)) {
-          var socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";
+          socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";
         }
         else {
-          var socketio_addr = null;
+          socketio_addr = null;
         }
         
         log('determining sio addr');
@@ -124,7 +124,7 @@
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
-                t: "register",
+                t: "register"
             };
             var referrer = document.cookie.match('referrer=([^;]+)') || [];
             registerMessage.d = {
@@ -197,7 +197,7 @@
                     publicUserId = message[3];
                     var lastReceivedMessage = message[4];
                     var forums_username = message[5];
-                    if(forums_username !== false && window.CLIENT_TYPE=='listener') {
+                    if(forums_username !== false && window.CLIENT_TYPE==='listener') {
                       console.log(forums_username);
                       $("span#currentUser").html(forums_username);
                       $("div#reputationLogin").hide();
