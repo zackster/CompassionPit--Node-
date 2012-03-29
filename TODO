@@ -1,7 +1,6 @@
-1) Get site working in IE7.
-2) Implement selenium and saucelabs for CompassionPit
-3) 301 redirect on /forum and /forums and /forums/
-4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback
+
+
+
 5) Email for listeners letting them know their rank and top15 status
 6) Better 502 page on nginx, with embedded chat
 7) Ask Treya ETA on training modules
@@ -12,8 +11,8 @@
 12 outline privacy policy as per forum thread
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
 14 Chat expands to fill browser
-
-This weekend todo;
+15 remove "referrer" from vbulletin registration -> streamline vb reg as much as possible
+16 don't show location if they are far away
 	
 
 	
@@ -32,3 +31,6 @@ This weekend todo;
 - textroulette for top listeners
 - sneakpeeq companies give sponsors to top prizes?  ask donny who we have relationships with?
 - sneakpeeq credit for top listeners
+- Implement selenium and saucelabs for CompassionPit
+3) 301 redirect on /forum and /forums and /forums/
+4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback

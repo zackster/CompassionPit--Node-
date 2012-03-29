@@ -219,7 +219,7 @@ process.on('uncaughtException', function(err) {
 
           authServer.checkLogin(req, function(username) {
 
-            feedbackServer.getLeaderboard(function(top15) {
+            feedbackServer.getLeaderboard(true, function(top15) {
               if(username) {
                 feedbackServer.getLeaderboardForUser(username, function(userStats) {
                   // console.log("user stats", userStats);

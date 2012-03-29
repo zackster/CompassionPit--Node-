@@ -4,22 +4,23 @@
 
 (function () {
     "use strict";
-    
+
     var log = require("../log"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
         User = require("../users/models").User,
         hashIPAddress = require("../utils").hashIPAddress,
+        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
         async = require( 'async' );
-    
-    
+
+
     /**
      * The amount of time between activities until the room is considered expired.
      */
     var EXPIRY_TIME = 60 * 1000; // 60 secs
-    
+
     var REQUESTED_PARTNER_TIMEOUT = 10 * 1000; // 10 secs
-    
+
     var mongoose = require('mongoose');
     (function () {
         var Schema = mongoose.Schema;
@@ -58,9 +59,9 @@
             messages: [Message]
         }));
     }());
-    
+
     var Conversation = exports.Conversation = mongoose.model('Conversation');
-    
+
     var saveConversation = function (conversation) {
         if (conversation.messages.length) {
             conversation.save(function (err) {
@@ -73,7 +74,7 @@
             });
         }
     };
-    
+
     setTimeout(function () {
         var serverSession = require("../app").sessionId;
         Conversation.find({ serverSession: { $ne: serverSession }, status: "active" }, function (err, conversations) {
@@ -93,12 +94,12 @@
             }
         });
     }, 5000);
-    
+
     /**
      * A hash of roomId to Room
      */
     var rooms = createHash();
-    
+
     /**
      * A hash of valid listener types
      */
@@ -106,7 +107,7 @@
         venter: true,
         listener: true
     }, true);
-    
+
     /**
      * The queue of listener userIDs that are waiting for a partner.
      */
@@ -115,12 +116,12 @@
      * The queue of venter userIDs that are waiting for a partner.
      */
     var venterQueue = [];
-    
+
     /**
      * A hash of userId to requested partner public userId.
      */
     var queueRequestedPartners = createHash();
-    
+
     /**
      * a simple hash of userId to roomId
      */
@@ -130,9 +131,9 @@
      * person.
      */
     var userInteractions = createHash();
-    
+
     var DEVELOPMENT = (process.env.NODE_ENV || "development") === "development";
-    
+
     /**
      * Create a Room object
      *
@@ -153,25 +154,25 @@
             listener: 0
         });
         this.numMessages = 0;
-        
+
         rooms[id] = this;
-        
+
         log.info({
             event: "New room",
             room: id
         });
-        
+
         this.addUser(venterId, "venter");
         this.addUser(listenerId, "listener");
         log.store("joinRoom", venterId);
         log.store("joinRoom", listenerId);
-        
+
         var venter = User.getById(venterId);
         var listener = User.getById(listenerId);
-        
+
         var venterIP = venter ? venter.getIPAddress() || "" : "";
         var listenerIP = listener ? listener.getIPAddress() || "" : "";
-        
+
         var conversation = this.conversation = new Conversation({
             serverSession: require("../app").sessionId,
             status: "active",
@@ -190,7 +191,7 @@
             messages: []
         });
         saveConversation(conversation);
-        
+
         if (venterIP && venterIP !== "127.0.0.1") {
             require('../app').geoipCity.lookup(venterIP, function (err, data) {
                 if (err) {
@@ -202,12 +203,12 @@
                     });
                     return;
                 }
-                
+
                 conversation.venter.geoLocation = data;
                 saveConversation(conversation);
             });
         }
-        
+
         if (listenerIP && listenerIP !== "127.0.0.1") {
             require('../app').geoipCity.lookup(listenerIP, function (err, data) {
                 if (err) {
@@ -219,13 +220,13 @@
                     });
                     return;
                 }
-                
+
                 conversation.listener.geoLocation = data;
                 saveConversation(conversation);
             });
         }
     };
-    
+
     /**
      * Loop through all existing rooms
      *
@@ -238,7 +239,7 @@
             }
         }
     };
-    
+
     /**
      * Calculate the number of listeners and venters in the system
      *
@@ -247,15 +248,44 @@
     Room.calculateCounts = function () {
         var numListeners = listenerQueue.length;
         var numVenters = venterQueue.length;
+        var venterId, listeners_here, venters_here;
 
         Room.forEach(function (room, id) {
-            numListeners += room.getNumUsersOfType("listener");
-            numVenters += room.getNumUsersOfType("venter");
+            venters_here = room.getNumUsersOfType("venter");
+            listeners_here = room.getNumUsersOfType("listener");
+            numListeners += listeners_here;
+            numVenters += venters_here;
+
+
+
+            if(listeners_here >= 1 && venters_here >= 1 && (Date.now() - room.startTime) > 1000*60*10) { // room is full; they've been talking for > 15 min
+              var room_users = room.users;
+              for (var userId in room_users) {
+                if (room_users.hasOwnProperty(userId)) {
+                  if(room_users.userId === 'venter') {
+                    venterId = userId;
+                  }
+                }
+              }
+
+              var room = Room.getByUserId(venterId),
+              listenerId = room.conversation.listener.userId;
+
+              feedbackServer.addFeedback({
+                venter: venterId,
+                listener: listenerId,
+                direction: 'positive'
+              });
+            }
+
+
         });
-        
+
+
+
         return [numListeners, numVenters];
     };
-    
+
     /**
      * Get the Room identified by the provided id
      *
@@ -265,7 +295,7 @@
     Room.get = function (id) {
         return rooms[id] || null;
     };
-    
+
     /**
      * Add the provided userId to the queue of its type
      *
@@ -280,19 +310,19 @@
         } else if (!VALID_TYPES[type]) {
             throw new Error("Unknown type: " + type);
         }
-        
+
         if (userIdToRoomId[userId]) {
             // in a room already
             return;
         }
-        
+
         if (venterQueue.indexOf(userId) !== -1 || listenerQueue.indexOf(userId) !== -1) {
             // in a queue already
             return;
         }
 
         var user = User.getById(userId);
-        if (DEVELOPMENT && (user.getIPAddress() === "" || user.getIPAddress() == "127.0.0.1")) {
+        if (DEVELOPMENT && (user.getIPAddress() === "" || user.getIPAddress() === "127.0.0.1")) {
             // console.log("setting ip for " + type + " " + userId);
             user.setIPAddress(type === "venter" ? "123.123.123.123" : "1.2.3.4");
         }
@@ -318,7 +348,7 @@
         Room.checkQueues();
 
     };
-    
+
     /**
      * Remove the provided userId from all queues
       *
@@ -337,7 +367,7 @@
 
         // console.log( 'dropped user ' + userId + ' from queue' );
     };
-    
+
     /**
      * Check the queues and create rooms if necessary
      */
@@ -349,9 +379,9 @@
             // console.log(listenerQueue);
             return;
         }
-        
+
         var now = Date.now();
-        
+
         for (var i = 0, lenI = venterQueue.length; i < lenI; i += 1) {
             var venterId = venterQueue[i];
             var venter = User.getById(venterId);
@@ -359,7 +389,7 @@
             if (venter && venter.isClientConnected()) {
                 // venter exists and the client is still connected
                 // console.log("venter exists and the client is still connected");
-                
+
                 var venterRequestedPartner = queueRequestedPartners[venterId];
                 if (venterRequestedPartner) {
                     if (venterRequestedPartner.timeout < now) {
@@ -367,13 +397,13 @@
                         venterRequestedPartner = undefined;
                     }
                 }
-                
+
                 for (var j = 0, lenJ = listenerQueue.length; j < lenJ; j += 1) {
                     var listenerId = listenerQueue[j];
                     var listener = User.getById(listenerId);
                     if (listener && listener.isClientConnected()) {
                         // listener exists and the client is still connected
-                        
+
                         var listenerRequestedPartner = queueRequestedPartners[listenerId];
                         if (listenerRequestedPartner) {
                             if (listenerRequestedPartner.timeout < now) {
@@ -381,12 +411,12 @@
                                 listenerRequestedPartner = undefined;
                             }
                         }
-                        
+
                         if (!userInteractions[venterId] || userInteractions[venterId].indexOf(listenerId) === -1) {
                             // console.log("the venter is new or has not talked with the listener before..");
                             // the venter is either new (and can be paired with anyone) or has not talked with the listener
                             // before
-                            
+
                             if (venterRequestedPartner && User.getByPublicId(venterRequestedPartner.partnerId) !== listener) {
                                 // the venter wants a partner, this is not the right listener.
                                 // console.log("The venter wants a partner, this is not the right listener.");
@@ -397,20 +427,18 @@
                                 continue;
                             }
 
-                            var venterIP = venter.getIPAddress();
-                            var listenerIP = listener.getIPAddress();
+                            // var venterIP = venter.getIPAddress();
+                            // var listenerIP = listener.getIPAddress();
 
-                            var hashedVenterIP = hashIPAddress(venterIP);
-                            var hashedListenerIP = hashIPAddress(listenerIP);
-                            
+                            // var hashedVenterIP = hashIPAddress(venterIP);
+                            // var hashedListenerIP = hashIPAddress(listenerIP);
+
 //                            console.log('hashed ip', hashedIPAddress);
                             // console.log('hashed venter', hashedVenterIP);
                             // console.log('hashed listener', hashedListenerIP);
-                            
+
                             new Room(guid(), venterId, listenerId);
-                            setTimeout(function() {
-                              Room.checkQueues();
-                            },500);
+                            setTimeout(Room.checkQueues,500);
 
                             return;
                         }
@@ -419,7 +447,7 @@
             }
         }
     };
-    
+
     /**
      * Get the Room with the provided userId in it.
      *
@@ -431,10 +459,10 @@
         if (!roomId) {
             return null;
         }
-        
+
         return Room.get(roomId);
     };
-    
+
     /**
      * Dump debug data of all the current Rooms.
      *
@@ -458,7 +486,7 @@
             venterQueue: venterQueue
         };
     };
-    
+
     /**
      * Calculate the current queue position of the provided user.
      *
@@ -482,7 +510,7 @@
             queue = listenerQueue;
             otherQueue = venterQueue;
         }
-        
+
 
         for (var i = 0; i < index; i += 1) {
             var competitorId = queue[i];
@@ -493,7 +521,7 @@
             } else {
                 for (var j = 0, len = otherQueue.length; j < len; j += 1) {
                     var otherId = otherQueue[j];
-                    
+
                     if (userInteractions[otherId] && userInteractions[otherId].indexOf(competitorId) !== -1 && userInteractions[otherId].indexOf(userId) === -1) {
                         // competitor can't queue with this person, already conversed with them, but the user we're
                         // checking has not yet, so they are potentially available, allowing the user to skip over this
@@ -507,23 +535,23 @@
         if (index < 0) {
             index = 0;
         }
-        
+
         return index;
     };
-    
+
     /**
      * Delete the current room. Adds any current users to their appropriate queues.
      *
      * @param {String} type Either "listener" or "venter" for the person who left that ended the chat.
      * @param {String} reason Either "disconnect" or "request".
      */
-    Room.prototype.delete = function (type, reason) {
+    Room.prototype.deleteRoom = function (type, reason) {
         log.info({
             event: "Delete room",
             room: this.id
         });
         delete rooms[this.id];
-        
+
         var users = this.users;
         for (var userId in users) {
             var clientType = users[userId];
@@ -533,7 +561,7 @@
             log.store("leaveRoom", userId);
             Room.addUserToQueue(userId, clientType);
         }
-        
+
         var conversation = this.conversation;
         conversation.status = "complete";
         conversation.finishTime = Date.now();
@@ -552,14 +580,14 @@
         }
         saveConversation(conversation);
     };
-    
+
     /**
      * Update the lastAccessTime of the Room.
      */
     Room.prototype.poke = function () {
         this.lastAccessTime = Date.now();
     };
-    
+
     /**
      * Return whether the Room has the provided client type in it already.
      *
@@ -569,7 +597,7 @@
     Room.prototype.hasType = function (type) {
         return !!this.types[type];
     };
-    
+
     /**
      * Return whether all expected client types are in the Room.
      *
@@ -583,7 +611,7 @@
         }
         return true;
     };
-    
+
     /**
      * Return the number of clients of the provided type in the Room.
      *
@@ -593,19 +621,16 @@
     Room.prototype.getNumUsersOfType = function (type) {
         return this.types[type] || 0;
     };
-    
+
     /**
      * Return whether at least 1 user is present in the Room.
      *
      * @return {Boolean} Whether the Room has at least 1 user.
      */
     Room.prototype.hasAnyUsers = function () {
-        for (var userId in this.users) {
-            return true;
-        }
-        return false;
+      return Object.keys(this.users).length > 0;
     };
-    
+
     /**
      * Return the number of users present in the Room.
      *
@@ -613,12 +638,10 @@
      */
     Room.prototype.getNumUsers = function () {
         var count = 0;
-        for (var userId in this.users) {
-            count += 1;
-        }
+        count = Object.keys(this.users).length;
         return count;
     };
-    
+
     /**
      * Return whether the Room has had no activity for the past EXPIRY_TIME.
      *
@@ -627,7 +650,7 @@
     Room.prototype.isExpired = function () {
         return this.lastAccessTime < Date.now() - EXPIRY_TIME;
     };
-    
+
     /**
      * Send a raw message to the provided user. Any parameters after type are included in the message.
      *
@@ -639,7 +662,7 @@
         if (!user) {
             return;
         }
-        
+
         var message = {t: type};
         if (arguments.length > 2) {
             if (arguments.length === 3) {
@@ -650,7 +673,7 @@
         }
         user.send(message);
     };
-    
+
     /**
      * Receive a message from the user
      *
@@ -660,13 +683,13 @@
      */
     Room.prototype.receiveMessage = function (userId, message, callback) {
         this.poke();
-        
+
         var clientType = this.users[userId];
         if (!clientType || !VALID_TYPES[clientType]) {
             callback(false);
             return;
         }
-        
+
         log.info({
             event: "Chat",
             user: userId,
@@ -679,26 +702,26 @@
                 this.sendToUser(otherUserId, "msg", clientType, message);
             }
         }
-        
+
         this.conversation.messages.push({
             partner: clientType,
             text: message
         });
         saveConversation(this.conversation);
-        
+
         callback(true);
     };
-    
+
 
     Room.prototype.sendTypeStatus = function (userId, message, callback) {
         this.poke();
-        
+
         var clientType = this.users[userId];
         if (!clientType || !VALID_TYPES[clientType]) {
             callback(false);
             return;
         }
-        
+
         log.info({
             event: "Typing",
             user: userId,
@@ -711,10 +734,10 @@
                 this.sendToUser(otherUserId, "typing", clientType, message);
             }
         }
-        
+
         callback(true);
     };
-    
+
     Room.prototype.lookupUserGeoIP = function (userId, callback) {
         var user = User.getById(userId);
         if (!user || this.users[userId] !== "listener") {
@@ -723,7 +746,7 @@
             user.lookupGeoIP(callback);
         }
     };
-    
+
     /**
      * Add the provided user to the Room.
      *
@@ -745,14 +768,14 @@
                 oldRoom.removeUser(userId);
             }
         }
-        
+
         log.info({
             event: "Add user",
             user: userId,
             room: this.id,
             type: type
         });
-        
+
         userIdToRoomId[userId] = this.id;
         this.users[userId] = type;
         this.types[type] += 1;
@@ -784,10 +807,10 @@
                 // }
             }
         });
-        
+
         Room.removeUserFromQueue(userId);
     };
-    
+
     /**
      * Remove the provided user from the Room.
      *
@@ -812,7 +835,7 @@
                 }
             }
         }
-        
+
         var users = this.users;
         delete users[userId];
         delete userIdToRoomId[userId];
@@ -825,7 +848,7 @@
             async.forEach(
                 userIds,
                 function( user, callback ) {
-                    if ( reason == 'disconnect' ) {
+                    if ( reason === 'disconnect' ) {
                         console.log( 'dropping user %s from room', user );
 
                         delete users[ user ];
@@ -849,12 +872,12 @@
 
                     console.log( '%s room deconstruction complete, users remaining: %s', reason, remaining.join( ', ' ) );
 
-                    self.delete( clientType || 'unknown', reason );
+                    self.deleteRoom( clientType || 'unknown', reason );
                 }
             );
         } else {
             // no users to worry about, just delete the room
-            this.delete( clientType || 'unknown', reason );
+            this.deleteRoom( clientType || 'unknown', reason );
         }
     };
 }());

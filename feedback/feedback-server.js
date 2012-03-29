@@ -1,5 +1,6 @@
 (function () {
 
+  "use strict";
   var mongoose       = require('mongoose'),
     _ = require('underscore'),
     regexp = require(".././utils").regexp,
@@ -42,18 +43,20 @@
 
       var venter_ip = User.getById(feedback.venter).getIPAddress();
       var listener_ip = User.getById(feedback.listener).getIPAddress();
-            
+
       if(venter_ip === listener_ip) {
         console.log("We aren't adding feedback since both listener and venter share an IP address.");
         return;
       }
-      
-            
+
+
       instance.save(function(err) {
         if(err && err.errors) {
           var badFields = [];
           for (var badField in err.errors) {
-            badFields.push(badField);
+            if(err.errors.hasOwnProperty(badField)) {
+              badFields.push(badField);
+            }
           }
           console.log("ERROR!");
           console.log(badFields);
@@ -99,11 +102,9 @@
           }
           for (var i in listeners) {
 
-              (function() {
+            if(listeners.hasOwnProperty(i)) {
 
-
-                var thisListener = listeners[i];
-
+              (function(thisListener) {
 
                 Feedback.count({
                     listener: thisListener,
@@ -129,7 +130,8 @@
                     self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (-3 * docs);
                 });
 
-              }());
+              }(listeners[i]));
+            }
 
           }
 
@@ -147,7 +149,7 @@
       var user_scores = [];
       _.each(scores, function(score, username, list) {
 
-        if(username.length != 24 && !regexp().email.test(username)) {
+        if(username.length !== 24 && !regexp().email.test(username)) {
           var valid_user = {username: username, score: score};
           user_scores.push(valid_user);
         }
@@ -162,7 +164,7 @@
       _.each(user_scores_sorted, function(user, position, list) {
         // console.log("username being eached", user.username);
         // console.log("our user", loggedInUser);
-        if(user.username == loggedInUser) {
+        if(user.username === loggedInUser) {
           user_position = position + 1;
         }
       });
@@ -198,12 +200,13 @@
 
     };
 
-    this.getLeaderboard = function(cb) {
+    this.getLeaderboard = function(top15Only, cb) {
+
       var scores = self.listenerScores;
       var user_scores = [];
       _.each(scores, function(score, username, list) {
 
-        if(username.length != 24 && !regexp().email.test(username)) {
+        if(username.length !== 24 && !regexp().email.test(username)) {
           var user = {username: username, score: score};
           user_scores.push(user);
         }
@@ -212,7 +215,14 @@
         return -user.score; // sortBy sorts by value returned in descending order
       });
 
-      cb.call(null, user_scores.slice(0,15));
+      var top15 = top15Only || false;
+      if(top15) {
+        cb.call(null, user_scores.slice(0,15));
+      }
+      else {
+        cb.call(null, user_scores);
+      }
+
 
     };
 
