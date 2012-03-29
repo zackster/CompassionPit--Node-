@@ -2,7 +2,7 @@
     "use strict";
 
 
-    var feedbackServer = require('./feedback/feedback-server').feedbackServer();
+    var feedbackServer = require('.././feedback/feedback-server').feedbackServer();
     var mongoose = require('mongoose'),
     config = require("../config");
     mongoose.connect(config.mongodb.uri, function(err) {
