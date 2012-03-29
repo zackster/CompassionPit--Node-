@@ -84,7 +84,7 @@
 
         var socket = io.connect(socketio_addr, {
             'max reconnection attempts': 5,
-            'force new connection': true,
+            'force new connection': true
         });
         window.globalSocket = socket;
         
