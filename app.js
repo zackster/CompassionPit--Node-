@@ -136,12 +136,25 @@ process.on('uncaughtException', function(err) {
         app.get("/listen", function (req, res) {
             authServer.checkLogin(req, function(username) {
               if(username) {
-                res.render("chat", {
-                    type: "listener"
-                });
+				try {
+	                res.render("chat", {
+	                    type: "listener"
+	                });					
+				}
+				catch(e) {
+					console.log("BEEP BOOP");
+					console.log(e);
+				}
+
               }
               else {
-                res.render("listener-registration");
+				try {
+	                res.render("listener-registration");	
+				}
+				catch(e) {
+					console.log("BOOP BEEP");
+					console.log(e);
+				}
               }
             });
 
