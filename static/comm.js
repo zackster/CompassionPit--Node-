@@ -91,6 +91,7 @@
         }
         else {
             socket = io.connect(socketio_addr, {
+				'transports': ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'],
                 'max reconnection attempts': 5,
                 'force new connection': true
             });

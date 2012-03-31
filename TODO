@@ -13,7 +13,8 @@
 14 Chat expands to fill browser
 15 remove "referrer" from vbulletin registration -> streamline vb reg as much as possible
 16 don't show location if they are far away
-	
+17 make app validate in http://validator.w3.org/check# for html5
+18 use sprites to reduce resources 	
 
 	
 
