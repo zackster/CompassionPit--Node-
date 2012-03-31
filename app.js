@@ -119,7 +119,7 @@ process.on('uncaughtException', function(err) {
           res.clearCookie('bb_sessionhash');
           res.clearCookie('bb_userid');
           res.clearCookie('bb_password');
-          
+
           var opts = {
             loggedOut: true,
             roomCounts: getRoomCounts() // TODO: make sure this is cached in memory
@@ -136,25 +136,25 @@ process.on('uncaughtException', function(err) {
         app.get("/listen", function (req, res) {
             authServer.checkLogin(req, function(username) {
               if(username) {
-				try {
-	                res.render("chat", {
-	                    type: "listener"
-	                });					
-				}
-				catch(e) {
-					console.log("BEEP BOOP");
-					console.log(e);
-				}
+                try {
+                    res.render("chat", {
+                        type: "listener"
+                    });
+                }
+                catch(e) {
+                    console.log("BEEP BOOP");
+                    console.log(e);
+                }
 
               }
               else {
-				try {
-	                res.render("listener-registration");	
-				}
-				catch(e) {
-					console.log("BOOP BEEP");
-					console.log(e);
-				}
+                try {
+                    res.render("listener-registration");
+                }
+                catch(e) {
+                    console.log("BOOP BEEP");
+                    console.log(e);
+                }
               }
             });
 
@@ -261,9 +261,18 @@ process.on('uncaughtException', function(err) {
       // disable debug logging in socket.io
       socket.set( 'log level', 3 );
 
+
+
       var socketHandlers = Object.create(null);
 
       socket.configure(function () {
+              socket.set('transports', [
+                    'websocket',
+                    'flashsocket',
+                    'htmlfile',
+                    'xhr-polling',
+                    'jsonp-polling'
+                 ]);
           socket.set('authorization', function (handshakeData, callback) {
             // console.log('calling authorization inside socketio');
             // console.log(handshakeData);

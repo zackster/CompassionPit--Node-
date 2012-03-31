@@ -83,15 +83,20 @@
         log('determining sio addr');
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
-            socket = io.connect(socketio_addr,{
-                    'transports': ['xhr-multipart', 'flashsocket','htmlfile', 'xhr-polling'],
-                    'max reconnection attempts': 15,
-                    'force new connection': true
-            });
+
+            socket = io.connect(socketio_addr, {
+                       'connect timeout': 500,
+                        'try multiple transports': true,
+                       'reconnect': true,
+                       'reconnection delay': 500,
+                       'reopen delay': 500,
+                       'max reconnection attempts': 10
+                   });
+
         }
         else {
             socket = io.connect(socketio_addr, {
-		'transports': ['flashsocket'],
+        'transports': ['flashsocket'],
                 'max reconnection attempts': 5,
                 'force new connection': true
             });
