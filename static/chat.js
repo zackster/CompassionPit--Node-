@@ -1,5 +1,5 @@
 (function (exports, $, undefined) {
-
+	"use strict";
     $("div#main").hide();
     var progressBarPct = 0;
 
@@ -26,8 +26,8 @@
         var self = this;
         self.progressBar('init');
         $("#initializing").append('<br>'+'Chat create');
-        for(var i=1;i<9;i++) {
-          setTimeout(function() { self.progressBar(); }, 1500*i);
+        for(var i = 1; i < 9; i = i+1) {
+          setTimeout(self.progressBar, 1500*i);
         }
         
         if ($("#chatWindow").length === 0) {
@@ -101,7 +101,7 @@
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
         var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
 
-        if(CLIENT_TYPE == 'listener') {
+        if(CLIENT_TYPE === 'listener') {
           $("div#reputationLogin").show();
         }
         else {
@@ -109,7 +109,7 @@
         }
 
         $("div#listenerFeedback button").click(function() {
-          if(this.id=='helpful') {
+          if(this.id === 'helpful') {
             send_positive_feedback();
           }
           else {
@@ -145,8 +145,7 @@
         };
 
         log('creating comm object');
-        var comm = window.Comm.create();
-        window.comm = comm;
+        window.comm = window.Comm.create();
         log('comm object creation successful');
         var hasPartner = false;
         var lastPartnerId = null;
@@ -206,6 +205,23 @@
             info('Connection error');
         });
 
+        var status = function(msg, cssClass, checkQueue) {
+          
+            checkingQueue = checkQueue && msg;
+
+            var msgform = (msg === false);
+
+            var $status = $('#status');
+            $status.removeClass('errorMessage infoMessage');
+            $status.addClass(cssClass);
+            if(msgform) {
+                $status.text("Connected");
+            } else {
+                $status.text(msg);
+            }
+            queryQueuePosition();
+        };
+
         function info(msg) {
             status(msg, 'infoMessage');
         }
@@ -244,22 +260,7 @@
             }, 0);
         };
         
-        function status(msg, cssClass, checkQueue) {
-          
-            checkingQueue = checkQueue && msg;
 
-            var msgform = (msg === false);
-
-            var $status = $('#status');
-            $status.removeClass('errorMessage infoMessage');
-            $status.addClass(cssClass);
-            if(msgform) {
-                $status.text("Connected");
-            } else {
-                $status.text(msg);
-            }
-            queryQueuePosition();
-        }
 
         var spaces_only = /^\s+$/img;
         $('#chat_input').submit(function (event) {
@@ -272,7 +273,7 @@
         });
         
         $('#inform').keyup(function(e) {
-          if((e.keyCode || e.which) == 13) { //Enter keycode
+          if((e.keyCode || e.which) === 13) { //Enter keycode
             $('#chat_input').trigger('submit');
           }
         });
@@ -371,7 +372,7 @@
             scrollDiv.scrollTop = scrollDiv.scrollHeight;
         };
 
-        var i = 0;
+        i = 0;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg, cssClass) {
             var $td = $("<span>");
@@ -394,7 +395,7 @@
         }
 
         function changeTitle() {
-            i++;
+            i = i + 1;
             if(i%2) {
                 document.title = 'New message on CompassionPit!';
             }
@@ -465,7 +466,7 @@
             addMessage("System", message, 'yellow-row');
         });
         comm.handler("msg", function (type, message) {
-            if (type != CLIENT_TYPE) {
+            if (type !== CLIENT_TYPE) {
                 addMessage(type, message);
                 $("#abuseButtonContainer")
                     .removeClass("hidden");
@@ -492,7 +493,7 @@
           
         });
         comm.handler("typing", function (type, message) {
-            if (type != CLIENT_TYPE && hasPartner) {
+            if (type !== CLIENT_TYPE && hasPartner) {
                 switch (message.state){
                     case "on":
                         addMessage('System', 'You will now be able to see when '+type+' is typing');
@@ -533,7 +534,7 @@
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
-                    if(CLIENT_TYPE == 'venter') {
+                    if(CLIENT_TYPE === 'venter') {
                       $("div#listenerFeedback").show();
                     }
                 }

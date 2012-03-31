@@ -259,13 +259,14 @@
         };
         
         checkSend = function (lastReceivedMessage) {
+			var i, j, k, len;
             if (!isRegistered) {
                 return;
             }
             
             if (lastReceivedMessage != null) {
                 var backlogMessages = [];
-                for (var i = 0, len = sendBacklog.length; i < len; i += 1) {
+                for (i = 0, len = sendBacklog.length; i < len; i += 1) {
                     var message = sendBacklog[i];
                     if (message.i > lastReceivedMessage) {
                         backlogMessages.push(message);
@@ -273,14 +274,14 @@
                 }
                 if (backlogMessages.length > 0) {
                     log("Sent " + backlogMessages.length + " backlogged messages");
-                    for (var j = 0, len = backlogMessages.length; j < len; j += 1) {
+                    for (j = 0, len = backlogMessages.length; j < len; j += 1) {
                         socket.json.send(backlogMessages[j]);
                     }
                 }
             }
             
             if (sendQueue.length > 0) {
-                for (var k = 0, len = sendQueue.length; k < len; k += 1) {
+                for (k = 0, len = sendQueue.length; k < len; k += 1) {
                     socket.json.send(sendQueue[k]);
                 }
                 sendBacklog.push.apply(sendBacklog, sendQueue);
