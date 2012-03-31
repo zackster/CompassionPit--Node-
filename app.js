@@ -138,15 +138,15 @@ process.on('uncaughtException', function(err) {
         app.get("/listen", function (req, res) {
 
             authServer.checkLogin(req, function(username) {
-
-              if(username) {
+				// username='Zachary Burt';
+              // if(username) {
                 res.render("chat", {
                     type: "listener"
                 });
-              }
-              else {
-                res.render("listener-registration");
-              }
+              // }
+              // else {
+              //   res.render("listener-registration");
+              // }
             });
 
         });

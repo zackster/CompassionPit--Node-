@@ -2,7 +2,7 @@ module.exports = function (config) {
     config.scripts = [
         "json2.js",
         "es5-shim.js",
-        "jquery-1.6.1.js",
+        "jquery-1.7.2.js",
         "error-handling.js",
         "jquery.jplayer.js",
         "jquery.flot.js",

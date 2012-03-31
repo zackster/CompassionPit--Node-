@@ -11,8 +11,8 @@
 
 (function (exports, $, undefined) {
     "use strict";
-    
-    
+
+
     var VERSION = window.COMPASSION_PIT_VERSION;
     window.COMPASSION_PIT_VERSION = undefined;
 
@@ -29,9 +29,9 @@
 
     // amount of time to consider a disconnect a "real" disconnect.
     var DISCONNECT_LEEWAY = 10 * 1000;
-    
+
     var BACKLOG_SIZE = 100;
-    
+
     var isArray = Array.isArray || function (item) {
         return Object.prototype.toString.call(item) === "[object Array]";
     };
@@ -47,8 +47,8 @@
     };
 
     var has = Object.prototype.hasOwnProperty;
-    
-    
+
+
     var versionIssue = (function () {
         var showedVersionBar = false;
         return function () {
@@ -70,26 +70,36 @@
     }());
 
     exports.create = function () {
-      var socketio_addr;
+      var socketio_addr, socket;
         $("#initializing").append('<br>'+"Socket connection started");
-        
+
         if(/compassionpit\.com/i.test(document.domain)) {
           socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";
         }
         else {
           socketio_addr = null;
         }
-        
+
         log('determining sio addr');
 
-        var socket = io.connect(socketio_addr, {
-            'max reconnection attempts': 5,
-            'force new connection': true
-        });
+        if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
+            socket = io.connect(socketio_addr,{
+                    transports:['jsonp-polling'],
+                    'max reconnection attempts': 5,
+                    'force new connection': true
+            });
+        }
+        else {
+            socket = io.connect(socketio_addr, {
+                'max reconnection attempts': 5,
+                'force new connection': true
+            });
+        }
+
         window.globalSocket = socket;
-        
+
         var events = {};
-        
+
         log('declaring emit');
         var emit = function (event) {
           log("Emit was called for event " + event);
@@ -110,7 +120,7 @@
                 return i;
             };
         }());
-        
+
         var firstConnect = true;
         var isRegistered = false;
         var userId = null;
@@ -151,31 +161,31 @@
             emit("connect");
             log("We are about to call register");
             register();
-            
+
         });
-        
+
         var unregister;
         socket.on('disconnect', function () {
             log("disconnect");
-            
+
             if (isRegistered) {
                 isRegistered = false;
-                
+
                 var lastConnectIndex = currentConnectIndex;
                 setTimeout(function () {
                     if (lastConnectIndex !== currentConnectIndex) {
                         return;
                     }
-                    
+
                     unregister();
                 }, DISCONNECT_LEEWAY);
             }
         });
-        
+
         socket.on('reconnecting', function (x, y) {
             log('reconnecting. Delay: ' + x + '. Attempts: ' + y);
         });
-        
+
         socket.on('reconnect_failed', function () {
             emit('reconnectFailed');
         });
@@ -184,6 +194,7 @@
         var requests = {};
         var handlers = {};
         socket.on('message', function (data) {
+            window.alert(data);
             if (!isRegistered) {
                 if (data.t === "register") {
                     var message = arrayify(data.d);
@@ -204,18 +215,18 @@
                       $("div#loggedInAs").show();
                       window.LISTENER_LOGGED_IN = true;
                     }
-                    
+
                     if (oldUserId && (isNewUser || userId !== oldUserId)) {
                         unregister();
                     }
-                    
+
                     isRegistered = true;
                     log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
                     $("#initializing").append('<br>'+"Received register message via socket");
                     window.Chat.progressBar();
-                    
+
                     checkSend(lastReceivedMessage);
-                    
+
                     if (!sentConnectedEvents) {
                         sentConnectedEvents = true;
                         emit('register', firstConnect, userId);
@@ -244,10 +255,10 @@
                 }
             }
         });
-        
+
         var sendQueue = [];
         var sendBacklog = [];
-        
+
         unregister = function () {
             log("unregister");
             if (sentConnectedEvents) {
@@ -257,13 +268,13 @@
             sendQueue.length = 0;
             sendBacklog.length = 0;
         };
-        
+
         checkSend = function (lastReceivedMessage) {
-			var i, j, k, len;
+            var i, j, k, len;
             if (!isRegistered) {
                 return;
             }
-            
+
             if (lastReceivedMessage != null) {
                 var backlogMessages = [];
                 for (i = 0, len = sendBacklog.length; i < len; i += 1) {
@@ -279,7 +290,7 @@
                     }
                 }
             }
-            
+
             if (sendQueue.length > 0) {
                 for (k = 0, len = sendQueue.length; k < len; k += 1) {
                     socket.json.send(sendQueue[k]);
@@ -291,12 +302,12 @@
                 }
             }
         };
-        
+
         var send = function (message) {
             sendQueue.push(message);
             checkSend();
         };
-        
+
         log('returning from comm');
 
         return {
@@ -331,5 +342,5 @@
             }
         };
     };
-    
+
 }(window.Comm = {}, jQuery));
