@@ -71,7 +71,7 @@
           
           self.getSession(req, req.cookies.bb_sessionhash, function(user) {
             console.log('call back of getSession');
-            console.log(user);
+            // console.log(user);
             if(user) {
               // console.log("WRECK");
               // console.log(req);
@@ -100,7 +100,7 @@
           var row = results[0];
           var dbpass = row.password;
           // vb might change the salt from time to time. can be found in the /includes/functions.php file
-          if(hashlib.md5(dbpass + 'CpnsPhJPwVeQgmKX5Wdz8JOz4TV') == pass){
+          if(hashlib.md5(dbpass + 'CpnsPhJPwVeQgmKX5Wdz8JOz4TV') === pass){
             callback.call(self, id);
             client.end();
             return;
@@ -158,7 +158,7 @@
           var userid = row.userid;
           var lastactive = row.lastactivity;
           var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
-          callback.call(self, (idhash == newidhash && (epoch_in_seconds - lastactive) < 604800) ? userid : false);
+          callback.call(self, (idhash === newidhash && (epoch_in_seconds - lastactive) < 604800) ? userid : false);
           client.end();
           return;
         }
@@ -215,4 +215,4 @@
       return new Server();
     };
 
-})();
+}());

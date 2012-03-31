@@ -13,7 +13,7 @@
     });
 
     feedbackServer.getLeaderboard(function(top15) {
-			console.log(top15);
+			// console.log(top15);
       // if(username) {
       //   feedbackServer.getLeaderboardForUser(username, function(userStats) {
       //     // console.log("user stats", userStats);
