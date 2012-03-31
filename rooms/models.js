@@ -10,7 +10,7 @@
         createHash = require("../utils").createHash,
         User = require("../users/models").User,
         hashIPAddress = require("../utils").hashIPAddress,
-        feedbackServer = require('./feedback/feedback-server').feedbackServer(),
+        feedbackServer = require('../feedback/feedback-server').feedbackServer(),
         async = require( 'async' );
 
 
