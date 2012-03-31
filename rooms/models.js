@@ -6,7 +6,7 @@
     "use strict";
 
     var log = require("../log"),
-	_ = require("underscore"),
+	underscore = require("underscore"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
         User = require("../users/models").User,
@@ -249,7 +249,7 @@
     Room.calculateCounts = function () {
         var numListeners = listenerQueue.length;
         var numVenters = venterQueue.length;
-        var venterId, listeners_here, venters_here;
+        var venterId, listenerId, listeners_here, venters_here;
 
         Room.forEach(function (room, id) {
             venters_here = room.getNumUsersOfType("venter");
@@ -260,7 +260,7 @@
 
 
             if(listeners_here >= 1 && venters_here >= 1 && (Date.now() - room.startTime) > 1000*60*10) { // room is full; they've been talking for > 15 min
-		_.each(room.users, function(value, key, list) {
+		underscore.each(room.users, function(value, key, list) {
 			if (value === 'venter') {
 				venterId = key;
 			}
