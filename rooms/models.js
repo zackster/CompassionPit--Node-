@@ -6,6 +6,7 @@
     "use strict";
 
     var log = require("../log"),
+	_ = require("underscore"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
         User = require("../users/models").User,
@@ -259,17 +260,14 @@
 
 
             if(listeners_here >= 1 && venters_here >= 1 && (Date.now() - room.startTime) > 1000*60*10) { // room is full; they've been talking for > 15 min
-              var room_users = room.users;
-              for (var userId in room_users) {
-                if (room_users.hasOwnProperty(userId)) {
-                  if(room_users.userId === 'venter') {
-                    venterId = userId;
-                  }
-                }
-              }
-
-              var room = Room.getByUserId(venterId),
-              listenerId = room.conversation.listener.userId;
+		_.each(room.users, function(value, key, list) {
+			if (value === 'venter') {
+				venterId = key;
+			}
+			else if (value === 'listener') {
+				listenerId = key;
+			}
+		});
 
               feedbackServer.addFeedback({
                 venter: venterId,
