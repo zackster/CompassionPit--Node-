@@ -266,13 +266,10 @@ process.on('uncaughtException', function(err) {
       var socketHandlers = Object.create(null);
 
       socket.configure(function () {
-              socket.set('transports', [
-                    'websocket',
-                    'flashsocket',
-                    'htmlfile',
-                    'xhr-polling',
-                    'jsonp-polling'
-                 ]);
+
+
+			   socket.set('transports', ['websocket','xhr-polling','jsonp-polling','htmlfile']);
+
           socket.set('authorization', function (handshakeData, callback) {
             // console.log('calling authorization inside socketio');
             // console.log(handshakeData);
