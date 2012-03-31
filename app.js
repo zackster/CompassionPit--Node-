@@ -1,7 +1,5 @@
 /*jshint devel: true */
 /*global setInterval: false */
-
-
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
 //todo - modify log.js to insert this into the database .
 process.on('uncaughtException', function(err) {
@@ -136,17 +134,15 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
-
             authServer.checkLogin(req, function(username) {
-				// username='Zachary Burt';
-              // if(username) {
+              if(username) {
                 res.render("chat", {
                     type: "listener"
                 });
-              // }
-              // else {
-              //   res.render("listener-registration");
-              // }
+              }
+              else {
+                res.render("listener-registration");
+              }
             });
 
         });

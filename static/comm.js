@@ -84,8 +84,8 @@
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
             socket = io.connect(socketio_addr,{
-                    transports:['jsonp-polling'],
-                    'max reconnection attempts': 5,
+                    'transports': ['xhr-polling', 'jsonp-polling', 'flashsocket'],
+                    'max reconnection attempts': 15,
                     'force new connection': true
             });
         }
@@ -194,7 +194,6 @@
         var requests = {};
         var handlers = {};
         socket.on('message', function (data) {
-            window.alert(data);
             if (!isRegistered) {
                 if (data.t === "register") {
                     var message = arrayify(data.d);
