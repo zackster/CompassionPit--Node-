@@ -83,6 +83,7 @@
         log('determining sio addr');
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
+			window.alert('connecting on IE');
             socket = io.connect(socketio_addr,{
                     'transports': ['flashsocket','htmlfile'],
                     'max reconnection attempts': 15,

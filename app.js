@@ -246,7 +246,7 @@ process.on('uncaughtException', function(err) {
       socket = app.socket = socketIO.listen(app);
 
       // disable debug logging in socket.io
-      socket.set( 'log level', 1 );
+      socket.set( 'log level', 3 );
 
       var socketHandlers = Object.create(null);
 
