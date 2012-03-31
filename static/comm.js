@@ -84,7 +84,7 @@
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
             socket = io.connect(socketio_addr,{
-                    'transports': ['xhr-polling', 'jsonp-polling', 'flashsocket'],
+                    'transports': ['xhr-polling', 'flashsocket'],
                     'max reconnection attempts': 15,
                     'force new connection': true
             });
