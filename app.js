@@ -268,7 +268,7 @@ process.on('uncaughtException', function(err) {
       socket.configure(function () {
 
 
-			   socket.set('transports', ['websocket','xhr-polling','jsonp-polling','htmlfile']);
+			   socket.set('transports', ['xhr-polling']);
 
           socket.set('authorization', function (handshakeData, callback) {
             // console.log('calling authorization inside socketio');
@@ -457,8 +457,11 @@ process.on('uncaughtException', function(err) {
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
 
           var venterId = user.id,
-            room = Room.getByUserId(venterId),
-            listenerId = room.conversation.listener.userId;
+            room = Room.getByUserId(venterId);
+		if(!room) {
+			return;
+		} 
+            var listenerId = room.conversation.listener.userId;
 
           feedbackServer.addFeedback({
             venter: venterId,

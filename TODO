@@ -2,16 +2,13 @@
 
 
 5) Email for listeners letting them know their rank and top15 status
-6) Better 502 page on nginx, with embedded chat
 7) Ask Treya ETA on training modules
 8) Checkbox: let my venter see my forums username (on by default)
 9) Put points and leaderboard on right side of chat (ajaxy)
-10 Copyright date
 11 Measure waiting times - poll every 5 seconds.  ( User ID,  Venter / Listener, Queue position, Start Time, Now )
 12 outline privacy policy as per forum thread
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
 14 Chat expands to fill browser
-15 remove "referrer" from vbulletin registration -> streamline vb reg as much as possible
 16 don't show location if they are far away
 17 make app validate in http://validator.w3.org/check# for html5
 18 use sprites to reduce resources 	
@@ -24,14 +21,3 @@
 - neg feedback responsivity?
 - bans? reprimands? encouragement to learn?
 
-
-
-
-- anthony, incentives for top listeners - creditcovers for top listeners? t shirts if they make a forum post explaining their listening
-
-- textroulette for top listeners
-- sneakpeeq companies give sponsors to top prizes?  ask donny who we have relationships with?
-- sneakpeeq credit for top listeners
-- Implement selenium and saucelabs for CompassionPit
-3) 301 redirect on /forum and /forums and /forums/
-4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback

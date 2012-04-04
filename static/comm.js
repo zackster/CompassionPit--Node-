@@ -86,17 +86,19 @@
 
             socket = io.connect(socketio_addr, {
                        'connect timeout': 500,
+			'transports': ['xhr-polling'],
                         'try multiple transports': true,
                        'reconnect': true,
                        'reconnection delay': 500,
                        'reopen delay': 500,
                        'max reconnection attempts': 10
                    });
+	alert(socket.connection);
 
         }
         else {
             socket = io.connect(socketio_addr, {
-        'transports': ['flashsocket'],
+        'transports': ['flashsocket', 'xhr-polling'],
                 'max reconnection attempts': 5,
                 'force new connection': true
             });
