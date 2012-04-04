@@ -11,6 +11,8 @@ process.on('uncaughtException', function(err) {
     "use strict";
 
     var express = require("express");
+    require("./database/singleton");
+
 
     var app = module.exports = express.createServer(),
         util = require("util"),
@@ -26,8 +28,6 @@ process.on('uncaughtException', function(err) {
         geoip = require("geoip"),
         authServer = require('./authentication/auth-server').authServer(),
         feedbackServer = require('./feedback/feedback-server').feedbackServer();
-
-    require("./database/singleton");
 
     var getRoomCounts = function () {
         var result = Room.calculateCounts();
@@ -271,11 +271,11 @@ process.on('uncaughtException', function(err) {
 			   socket.set('transports', ['xhr-polling']);
 
           socket.set('authorization', function (handshakeData, callback) {
-            // console.log('calling authorization inside socketio');
-            // console.log(handshakeData);
-            // console.log(callback);
-            // console.log("Do we have client info?");
-            // console.log(this.client);
+            console.log('calling authorization inside socketio');
+            console.log(handshakeData);
+            console.log(callback);
+            console.log("Do we have client info?");
+            console.log(this.client);
 
             /// cookies = handshakeData.headers.cookie
 
