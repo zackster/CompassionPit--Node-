@@ -134,20 +134,6 @@ function(err) {
             res.redirect("/terms-of-service", 301);
         });
 
-        app.get("/logout",
-        function(req, res) {
-            res.clearCookie('bb_sessionhash');
-            res.clearCookie('bb_userid');
-            res.clearCookie('bb_password');
-
-            var opts = {
-                loggedOut: true,
-                roomCounts: getRoomCounts()
-                // TODO: make sure this is cached in memory
-            };
-            res.render('index', opts);
-        });
-
         app.get("/vent",
         function(req, res) {
             res.render("chat", {
@@ -167,6 +153,7 @@ function(err) {
                 function(username) {
                     if (username) {
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
+							console.log(vB_info);
                             res.render("chat", {
                                 type: "listener",
                                 email: vB_info.email,
@@ -174,9 +161,9 @@ function(err) {
                                 show_intercom: true
                             });
                         });
-
-
-                    }
+                    } else {
+						res.render("listener-registration");
+					}
                 });
             }
         });
@@ -232,10 +219,8 @@ function(err) {
 
         app.get('/leaderboard',
         function(req, res) {
-
             authServer.checkLogin(req,
             function(username) {
-
                 feedbackServer.getLeaderboard(true,
                 function(top15) {
                     if (username) {
@@ -255,11 +240,8 @@ function(err) {
                             username: username
                         });
                     }
-
                 });
-
             });
-
         });
 
         // import in the room-based actions
