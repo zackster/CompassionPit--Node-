@@ -169,7 +169,8 @@ function(err) {
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
                             res.render("chat", {
                                 type: "listener",
-                                user_settings: JSON.stringify(vB_info),
+                                email: vB_info.email,
+								created_at: vB_info.created_at,
                                 show_intercom: true
                             });
                         });
