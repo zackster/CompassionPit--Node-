@@ -28,6 +28,11 @@ div(id="main",style="display:none")
       #status &nbsp;
       ul
         li
+          div#scoreCard
+            span#score
+            span#diff
+            span#rank
+        li
           a(href="#", id="newPartner") Find a new partner
         li#reportAbuse
           a(href="#") Report abuse?
@@ -75,5 +80,6 @@ script
 
 script
   window.CLIENT_TYPE = !{JSON.stringify(type)};
-  
+
+script(src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js")
 script(src="chat-init.js")

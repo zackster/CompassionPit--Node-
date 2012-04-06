@@ -1,5 +1,5 @@
 (function (exports, $, undefined) {
-	"use strict";
+    "use strict";
     $("div#main").hide();
     var progressBarPct = 0;
 
@@ -22,82 +22,25 @@
     };
 
     exports.create = function () {
-      
+
         var self = this;
         self.progressBar('init');
         $("#initializing").append('<br>'+'Chat create');
         for(var i = 1; i < 9; i = i+1) {
           setTimeout(self.progressBar, 1500*i);
         }
-        
+
         if ($("#chatWindow").length === 0) {
             return;
         }
-        
+
         window.LISTENER_LOGGED_IN = false;
 
         var comm = window.Comm.create();
         comm.register();
 
-
-        $("button#login, button#register").click(function() {
-           $("div.announce").hide();
-        });
-        $("button#login").click(function() {
-          var credentials = {
-            username: $("#loginUsername").val(),
-            password: $("#loginPassword").val()
-          };
-          var callback = function(success) {
-            window.log('callback called back with status: %s', success);
-            hideSpinner();
-            if(success) {
-              $("div#reputationLogin").html("Login Successful!").fadeOut(4000, function() {
-                  $("div#loggedInAs").show();
-                  window.LISTENER_LOGGED_IN = true;
-              });
-            }
-            else {
-              $("div#form_errors").html("Incorrect username/password combination.");
-            }
-          };
-          showSpinner('login');
-          $("span#currentUser").html(credentials.username);
-          console.log(credentials);
-          window.comm.request("authenticateUser", credentials, callback);
-        });
-
-        var showSpinner = function(msg) {
-          $("div#reputationLogin").hide();
-          var $spinner = $("div#spinner");
-          $spinner.show();
-          if(msg==='registration') {
-            $spinner.html("Submitting your registration");
-          }
-          else if(msg === 'login') {
-            $spinner.html("Logging you in");
-          }
-          $spinner.append($('<br /><br /><img src="img/loadbar.gif" />'));
-        };
-
-        var hideSpinner = function() {
-          $("div#spinner").hide();
-          $("div#reputationLogin").show();
-
-        };
-
-
-        $("a.registration_mistake").click(function() {
-          $("a#meant_to_login").toggle();
-          $("a#register_account").toggle();
-          $(this).hide();
-          $("button#login").toggle();
-          $("button#register").toggle();
-        });
-
-
         var CLIENT_TYPE = window.CLIENT_TYPE;
-        
+
         var OTHER_CLIENT_TYPE = (CLIENT_TYPE === 'listener') ? 'venter' : 'listener';
         var NEW_PARTNER_BUTTON_TIMEOUT = 10 * 1000;
 
@@ -117,15 +60,15 @@
           }
           $("div#listenerFeedback").hide();
         });
-        
+
         function send_positive_feedback() {
           comm.request("listenerFeedback", {direction:'positive'});
         }
-        
+
         function send_negative_feedback() {
           comm.request("listenerFeedback", {direction:'negative'});
         }
-        
+
         window.showBrowserCloseMessage = true;
         window.onbeforeunload = function(event) {
             if (window.showBrowserCloseMessage) {
@@ -154,7 +97,7 @@
             hasPartner = !!value;
             if (value) {
                $("#reportAbuse").show();
-              
+
                 setTimeout(function () {
                     if (hasPartner) {
                         $("#newPartner")
@@ -175,7 +118,7 @@
             }
         };
         setHasPartner(false);
-        
+
         comm.on('connect', function () {
             // do nothing
         });
@@ -206,7 +149,7 @@
         });
 
         var status = function(msg, cssClass, checkQueue) {
-          
+
             checkingQueue = checkQueue && msg;
 
             var msgform = (msg === false);
@@ -251,7 +194,7 @@
                 }
             });
         };
-        
+
         var refocusInformInput = function () {
             setTimeout(function () {
                 if ($("#inform").length > 0 && !$("#inform").is(":focus")) {
@@ -259,7 +202,7 @@
                 }
             }, 0);
         };
-        
+
 
 
         var spaces_only = /^\s+$/img;
@@ -271,7 +214,7 @@
             refocusInformInput();
             return false;
         });
-        
+
         $('#inform').keyup(function(e) {
           if((e.keyCode || e.which) === 13) { //Enter keycode
             $('#chat_input').trigger('submit');
@@ -342,7 +285,7 @@
 
         function requestNewChatChannel(forceNewPartner, priority, isAbuse) {
             setHasPartner(false);
-            
+
             comm.request("join", {
                 type: CLIENT_TYPE,
                 partnerId: (!forceNewPartner && lastPartnerId) || undefined,
@@ -366,7 +309,7 @@
             }
         }
         window.gong = gong;
-        
+
         var scrollToBottomOfChat = function () {
             var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
             scrollDiv.scrollTop = scrollDiv.scrollHeight;
@@ -423,7 +366,7 @@
                 comm.request("typing", {state: 'off'});
             }
         });
-        
+
         var isTyping = false;
         $('#chat_input').bind('change keydown keyup',function (){
             if ($('#enable_typing').is(':checked')){
@@ -482,7 +425,7 @@
                 $('div.announce').html('Your venter has rated you as a good listener! Use your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account:');
               }
 
-              
+
               break;
             case "negative":
               $('div.announce').html('Your venter has indicated that you are not a good listener.  Perhaps you could ask them how you can be a better listener?');
@@ -490,7 +433,7 @@
             default:
               break;
           }
-          
+
         });
         comm.handler("typing", function (type, message) {
             if (type !== CLIENT_TYPE && hasPartner) {
@@ -519,7 +462,7 @@
                 setHasPartner(otherUserId);
                 log("join " + otherUserId);
                 info(false);
-                
+
                 var message;
                 if (otherUserId === oldUserId) {
                     // we were properly reconnected!
@@ -543,7 +486,7 @@
 
 
         });
-        
+
         var includeLikeButtonScript = function () {
             $('#chatWindow > div:last')
                 .append($('<div class="off-white-row">')
@@ -555,14 +498,14 @@
                             style: "width:100%;height:24px;border:none;overflow:hidden;",
                             src: "http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=24"
                         }))));
-                        
+
             $('#chatWindow > div:last')
                 .append($('<div class="off-white-row">')
                     .append($("<span>")
                         .append($('<a href="https://twitter.com/share" data-url="http://www.CompassionPit.com" data-text="CompassionPit: get it off your chest without it biting you in the ass" data-count="horizontal" data-via="CompassionPit" class="twitter-share-button">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>'))));
             scrollToBottomOfChat();
         };
-        
+
         comm.handler("partRequest", function (type) {
             // partner requested a new match, automatically reconnect
             addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
@@ -574,7 +517,7 @@
         });
         comm.handler("partDisconnect", function (type) {
             var container = $( '<span></span>' );
-        
+
             var button = $( '<a></a>', {
                 'href'  : '#',
                 'text'  : 'Click here'
@@ -583,7 +526,7 @@
             button.click( function() {
                 requestNewChatPartnerPriority();
                 refocusInformInput();
-        
+
                 return false;
             });
 
@@ -593,21 +536,21 @@
                 .append( ' to be connected to a new ' + OTHER_CLIENT_TYPE + '.' );
 
             addMessage( 'System', container );
-            
+
             includeLikeButtonScript();
-            
+
             info('Partner disconnected.');
         });
-        
+
         function capitalize(text) {
             return text.charAt(0).toUpperCase() + text.substring(1);
         }
-        
+
         return {
             restart: function () {
                 comm.register();
             }
         };
     };
-    
+
 }(window.Chat = {}, jQuery));

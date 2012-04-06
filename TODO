@@ -1,12 +1,8 @@
-
-
-
 5) Email for listeners letting them know their rank and top15 status
 6) Better 502 page on nginx, with embedded chat
 7) Ask Treya ETA on training modules
 8) Checkbox: let my venter see my forums username (on by default)
 9) Put points and leaderboard on right side of chat (ajaxy)
-10 Copyright date
 11 Measure waiting times - poll every 5 seconds.  ( User ID,  Venter / Listener, Queue position, Start Time, Now )
 12 outline privacy policy as per forum thread
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
@@ -15,7 +11,7 @@
 16 don't show location if they are far away
 17 make app validate in http://validator.w3.org/check# for html5
 18 use sprites to reduce resources 	
-
+19 Don't auto reconnect - if you are a listener and your venter leaves.  
 	
 
 
@@ -35,3 +31,4 @@
 - Implement selenium and saucelabs for CompassionPit
 3) 301 redirect on /forum and /forums and /forums/
 4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback
+10 Copyright date

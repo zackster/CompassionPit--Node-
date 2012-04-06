@@ -50,7 +50,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.configure(function () {
-            app.use(express.static(__dirname + '/static'));
+            app.use(express['static'](__dirname + '/static'));
             app.use(express.bodyParser());
             app.use(express.cookieParser());
             app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -134,29 +134,25 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
-            authServer.checkLogin(req, function(username) {
-              if(username) {
-                try {
-                    res.render("chat", {
-                        type: "listener"
-                    });
-                }
-                catch(e) {
-                    console.log("BEEP BOOP");
-                    console.log(e);
-                }
+            if((process.env.NODE_ENV || "development") === 'development') {
+                res.render("chat", {
+                    type: "listener"
+                });
+            }
+            else {
+                authServer.checkLogin(req, function(username) {
+                    if(username) {
+                        res.render("chat", {
+                            type: "listener"
+                        });
 
-              }
-              else {
-                try {
-                    res.render("listener-registration");
-                }
-                catch(e) {
-                    console.log("BOOP BEEP");
-                    console.log(e);
-                }
-              }
-            });
+                    }
+                    else {
+                        res.render("listener-registration");
+                    }
+                });
+            }
+
 
         });
 
@@ -259,7 +255,7 @@ process.on('uncaughtException', function(err) {
       socket = app.socket = socketIO.listen(app);
 
       // disable debug logging in socket.io
-      socket.set( 'log level', 3 );
+      socket.set( 'log level', 1 );
 
 
 
@@ -268,7 +264,7 @@ process.on('uncaughtException', function(err) {
       socket.configure(function () {
 
 
-			   socket.set('transports', ['websocket','xhr-polling','jsonp-polling','htmlfile']);
+               socket.set('transports', ['websocket','xhr-polling','jsonp-polling','htmlfile']);
 
           socket.set('authorization', function (handshakeData, callback) {
             console.log('calling authorization inside socketio');
@@ -414,19 +410,30 @@ process.on('uncaughtException', function(err) {
               });
           }
 
+        if((process.env.NODE_ENV || "development") === 'development') {
+            callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, 'Zachary Burt']);
+        }
+        else {
           var req = client.manager.handshaken[clientId.toString()];
           if(req.headers && req.headers.cookie) {
             req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
             authServer.checkLogin(req, function(username) {
               if(username!== false) {
                  authServer.logged_in_users[user.id] = username;
+                 callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
               }
-              callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
+              else {
+                callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);
+              }
+
             });
           }
           else {
             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);
           }
+
+        }
+
           Room.checkQueues();
       };
 
@@ -453,6 +460,25 @@ process.on('uncaughtException', function(err) {
           }
         });
       };
+
+		socketHandlers.updateHUD = function(client, user, data, callback) {
+			
+				console.log(client);
+				console.log('------------------------------------------------');
+				console.log(user);
+				console.log(data);
+				console.log(callback);
+			var listenerId = user.id;
+			
+			console.log('update HUD ...');
+            feedbackServer.getLeaderboardForUser(listenerId, function(info) {
+				console.log('got the info.....');
+				console.log(callback.toString());
+				callback(info);
+			});
+			
+			return;
+		};
 
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
 
