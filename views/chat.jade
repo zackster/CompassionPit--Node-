@@ -1,11 +1,11 @@
 #initializing
   h1 Please wait while the CompassionPit chat loads
-  p This should take no longer than 
+  p This should take no longer than
     span#secondsTilAppLoad
      #{10}
     &nbsp;seconds.
   #progressbar
-    
+
 div(id="main",style="display:none")
   #audioPlayer
   #left
@@ -46,7 +46,7 @@ div(id="main",style="display:none")
             #{" Visible Typing"}
         #typing_status
         //-
-          div#spinner          
+          div#spinner
           div#reputationLogin
             div(class="announce")
               p Listeners can now optionally log in using their CompassionPit forums account!
@@ -54,7 +54,7 @@ div(id="main",style="display:none")
             label(class="login")
               input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
             label(class="login")
-              input(type="text", id="loginPassword", name="loginPassword", class="login", placeholder="Password") 
+              input(type="text", id="loginPassword", name="loginPassword", class="login", placeholder="Password")
             button(id="login", class="login") Log In!
             br
             a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
@@ -65,16 +65,16 @@ div(id="main",style="display:none")
         div#loggedInAs
           p Currently logged in as:&nbsp;
           span#currentUser
-          a(style="display:block", href="/forum/z_logout.php?do=logout", onclick="javascript:window.onbeforeunload=undefined;") Log Out  
-        
+          a(style="display:block", href="/forum/z_logout.php?do=logout", onclick="javascript:window.onbeforeunload=undefined;") Log Out
+
 
 - if (typeof(show_intercom) != "undefined" && show_intercom)
   script#IntercomSettingsScriptTag
     var user_settings = !{JSON.parse(user_settings)};
     var intercomSettings = {
        app_id: 'fc0u2tpj',
-       email: user_settings.email, 
-       created_at: user_settings.created_at 
+       email: user_settings.email,
+       created_at: user_settings.created_at
      };
    script
      (function() {
