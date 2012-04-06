@@ -167,6 +167,7 @@ function(err) {
                 function(username) {
                     if (username) {
                         var vB_info = vB_dao.getEmailAndJoindateForUser(username);
+						console.log(JSON.stringify(vB_info));
                         try {
                             res.render("chat", {
                                 type: "listener",
