@@ -26,6 +26,7 @@ process.on('uncaughtException', function(err) {
         log = require("./log"),
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
+        vB_dao = require("./vBDao"),
         authServer = require('./authentication/auth-server').authServer(),
         feedbackServer = require('./feedback/feedback-server').feedbackServer();
 
@@ -134,6 +135,7 @@ process.on('uncaughtException', function(err) {
         });
 
         app.get("/listen", function (req, res) {
+<<<<<<< HEAD
             if((process.env.NODE_ENV || "development") === 'development') {
                 res.render("chat", {
                     type: "listener"
@@ -152,6 +154,22 @@ process.on('uncaughtException', function(err) {
                     }
                 });
             }
+=======
+            authServer.checkLogin(req, function(username) {
+              if(username) {
+		var vB_info = vB_dao.getEmailAndJoindateForUser(username);	
+                try {
+                    res.render("chat", {
+                        type: "listener",
+			user_settings: JSON.stringify(vB_info),
+			show_intercom: true
+                    });
+                }
+                catch(e) {
+                    console.log("BEEP BOOP");
+                    console.log(e);
+                }
+>>>>>>> 3f7033ef04109d2536935d5cc6b826932f3d716e
 
 
         });
@@ -264,7 +282,11 @@ process.on('uncaughtException', function(err) {
       socket.configure(function () {
 
 
+<<<<<<< HEAD
                socket.set('transports', ['websocket','xhr-polling','jsonp-polling','htmlfile']);
+=======
+			   socket.set('transports', ['xhr-polling']);
+>>>>>>> 3f7033ef04109d2536935d5cc6b826932f3d716e
 
           socket.set('authorization', function (handshakeData, callback) {
             console.log('calling authorization inside socketio');
@@ -483,8 +505,11 @@ process.on('uncaughtException', function(err) {
       socketHandlers.listenerFeedback = function(client, user, data, callback) {
 
           var venterId = user.id,
-            room = Room.getByUserId(venterId),
-            listenerId = room.conversation.listener.userId;
+            room = Room.getByUserId(venterId);
+		if(!room) {
+			return;
+		} 
+            var listenerId = room.conversation.listener.userId;
 
           feedbackServer.addFeedback({
             venter: venterId,

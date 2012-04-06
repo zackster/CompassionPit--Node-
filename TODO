@@ -1,5 +1,4 @@
 5) Email for listeners letting them know their rank and top15 status
-6) Better 502 page on nginx, with embedded chat
 7) Ask Treya ETA on training modules
 8) Checkbox: let my venter see my forums username (on by default)
 9) Put points and leaderboard on right side of chat (ajaxy)
@@ -7,7 +6,6 @@
 12 outline privacy policy as per forum thread
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
 14 Chat expands to fill browser
-15 remove "referrer" from vbulletin registration -> streamline vb reg as much as possible
 16 don't show location if they are far away
 17 make app validate in http://validator.w3.org/check# for html5
 18 use sprites to reduce resources 	
@@ -20,6 +18,7 @@
 - neg feedback responsivity?
 - bans? reprimands? encouragement to learn?
 
+<<<<<<< HEAD
 
 
 
@@ -32,3 +31,5 @@
 3) 301 redirect on /forum and /forums and /forums/
 4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback
 10 Copyright date
+=======
+>>>>>>> 3f7033ef04109d2536935d5cc6b826932f3d716e

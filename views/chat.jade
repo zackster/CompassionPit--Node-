@@ -67,6 +67,31 @@ div(id="main",style="display:none")
           span#currentUser
           a(style="display:block", href="/forum/z_logout.php?do=logout", onclick="javascript:window.onbeforeunload=undefined;") Log Out  
         
+
+- if (typeof(show_intercom) != "undefined" && show_intercom)
+  script#IntercomSettingsScriptTag
+    var user_settings = !{JSON.parse(user_settings)};
+    var intercomSettings = {
+       app_id: 'fc0u2tpj',
+       email: user_settings.email, 
+       created_at: user_settings.created_at 
+     };
+   script
+     (function() {
+      function async_load() {
+        var s = document.createElement('script');
+           s.type = 'text/javascript'; s.async = true;
+           s.src = 'https://api.intercom.io/api/js/library.js';
+           var x = document.getElementsByTagName('script')[0];
+           x.parentNode.insertBefore(s, x);
+         }
+         if (window.attachEvent) {
+           window.attachEvent('onload', async_load);
+         } else {
+           window.addEventListener('load', async_load, false);
+         }
+       })();
+
 script
   //- Google Website Optimizer Tracking Script
   var _gaq = _gaq || [];
