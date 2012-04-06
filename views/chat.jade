@@ -70,7 +70,7 @@ div(id="main",style="display:none")
 
 - if (typeof(show_intercom) != "undefined" && show_intercom) {
   script#IntercomSettingsScriptTag
-    var user_settings = !{JSON.parse(user_settings)};
+    var user_settings = !{user_settings};
     var intercomSettings = {
        app_id: 'fc0u2tpj',
        email: user_settings.email,
