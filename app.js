@@ -166,7 +166,7 @@ function(err) {
                 authServer.checkLogin(req,
                 function(username) {
                     if (username) {
-                        var vB_info = vB_dao.getEmailAndJoindateForUser(username, function() {
+                        vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
                             res.render("chat", {
                                 type: "listener",
                                 user_settings: JSON.stringify(vB_info),
