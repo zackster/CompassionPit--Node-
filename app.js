@@ -6,7 +6,7 @@ process.on('uncaughtException',
 function(err) {
     console.log("We found an uncaught exception.");
     console.log(err);
-	console.log(err.stack);
+    console.log(err.stack);
 });
 
  (function() {
@@ -166,19 +166,14 @@ function(err) {
                 authServer.checkLogin(req,
                 function(username) {
                     if (username) {
-                        var vB_info = vB_dao.getEmailAndJoindateForUser(username);
-						console.log(JSON.stringify(vB_info));
-                        try {
+                        var vB_info = vB_dao.getEmailAndJoindateForUser(username, function() {
                             res.render("chat", {
                                 type: "listener",
                                 user_settings: JSON.stringify(vB_info),
                                 show_intercom: true
                             });
-                        }
-                        catch(e) {
-                            console.log("BEEP BOOP");
-                            console.log(e);
-                        }
+                        });
+
 
                     }
                 });

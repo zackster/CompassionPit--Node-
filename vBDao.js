@@ -14,17 +14,15 @@
 
     exports.getEmailAndJoindateForUser = function(username, callback) {
 
-
-
-	var client = getMySQLClient();
-	client.query("SELECT email, joindate FROM user WHERE username = ?", [username], function selectCb(err, results, fields) {
-		if(err) {
-			throw err;
-		}
-		else {
-			return results[0];
-		}
-	});  
-    }
+		var client = getMySQLClient();
+		client.query("SELECT email, joindate FROM user WHERE username = ?", [username], function selectCb(err, results, fields) {
+			if(err) {
+				throw err;
+			}
+			else {
+				callback(results[0]);
+			}
+		});  
+    };
 
 }());
