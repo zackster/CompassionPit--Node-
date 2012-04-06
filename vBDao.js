@@ -15,7 +15,7 @@
     exports.getEmailAndJoindateForUser = function(username, callback) {
 
 		var client = getMySQLClient();
-		client.query("SELECT email, joindate FROM user WHERE username = ?", [username], function selectCb(err, results, fields) {
+		client.query("SELECT email, joindate as created_at FROM user WHERE username = ?", [username], function selectCb(err, results, fields) {
 			if(err) {
 				throw err;
 			}
