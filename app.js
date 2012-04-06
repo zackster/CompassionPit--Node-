@@ -26,6 +26,7 @@ process.on('uncaughtException', function(err) {
         log = require("./log"),
         mergeStatic = require("./mergeStatic"),
         geoip = require("geoip"),
+        vB_dao = require("./vBDao"),
         authServer = require('./authentication/auth-server').authServer(),
         feedbackServer = require('./feedback/feedback-server').feedbackServer();
 
@@ -136,9 +137,12 @@ process.on('uncaughtException', function(err) {
         app.get("/listen", function (req, res) {
             authServer.checkLogin(req, function(username) {
               if(username) {
+		var vB_info = vB_dao.getEmailAndJoindateForUser(username);	
                 try {
                     res.render("chat", {
-                        type: "listener"
+                        type: "listener",
+			user_settings: JSON.stringify(vB_info),
+			show_intercom: true
                     });
                 }
                 catch(e) {
