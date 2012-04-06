@@ -68,7 +68,7 @@ div(id="main",style="display:none")
           a(style="display:block", href="/forum/z_logout.php?do=logout", onclick="javascript:window.onbeforeunload=undefined;") Log Out
 
 
-- if (typeof(show_intercom) != "undefined" && show_intercom)
+- if (typeof(show_intercom) != "undefined" && show_intercom) {
   script#IntercomSettingsScriptTag
     var user_settings = !{JSON.parse(user_settings)};
     var intercomSettings = {
@@ -91,6 +91,7 @@ div(id="main",style="display:none")
            window.addEventListener('load', async_load, false);
          }
        })();
+- }
 
 script
   //- Google Website Optimizer Tracking Script
