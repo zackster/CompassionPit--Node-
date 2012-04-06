@@ -72,24 +72,24 @@ div(id="main",style="display:none")
   script#IntercomSettingsScriptTag
     var intercomSettings = {
        app_id: 'fc0u2tpj',
-       email: !{JSON.stringify(email),
-       created_at: !{JSON.stringify{created_at}
+       email: !{JSON.stringify(email)},
+       created_at: !{JSON.stringify(created_at)}
      };
    script
      (function() {
-      function async_load() {
-        var s = document.createElement('script');
-           s.type = 'text/javascript'; s.async = true;
-           s.src = 'https://api.intercom.io/api/js/library.js';
-           var x = document.getElementsByTagName('script')[0];
-           x.parentNode.insertBefore(s, x);
-         }
-         if (window.attachEvent) {
-           window.attachEvent('onload', async_load);
-         } else {
-           window.addEventListener('load', async_load, false);
-         }
-       })();
+       function async_load() {
+         var s = document.createElement('script');
+         s.type = 'text/javascript'; s.async = true;
+         s.src = 'https://api.intercom.io/api/js/library.js';
+         var x = document.getElementsByTagName('script')[0];
+         x.parentNode.insertBefore(s, x);
+       }
+       if (window.attachEvent) {
+         window.attachEvent('onload', async_load);
+       } else {
+         window.addEventListener('load', async_load, false);
+       }
+     })();
 - }
 
 script
