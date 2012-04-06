@@ -1,6 +1,3 @@
-
-
-
 5) Email for listeners letting them know their rank and top15 status
 7) Ask Treya ETA on training modules
 8) Checkbox: let my venter see my forums username (on by default)
@@ -12,7 +9,7 @@
 16 don't show location if they are far away
 17 make app validate in http://validator.w3.org/check# for html5
 18 use sprites to reduce resources 	
-
+19 Don't auto reconnect - if you are a listener and your venter leaves.  
 	
 
 
@@ -21,3 +18,18 @@
 - neg feedback responsivity?
 - bans? reprimands? encouragement to learn?
 
+<<<<<<< HEAD
+
+
+
+- anthony, incentives for top listeners - creditcovers for top listeners? t shirts if they make a forum post explaining their listening
+
+- textroulette for top listeners
+- sneakpeeq companies give sponsors to top prizes?  ask donny who we have relationships with?
+- sneakpeeq credit for top listeners
+- Implement selenium and saucelabs for CompassionPit
+3) 301 redirect on /forum and /forums and /forums/
+4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback
+10 Copyright date
+=======
+>>>>>>> 3f7033ef04109d2536935d5cc6b826932f3d716e
