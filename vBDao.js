@@ -21,6 +21,7 @@
 			}
 			else {
 				callback(results[0]);
+				client.end();
 			}
 		});  
     };
