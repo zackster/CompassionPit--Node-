@@ -1,0 +1,69 @@
+!!! 5
+html
+  head
+    script 
+      var _sf_startpt=(new Date()).getTime()
+    title Compassion Pit
+    - if (config.serveMerged)
+      link(rel="stylesheet", href="/style.min.css?" + cssHash, type="text/css")
+    - else
+      - each style in config.styles
+        link(rel="stylesheet", href="/" + style, type="text/css")
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="description", content="Feeling down? CompassionPit makes it easy to find an anonymous friend to share your troubles with, without fear of being blackmailed later on.")
+    script
+      window.COMPASSION_PIT_VERSION = !{JSON.stringify(config.version || 0)};
+    - if (config.serveMerged)
+      script
+        (function(){var noop=function(){};var console={log:noop,error:noop}})()
+      script(src="/script.min.js?" + jsHash)
+      script(src="//platform.twitter.com/widgets.js")      
+    - else
+      - each script in config.scripts
+        script(src="/" + script)
+    script
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-17971348-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+  body
+    #wrapper
+      .lft_curve
+        img(src="img/lft_curve.png", width="200", height="367", alt="decorative border")
+      .rht_curves
+        img(src="img/rht_curve.png", width="200", height="367", alt="decorative border")
+
+      #body_container
+      .container
+        .topbg
+        .midbg
+          != body
+        .btmbg
+
+      #footer
+        .container
+          p &copy; 2012 CompassionPit.com All rights reserved.
+          ul.footernav
+            li
+              a(href="/") Home
+            li
+              a(href="/about-us") About Us
+            li
+              a(href="/faq") FAQ
+            li
+              a(href="/terms-of-service") Terms
+            li
+              a(href="/privacy-policy") Privacy
+            li.last
+              a(href="/contact") Contact
+
+    .lft_btmcurve
+      img(src="img/lft_btmcurve.png", width="200", height="367", alt="decorative border")
+    .rht_btmcurve
+      img(src="img/btm_rhtcurve.png", width="200", height="367", alt="decorative border")
