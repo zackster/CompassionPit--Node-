@@ -16,22 +16,22 @@ div(id="main",style="display:none")
       form
         textarea#inform(type="text", autocomplete="off", size="110")
         input#sendmessage(type="submit", value="SEND")
-        script
-          google_ad_client = "ca-pub-6036766792552196";
-          /* CompassionPit Chat 468x60 Bottom */
-          google_ad_slot = "6889968105";
-          google_ad_width = 468;
-          google_ad_height = 60;
-        script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
+        div#adSenseAd(style="text-align: center; margin: 0px auto")
+          script
+            google_ad_client = "ca-pub-6036766792552196";
+            /* CompassionPit Chat 468x60 Bottom */
+            google_ad_slot = "6889968105";
+            google_ad_width = 468;
+            google_ad_height = 60;
+          script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
   #right
     #buttons1
       #status &nbsp;
       ul
-        li
+        li.scoreCard
           div#scoreCard
-            span#score
-            span#diff
-            span#rank
+            div#score
+            div#diff
         li
           a(href="#", id="newPartner") Find a new partner
         li#reportAbuse
@@ -45,11 +45,10 @@ div(id="main",style="display:none")
             input(type="checkbox", id="enable_typing")
             #{" Visible Typing"}
         #typing_status
+        div(class="announce")
         //-
           div#spinner
-          div#reputationLogin
-            div(class="announce")
-              p Listeners can now optionally log in using their CompassionPit forums account!
+          div#reputationLogin            
             div(class="form_errors",id="form_errors")
             label(class="login")
               input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
@@ -59,9 +58,9 @@ div(id="main",style="display:none")
             br
             a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
         div#listenerFeedback
-          p Is this person a good listener?
-            button(id="helpful") Yes!
-            button(id="notHelpful") No
+          p Please give feedback to keep CompassionPit high-quality
+            button(id="helpful") This person is a good listener! =)
+            button(id="notHelpful") This person is a bad listener :-(
         div#loggedInAs
           p Currently logged in as:&nbsp;
           span#currentUser
@@ -91,17 +90,6 @@ div(id="main",style="display:none")
        }
      })();
 - }
-
-script
-  //- Google Website Optimizer Tracking Script
-  var _gaq = _gaq || [];
-  _gaq.push(['gwo._setAccount', 'UA-17971348-2']);
-  _gaq.push(['gwo._trackPageview', '/2386081484/goal']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
 
 script
   window.CLIENT_TYPE = !{JSON.stringify(type)};

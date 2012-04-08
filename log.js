@@ -1,14 +1,14 @@
 (function () {
     "use strict";
-    
+
     /*global console: false*/
-    
+
     var config = require('./config');
-    
+
     var mongoose = require('mongoose'),
         Schema = mongoose.Schema,
-        ObjectId = Schema.ObjectId;            
-    
+        ObjectId = Schema.ObjectId;
+
     // TODO: write some merging app that will merge the LogEntries
     /**
      * Represents a single LogEntry that will be stored in MongoDB
@@ -20,7 +20,19 @@
         count: { type: Number, default: 1 }
     }));
     var LogEntry = exports.LogEntry = mongoose.model('LogEntry');
-    
+
+
+
+    mongoose.model('WaitTime', new Schema({
+        userid: { type: String },
+        userType: { type: String },
+        queuePosition: { type: Number },
+        joinTime: { type: Number },
+        currentTime: { type: Number, default: new Date().getTime() }
+    }));
+    var WaitTime = exports.WaitTime = mongoose.model('WaitTime');
+
+
     /**
      * Represents a single ClientError that will be stored in MongoDB
      */
@@ -33,10 +45,10 @@
         time: { type: Date, default: Date.now }
     }));
     var ClientError = exports.ClientError = mongoose.model('ClientError');
-    
+
     var logEntries = {};
     var logCounts = {};
-    
+
     /**
      * Generate a function that will handle logging for specific severity
      */
@@ -57,7 +69,7 @@
             }
         };
     };
-    
+
     exports.info = makeLogFunction("info");
     exports.warn = makeLogFunction("warn");
     exports.error = makeLogFunction("error");
@@ -83,7 +95,27 @@
             }
         });
     };
-    
+
+    exports.logWaitTime = function(waiter_info) {
+        var wait_time = new WaitTime( {
+            userId: waiter_info.userid,
+            userType: waiter_info.user_type,
+            queuePosition: waiter_info.queue_position,
+            joinTime: waiter_info.join_time,
+            currentTime: waiter_info.current_time
+        });
+        wait_time.save(function(err) {
+            if(err) {
+                exports.error({
+                    event: "Cannot save WaitTime",
+                    error: err.toString()
+                });
+            }
+        })
+    };
+
+
+
     /**
      * Add URL actions to an express app
      */
@@ -91,7 +123,7 @@
         app.get("/logs", function (req, res) {
             res.render('logs', { logTypes: Object.keys(logEntries) });
         });
-        
+
         app.get("/logs.json", function (req, res) {
             var roomData = require('./rooms/models').Room.dumpData();
             var result = {
@@ -110,7 +142,7 @@
                 res.end(JSON.stringify(result));
             });
         });
-        
+
         app.post("/log-error", function (req, res) {
             var error = new ClientError({
                 message: req.body.errorMsg,
@@ -131,7 +163,7 @@
             res.send("");
         });
     };
-    
+
     exports.info({
         event: "Server started"
     });

@@ -108,4 +108,10 @@
         
         return hashlib.sha512("CompassionPit$" + hashSalt + "$" + address);
     };
+
+	exports.sendEmailToUser = function(email_address, template_name, username, score, rank, diff) {
+		// implement me!
+		// send to email address, using the template template_name, and the four varaibles.
+	};
+
 }());

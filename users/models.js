@@ -21,6 +21,7 @@
         }
         this.id = id = id || guid();
         this.publicId = publicId = publicId || guid();
+		this.join_time = new Date().getTime();
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];
@@ -163,6 +164,7 @@
             callback(null);
         } else {
             require('../app').geoipCity.lookup(ipAddress, function (err, data) {
+	
                 if (err) {
                     log.error({
                         event: "GeoIP",
@@ -181,8 +183,14 @@
                         parts.push(part);
                     }
                 }
-                
-                callback(parts.join(", ") || null);
+
+				var geoIp = parts.join(", ") || null;
+				if(geoIp === null || !data.country_name) {
+					callback(null);
+				}
+				else {
+					callback(geoIp);
+				}
             });
         }
     };

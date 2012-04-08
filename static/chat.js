@@ -47,9 +47,7 @@
         if(CLIENT_TYPE === 'listener') {
           $("div#reputationLogin").show();
         }
-        else {
-          $("div#main").css('height','405px').css('overflow-y','hidden');
-        }
+        $("div#main").css('height','405px').css('overflow-y','hidden');
 
         $("div#listenerFeedback button").click(function() {
           if(this.id === 'helpful') {
@@ -76,20 +74,7 @@
             }
         };
 
-        var log = function (data) {
-            try {
-                var console = window.console;
-                if (console && console.log) {
-                    console.log(data);
-                }
-            } catch (err) {
-                // do nothing
-            }
-        };
-
-        log('creating comm object');
         window.comm = window.Comm.create();
-        log('comm object creation successful');
         var hasPartner = false;
         var lastPartnerId = null;
         var currentPartnerId = null;
@@ -106,8 +91,6 @@
                 }, NEW_PARTNER_BUTTON_TIMEOUT);
                 lastPartnerId = value;
                 currentPartnerId = value;
-                log('last partner id, ' + lastPartnerId);
-                log('current partner id, ' + currentPartnerId);
             } else {
                 $("#newPartner")
                     .addClass("disabled");
@@ -124,7 +107,7 @@
         });
         comm.on('register', function (first, userId) {
             self.progressBar(100);
-            log('registered with id, ' + userId);
+            //log('registered with id, ' + userId);
             addMessage('System', first ? 'Connected' : 'Reconnected');
             requestNewChatChannel(false);
         });
@@ -416,19 +399,28 @@
             }
         });
         comm.handler("received-feedback", function(message) {
+          window.comm.request("updateHUD", {}, function(userLeaderboard) {
+              $('li.scoreCard').show().css('display', 'block !important').css('height', 'auto');
+              $("#score").text('Points ' + userLeaderboard.score + ' | Rank ' + userLeaderboard.rank);
+              $("#diff").text('You now need ' + userLeaderboard.diff + ' points to overtake the next spot on the leaderboard');
+          });
+
           switch (message) {
             case "positive":
               if(window.LISTENER_LOGGED_IN) {
-                $('div.announce').html('Your venter has rated you as a good listener!');
+                $('div.announce').html('Your venter has rated you a good listener!');
               }
               else {
-                $('div.announce').html('Your venter has rated you as a good listener! Use your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account:');
+                $('div.announce').html('Your venter has rated you a good listener! Use your <a href="http://www.compassionpit.com/forum/" target="_blank">CompassionPit forums account</a> to tie this feedback to your account:');
               }
-
-
               break;
             case "negative":
-              $('div.announce').html('Your venter has indicated that you are not a good listener.  Perhaps you could ask them how you can be a better listener?');
+              $('div.announce').html('Your venter has indicated that you are not a good listener.  Perhaps you could ask them how you can be a better listener.  You will now need to register an account, in order to prevent abuse.');
+              if(!window.LISTENER_LOGGED_IN) {
+                setTimeout(function() {
+                    window.location = 'http://www.compassionpit.com/listen';
+                }, 1000*45);
+              }
               break;
             default:
               break;
@@ -460,7 +452,7 @@
             if (type !== CLIENT_TYPE) {
                 var oldUserId = lastPartnerId;
                 setHasPartner(otherUserId);
-                log("join " + otherUserId);
+                // log("join " + otherUserId);
                 info(false);
 
                 var message;

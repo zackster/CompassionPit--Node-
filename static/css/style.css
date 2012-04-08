@@ -1,3 +1,19 @@
+button#notHelpful {
+    margin-top: 5px;
+}
+button#helpful {
+    margin-top: 10px;
+}
+
+div#scoreCard {
+    color: black;
+    font-size: 12px;
+}
+
+#facebookLikeBoxIFrame {
+  background-color: transparent;    
+}
+
 span.announcement {
   background-color: yellow;
   font-size: 1.3em;
@@ -254,7 +270,7 @@ button.login {
 }
 
 #status {
-	margin: 10px 10px 57px 0px;
+	margin: 10px 10px 27px 0px;
 	width: 250px;
 	padding: 10px;
 	text-align: center;

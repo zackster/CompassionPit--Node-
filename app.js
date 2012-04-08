@@ -2,11 +2,14 @@
 /*global setInterval: false */
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
 //todo - modify log.js to insert this into the database .
+
+var util = require("util");
+
 process.on('uncaughtException',
 function(err) {
-    console.log("We found an uncaught exception.");
-    console.log(err);
-    console.log(err.stack);
+    util.puts("We found an uncaught exception.");
+    util.puts(err);
+    util.puts(err.stack);
 });
 
  (function() {
@@ -69,15 +72,12 @@ function(err) {
 
         app.get("/",
         function(req, res, next) {
-            console.log(req.query);
-            console.log(req.cookies);
             var opts = {
                 loggedOut: false,
                 roomCounts: getRoomCounts()
                 // TODO: make sure this is cached in memory
             };
             if (req.query && req.query.logout === 'true') {
-                console.log("Xxx");
                 opts.loggedOut = true;
             }
             res.render('index', opts);
@@ -137,7 +137,8 @@ function(err) {
         app.get("/vent",
         function(req, res) {
             res.render("chat", {
-                type: "venter"
+                type: "venter",
+				layout: 'layout'
             });
         });
 
@@ -145,7 +146,8 @@ function(err) {
         function(req, res) {
             if ((process.env.NODE_ENV || "development") === 'development') {
                 res.render("chat", {
-                    type: "listener"
+                    type: "listener",
+					layout: 'layout'
                 });
             }
             else {
@@ -153,15 +155,21 @@ function(err) {
                 function(username) {
                     if (username) {
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
-							console.log(vB_info);
                             res.render("chat", {
                                 type: "listener",
+								layout: 'layout',
                                 email: vB_info.email,
 								created_at: vB_info.created_at,
                                 show_intercom: true
                             });
                         });
-                    } else {
+                    } else if(feedbackServer.ipAddressHasNeverReceivedNegativeFeedback(req.headers['x-forwarded-for'] || req.address.address)) {
+						res.render("chat", {
+							layout: 'layout',
+							type: "listener",
+							show_intercom: false
+						});
+					} else {
 						res.render("listener-registration");
 					}
                 });
@@ -266,11 +274,11 @@ function(err) {
 
             socket.set('authorization',
             function(handshakeData, callback) {
-                console.log('calling authorization inside socketio');
-                console.log(handshakeData);
-                console.log(callback);
-                console.log("Do we have client info?");
-                console.log(this.client);
+                // console.log('calling authorization inside socketio');
+                // console.log(handshakeData);
+                // console.log(callback);
+                // console.log("Do we have client info?");
+                // console.log(this.client);
 
                 /// cookies = handshakeData.headers.cookie
                 var headers = handshakeData.headers;
@@ -327,10 +335,10 @@ function(err) {
                                 });
                             }
                         } else {
-                            console.log("Received message with unknown handler: " + data.t);
+                            throw new Error("Received message with unknown handler: " + data.t);
                         }
                     } else {
-                        console.log("Received improper message", JSON.stringify(data));
+                        throw new Error("Received improper message", JSON.stringify(data));
                     }
                 }));
 
@@ -447,14 +455,23 @@ function(err) {
       * Request the current position the client is in the queue for
       */
         socketHandlers.queue = function(client, user, _, callback) {
-            callback(Room.getQueuePosition(user.id));
+						
+			var queue_info = Room.getQueuePosition(user.id);
+			log.logWaitTime({
+				userid: user.id, 
+				user_type: queue_info.user_type, 
+				queuePosition: queue_info.queue_position, 
+				join_time: user.join_time,
+				current_time: new Date().getTime()
+			});
+
+            callback(queue_info.queue_position);
         };
 
         socketHandlers.authenticateUser = function(client, user, data, callback) {
             authServer.login(user.id, data.username, data.password,
             function(success) {
-                if (success) {
-                    console.log("Login success!");
+                if (success) {                    
                     feedbackServer.creditFeedback({
                         id: user.id,
                         username: data.username
@@ -462,7 +479,6 @@ function(err) {
                     callback(true);
                 }
                 else {
-                    console.log("Login failed!");
                     callback(false);
                 }
             });
@@ -470,18 +486,15 @@ function(err) {
 
         socketHandlers.updateHUD = function(client, user, data, callback) {
 
-            console.log(client);
-            console.log('------------------------------------------------');
-            console.log(user);
-            console.log(data);
-            console.log(callback);
+            // console.log(client);
+            // console.log('------------------------------------------------');
+            // console.log(user);
+            // console.log(data);
+            // console.log(callback);
             var listenerId = user.id;
 
-            console.log('update HUD ...');
             feedbackServer.getLeaderboardForUser(listenerId,
             function(info) {
-                console.log('got the info.....');
-                console.log(callback.toString());
                 callback(info);
             });
 
@@ -497,12 +510,15 @@ function(err) {
             }
             var listenerId = room.conversation.listener.userId;
 
+			console.log('Adding feedback...');
             feedbackServer.addFeedback({
                 venter: venterId,
                 listener: listenerId,
                 direction: data.direction
             });
 
+			console.log('Sending acknowledgement....');
+			console.log('sending to: ', listenerId);
             room.sendToUser(listenerId, "received-feedback", data.direction);
         };
 
@@ -510,7 +526,6 @@ function(err) {
       * Request to join a channel based on the provided type
       */
         socketHandlers.join = function(client, user, data, callback) {
-            console.log('join request');
             var type = data.type;
             if (type !== "venter") {
                 type = "listener";
@@ -574,7 +589,6 @@ function(err) {
         };
 
         socketHandlers.counts = function(client, user, _, callback) {
-            console.log("Calling back with getRoomCounts");
             callback(getRoomCounts());
         };
 
@@ -593,9 +607,9 @@ function(err) {
             cssHash: cssHash
         });
 
-        console.log("Registering app routes");
+        util.puts("Registering app routes");
         registerAppRoutes(app);
-        console.log("Registering Socket.IO");
+        util.puts("Registering Socket.IO");
         registerSocketIO(app);
 
         app.listen(config.port);

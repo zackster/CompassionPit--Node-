@@ -12,20 +12,19 @@
 (function (exports, $, undefined) {
     "use strict";
 
+    var updateHUD = function() {
+        window.comm.request("updateHUD", {}, function(userLeaderboard) {
+            $('li.scoreCard').show().css('display', 'block !important').css('height', 'auto');
+            $("#score").text('Points ' + userLeaderboard.score + ' | Rank ' + userLeaderboard.rank);
+            $("#diff").text('You only need ' + userLeaderboard.diff + ' points to overtake the next spot on the leaderboard');
+        });
+        setTimeout(function() {
+            updateHUD.call(this, null);
+        }, 1000*60);
+    };
 
     var VERSION = window.COMPASSION_PIT_VERSION;
     window.COMPASSION_PIT_VERSION = undefined;
-
-    var log = function (data) {
-        try {
-            var console = window.console;
-            if (console && console.log) {
-                console.log(data);
-            }
-        } catch (err) {
-            // do nothing
-        }
-    };
 
     // amount of time to consider a disconnect a "real" disconnect.
     var DISCONNECT_LEEWAY = 10 * 1000;
@@ -80,25 +79,23 @@
           socketio_addr = null;
         }
 
-        log('determining sio addr');
+        window.log('determining sio addr');
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
 
             socket = io.connect(socketio_addr, {
                        'connect timeout': 500,
-			'transports': ['xhr-polling'],
+            'transports': ['xhr-polling'],
                         'try multiple transports': true,
                        'reconnect': true,
                        'reconnection delay': 500,
                        'reopen delay': 500,
                        'max reconnection attempts': 10
                    });
-	alert(socket.connection);
 
         }
         else {
             socket = io.connect(socketio_addr, {
-        'transports': ['flashsocket', 'xhr-polling'],
                 'max reconnection attempts': 5,
                 'force new connection': true
             });
@@ -108,9 +105,9 @@
 
         var events = {};
 
-        log('declaring emit');
+        window.log('declaring emit');
         var emit = function (event) {
-          log("Emit was called for event " + event);
+          window.log("Emit was called for event " + event);
             var callbacks = has.call(events, event) && events[event];
             if (callbacks) {
                 var args = Array.prototype.slice.call(arguments, 1);
@@ -138,7 +135,7 @@
         var sentConnectedEvents = false;
 
         var register = function () {
-          log("big register method being called.");
+          window.log("big register method being called.");
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
@@ -156,25 +153,25 @@
                 registerMessage.d.n = lastMessageReceived;
             }
             socket.json.send(registerMessage);
-            log("Sent register message: " + JSON.stringify(registerMessage));
+            window.log("Sent register message: " + JSON.stringify(registerMessage));
             window.Chat.progressBar();
             $("#initializing").append('<br>'+"Sent register message via socket");
         };
 
         socket.on('connect', function () {
-            log("socket connect");
+            window.log("socket connect");
             window.Chat.progressBar();
             $("#initializing").append('<br>'+"Connected to the socket");
-            log("We are about to emit connect");
+            window.log("We are about to emit connect");
             emit("connect");
-            log("We are about to call register");
+            window.log("We are about to call register");
             register();
 
         });
 
         var unregister;
         socket.on('disconnect', function () {
-            log("disconnect");
+            window.log("disconnect");
 
             if (isRegistered) {
                 isRegistered = false;
@@ -191,7 +188,7 @@
         });
 
         socket.on('reconnecting', function (x, y) {
-            log('reconnecting. Delay: ' + x + '. Attempts: ' + y);
+            window.log('reconnecting. Delay: ' + x + '. Attempts: ' + y);
         });
 
         socket.on('reconnect_failed', function () {
@@ -216,11 +213,11 @@
                     var lastReceivedMessage = message[4];
                     var forums_username = message[5];
                     if(forums_username !== false && window.CLIENT_TYPE==='listener') {
-                      console.log(forums_username);
                       $("span#currentUser").html(forums_username);
                       $("div#reputationLogin").hide();
                       $("div#loggedInAs").show();
                       window.LISTENER_LOGGED_IN = true;
+                      updateHUD();
                     }
 
                     if (oldUserId && (isNewUser || userId !== oldUserId)) {
@@ -228,7 +225,7 @@
                     }
 
                     isRegistered = true;
-                    log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
+                    window.log("registered " + (isNewUser ? "new user" : "reclaimed user") + " " + userId + "/" + publicUserId);
                     $("#initializing").append('<br>'+"Received register message via socket");
                     window.Chat.progressBar();
 
@@ -255,10 +252,10 @@
                     if (handler) {
                         handler.apply(undefined, arrayify(data.d));
                     } else {
-                        log("Unhandled message: " + data.t);
+                        window.log("Unhandled message: " + data.t);
                     }
                 } else {
-                    log("Unknown message: " + JSON.stringify(data));
+                    window.log("Unknown message: " + JSON.stringify(data));
                 }
             }
         });
@@ -267,7 +264,7 @@
         var sendBacklog = [];
 
         unregister = function () {
-            log("unregister");
+            window.log("unregister");
             if (sentConnectedEvents) {
                 sentConnectedEvents = false;
                 emit('disconnect');
@@ -291,7 +288,7 @@
                     }
                 }
                 if (backlogMessages.length > 0) {
-                    log("Sent " + backlogMessages.length + " backlogged messages");
+                    window.log("Sent " + backlogMessages.length + " backlogged messages");
                     for (j = 0, len = backlogMessages.length; j < len; j += 1) {
                         socket.json.send(backlogMessages[j]);
                     }
@@ -315,7 +312,7 @@
             checkSend();
         };
 
-        log('returning from comm');
+        window.log('returning from comm');
 
         return {
             on: function (event, callback) {
@@ -344,7 +341,7 @@
                 socket.socket.reconnect();
             },
             register: function (userId) {
-                log("calling register method");
+                window.log("calling register method");
                 register();
             }
         };

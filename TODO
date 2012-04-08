@@ -1,24 +1,25 @@
-5) Email for listeners letting them know their rank and top15 status
-7) Ask Treya ETA on training modules
-8) Checkbox: let my venter see my forums username (on by default)
-9) Put points and leaderboard on right side of chat (ajaxy)
-11 Measure waiting times - poll every 5 seconds.  ( User ID,  Venter / Listener, Queue position, Start Time, Now )
-12 outline privacy policy as per forum thread
+abuse mod tool
+19 Don't auto reconnect - if you are a listener and your venter leaves.  
+20 make sure to hook up feedback to logged conversations so i can analyze
+5) Implement utils/emailer with pony or node_mailer, and templates. https://github.com/substack/node-pony  			  
+																http://blog.nodejitsu.com/sending-emails-in-node	
+			
+If listeners aren't logged in, say  "You can create an account here! and then come back to log in when youre done.  will open in new window"
+	make sure experience works smoothly, including the IP address checking (for neg ratings)
+Ask listeners to fill out an explanation for why they rated the person good 
+
+
+
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
 14 Chat expands to fill browser
-16 don't show location if they are far away
-17 make app validate in http://validator.w3.org/check# for html5
-18 use sprites to reduce resources 	
-19 Don't auto reconnect - if you are a listener and your venter leaves.  
-	
+
+
 
 
 - make authServer and feedbackServer into singletons
 - let user save conversation to PDF
 - neg feedback responsivity?
 - bans? reprimands? encouragement to learn?
-
-<<<<<<< HEAD
 
 
 
@@ -29,7 +30,4 @@
 - sneakpeeq credit for top listeners
 - Implement selenium and saucelabs for CompassionPit
 3) 301 redirect on /forum and /forums and /forums/
-4) automatically award listeners credit if they have been talking for >10 minutes and have not been awarded negative feedback
-10 Copyright date
 =======
->>>>>>> 3f7033ef04109d2536935d5cc6b826932f3d716e

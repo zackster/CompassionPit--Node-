@@ -19,7 +19,10 @@
                             direction:    {
                                             type:       String,
                                             validate:   [function(str) { return (str === 'positive' || str === 'negative'); }]
-                                          }
+                                          },
+                            ipAddress:    {
+                                            type:       String
+                                          } // later we can add in a validate: function, to ensure it's a proper ip address.
                                   }));
 
 
@@ -43,6 +46,7 @@
 
       var venter_ip = User.getById(feedback.venter).getIPAddress();
       var listener_ip = User.getById(feedback.listener).getIPAddress();
+      instance.ipAddress = listener_ip;
 
       if(venter_ip === listener_ip) {
         console.log("We aren't adding feedback since both listener and venter share an IP address.");
@@ -146,6 +150,7 @@
     this.getLeaderboardForUser = function(loggedInUser, cb) {
       // console.log("glfu");
       var scores = self.listenerScores;
+	  // console.log("scores,", scores);
       var user_scores = [];
       _.each(scores, function(score, username, list) {
 
@@ -183,6 +188,7 @@
             break;
           }
         }
+		// console.log('calling callback');
         cb.call(null, {
           rank: user_position,
           score: logged_in_user_score,
@@ -191,6 +197,7 @@
         return;
       }
       else {
+		// console.log('calling callback');
         cb.call(null, {
           rank: 'Not On Leaderboard',
           score: 'No Score',
@@ -225,6 +232,26 @@
 
 
     };
+
+    this.ipAddressHasNeverReceivedNegativeFeedback = function(ip_address, callback) {
+        Feedback.count({
+            ipAddress: ip_address,
+            direction: 'negative'
+        },
+        function(err, docs) {
+            if (err) {
+                console.log("error! " + err);
+                return;
+            }
+            if(docs==0) {
+                callback(true);
+            }
+            else {
+                callback(false);
+            }
+        });
+    };
+
 
   };
 

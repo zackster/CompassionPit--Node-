@@ -495,8 +495,10 @@
         var index = venterQueue.indexOf(userId);
         var queue;
         var otherQueue;
+		var user_type;
         if (index !== -1) {
             // venter
+			user_type = 'venter';
             queue = venterQueue;
             otherQueue = listenerQueue;
         } else {
@@ -505,6 +507,7 @@
                 return -1;
             }
             // listener
+			user_type = 'listener';
             queue = listenerQueue;
             otherQueue = venterQueue;
         }
@@ -534,7 +537,7 @@
             index = 0;
         }
 
-        return index;
+        return {queue_position: index, user_type: user_type};
     };
 
     /**
@@ -669,6 +672,10 @@
                 message.d = Array.prototype.slice.call(arguments, 2);
             }
         }
+
+		// console.log('we will be sending a message of type: %s to userId: %s', type, userId);
+		// console.log('the message is:', message);
+		// console.log('the user <object> is:', user);
         user.send(message);
     };
 
@@ -738,12 +745,34 @@
 
     Room.prototype.lookupUserGeoIP = function (userId, callback) {
         var user = User.getById(userId);
-        if (!user || this.users[userId] !== "listener") {
+        if (!user) {   								//was:         if (!user || this.users[userId] !== "listener") {
             callback(null);
         } else {
             user.lookupGeoIP(callback);
         }
-    };
+    }
+
+	// takes in: two user IDs
+	// calls back with: geoInfo if users are from same country; otherwise, null
+	Room.prototype.areUsersFromSameCountry = function(userId, otherUserId, callback) {
+		var self = this;
+	    self.lookupUserGeoIP(userId, function (geoInfo) {
+			if(geoInfo && geoInfo.data && geoInfo.data.country_name) {
+				self.lookupUserGeoIP(otherUserId, function(geoInfo2) {
+					if(geoInfo2 && geoInfo2.data && geoInfo2.data.country_name && geoInfo2.data.country_name === geoInfo.data.country_name) { 
+						
+						console.log('They are from Same country.!!');
+						
+						callback(geoInfo);
+						return;
+					}
+				});
+			}
+			console.log('They are NOT from same country.');
+			callback(null);
+			return;
+	    });		
+	}
 
     /**
      * Add the provided user to the Room.
@@ -785,24 +814,29 @@
         // let the new user know about the other users in the room.
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
-                // let the old user know that the new one has joined
-                self.lookupUserGeoIP(userId, function (geoInfo) {
-                    var user = User.getById(userId);
-                    self.sendToUser(otherUserId, "join", user && user.publicId, type, geoInfo);
-                });
-                var otherClientType = self.users[otherUserId];
-                if (VALID_TYPES[otherClientType]) {
-                    // let the new user know about the existing old users
-                    self.lookupUserGeoIP(otherUserId, function (geoInfo) {
-                        var otherUser = User.getById(otherUserId);
-                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
-                    });
-                }
-
-                // if (User.getById(userId).elizaUserId && User.getById(otherUserId).elizaUserId) {
-                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
-                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
-                // }
+	                
+				self.areUsersFromSameCountry(userId, otherUserId, function(geoInfo) {
+					var user = User.getById(userId);
+	                self.sendToUser(otherUserId, "join", user && user.publicId, type, geoInfo);  // let the old user know that the new one has joined
+	                var otherClientType = self.users[otherUserId];
+	                if (VALID_TYPES[otherClientType]) {
+						var otherUser = User.getById(otherUserId);
+	                    // let the new user know about the existing old users
+						if(otherClientType=='venter') {
+	                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, null);
+						}
+						else {
+		                    self.lookupUserGeoIP(otherUserId, function (geoInfo) {		                        
+		                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
+		                    });							
+						}
+						
+						console.log("other client type", otherClientType);
+	                }
+	
+	                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
+	                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);	
+				});
             }
         });
 
