@@ -1,0 +1,652 @@
+.faces, a[href="/fy1"]:after, a[href="/milk"]:after, a[href="/pickletime"]:after, a[href="/notsure"]:after, a[href="/fuckthatshit"]:after, a[href="/teethrage"]:after, a[href="/foreveralone"]:after, a[href="/bzz"]:after, a[href="/creepy"]:after, a[href="/itstime"]:after, a[href="/gtroll"]:after, a[href="/fap"]:after, a[href="/pfttxt"]:after, a[href="/biggusta"]:after, a[href="/hahahahaha"]:after, a[href="/2229"]:after, a[href="/smokeweedeveryday"]:after, a[href="/jackieeeee!"]:after, a[href="/jizzsplosion"]:after, a[href="/ifeelsyabreh"]:after, a[href="/trollmom"]:after, a[href="/femyao"]:after, a[href="/ilovethebeefytaco"]:after, a[href="/gyey"]:after, a[href="/gwat"]:after, a[href="/gsmile"]:after, a[href="/gtongue"]:after, a[href="/gohno"]:after, a[href="/gwah"]:after, a[href="/ghappy"]:after, a[href="/gbeh"]:after, a[href="/gfu"]:after, a[href="/guhm"]:after, a[href="/fu"]:after, a[href="/beh"]:after, a[href="/gah"]:after, a[href="/perfect"]:after, a[href="/happy"]:after, a[href="/uhm"]:after, a[href="/wat"]:after, a[href="/yey"]:after, a[href="/fuckyeah"]:after, a[href="/ewbte"]:after, a[href="/son"]:after, a[href="/high"]:after, a[href="/poker"]:after, a[href="/rightmilk"]:after, a[href="/megusta"]:after, a[href="/troll"]:after, a[href="/rtroll"]:after, a[href="/leftmilk"]:after, a[href="/futext"]:after, a[href="/pft"]:after, a[href="/sadtroll"]:after, a[href="/wetodddog"]:after, a[href="/harpdarp"]:after, a[href="/dude"]:after, a[href="/eyes"]:after, a[href="/awman"]:after, a[href="/bepsausage"]:after, a[href="/lol"]:after, a[href="/omg"]:after, a[href="/pissed"]:after, a[href="/hmm"]:after, a[href="/whoa"]:after, a[href="/sad"]:after, a[href="/thumbsup"]:after, a[href="/blackhair"]:after, a[href="/hehheh"]:after, a[href="/straight"]:after, a[href="/bepinthemorning"]:after, a[href="/red"]:after, a[href="/bepislaughingatyourmum"]:after, a[href="/nomegusta"]:after, a[href="/wtf"]:after, a[href="/trolldad"]:after, a[href="/wayevil"]:after, a[href="/challengeaccepted"]:after, a[href="/melvin"]:after, a[href="/welp"]:after, a[href="/bepistrollingyoubetter"]:after, a[href="/djlovestaco"]:after, a[href="/why"]:after, a[href="/surprised"]:after, a[href="/suprised"]:after, a[href="/longneck"]:after, a[href="/sweetjesus"]:after, a[href="/notokay"]:after, a[href="/yuno"]:after, a[href="/awyeah"]:after, a[href="/awyea"]:after, a[href="/ohisthatacarrot"]:after, a[href="/carrt"]:after, a[href="/iamawaffle"]:after, a[href="/jackieeeee"]:after, a[href="/aintthatsomeshit"]:after, a[href="/igotthis"]:after, a[href="/teeth"]:after, a[href="/foreveralonewithyourmum"]:after, a[href="/megustaperfect"]:after, a[href="/fapfap"]:after, a[href="/schlick"]:after, a[href="/gtfo"]:after, a[href="/stare"]:after, a[href="/fumanchu"]:after, a[href="/vuvu"]:after, a[href="/pfttext"]:after, a[href="/indeed"]:after, a[href="/ifeelyoubrah"]:after, a[href="/steve"]:after, a[href="/serious"]:after, a[href="/gserious"]:after, a[href="/gaytroll"]:after, a[href="/deviltroll"]:after, a[href="/freddie"]:after, a[href="/thestonedmod"]:after, a[href="/notbad"]:after, a[href="/trollmum"]:after, a[href="/gwtf"]:after, a[href="/okay"]:after, a[href="/splashy"]:after, a[href="/toomuchweed"]:after, a[href="/chrisbrpwnd"]:after, a[href="/21424"]:after, a[href="/biebs"]:after, a[href="/cereal"]:after, a[href="/foreveralonelaugh"]:after, a[href="/ohcrap"]:after, a[href="/jasonqualman"]:after, a[href="/fyl"]:after, a[href="/rmilk"]:after, a[href="/ewbtetext"]:after, a[href="/trap"]:after, author[href*="/flabbergasted1"]:before {
+    width: 25px;
+    height: 25px;
+    content: " ";
+    background-image: url('../img/sprites.png');
+    display: inline-block
+    }
+a[href="/fy1"]:after {
+    background-position: -240px -30px;
+    width: 23px;
+    height: 25px
+    }
+a[href="/milk"]:after {
+    background-position: -210px -60px;
+    width: 21px;
+    height: 25px
+    }
+a[href="/pickletime"]:after {
+    background-position: -240px -87px;
+    width: 56px;
+    height: 21px
+    }
+a[href="/notsure"]:after {
+    background-position: -433px -315px;
+    width: 22px;
+    height: 34px
+    }
+a[href="/fuckthatshit"]:after {
+    background-position: 0 -180px;
+    width: 61px;
+    height: 88px
+    }
+a[href="/teethrage"]:after {
+    background-position: -331px -61px;
+    width: 59px;
+    height: 59px
+    }
+a[href="/foreveralone"]:after {
+    background-position: -330px -120px;
+    width: 88px;
+    height: 95px
+    }
+a[href="/bzz"]:after {
+    background-position: -125px -150px;
+    width: 97px;
+    height: 28px
+    }
+a[href="/creepy"]:after {
+    background-position: -300px -60px;
+    width: 30px;
+    height: 31px
+    }
+a[href="/itstime"]:after {
+    background-position: -270px -300px;
+    width: 41px;
+    height: 41px
+    }
+a[href="/gtroll"]:after {
+    background-position: -149px -300px;
+    width: 35px;
+    height: 31px
+    }
+a[href="/fap"]:after {
+    background-position: -331px -330px;
+    width: 39px;
+    height: 45px
+    }
+a[href="/pfttxt"]:after {
+    background-position: -120px -571px;
+    width: 12px;
+    height: 24px
+    }
+a[href="/biggusta"]:after {
+    background-position: -370px -380px;
+    width: 65px;
+    height: 67px
+    }
+a[href="/hahahahaha"]:after {
+    background-position: -60px -541px;
+    width: 35px;
+    height: 34px
+    }
+a[href="/2229"]:after {
+    background-position: -108px -403px;
+    width: 47px;
+    height: 67px
+    }
+a[href="/smokeweedeveryday"]:after {
+    background-position: -180px -420px;
+    width: 45px;
+    height: 54px
+    }
+a[href="/jackieeeee!"]:after {
+    background-position: -210px -361px;
+    width: 95px;
+    height: 54px
+    }
+a[href="/jizzsplosion"]:after {
+    background-position: -315px -380px;
+    width: 50px;
+    height: 67px
+    }
+a[href="/ifeelsyabreh"]:after {
+    background-position: -450px -30px;
+    width: 47px;
+    height: 50px
+    }
+a[href="/trollmom"]:after {
+    background-position: -332px -240px;
+    width: 62px;
+    height: 80px
+    }
+a[href="/femyao"]:after {
+    background-position: -420px -150px;
+    width: 63px;
+    height: 66px
+    }
+a[href="/ilovethebeefytaco"]:after {
+    background-position: -59px -270px;
+    width: 32px;
+    height: 26px
+    }
+a[href="/gyey"]:after {
+    background-position: 0 0;
+    width: 26px;
+    height: 24px
+    }
+a[href="/gwat"]:after {
+    background-position: -30px 0;
+    width: 26px;
+    height: 25px
+    }
+a[href="/gsmile"]:after {
+    background-position: -60px 0;
+    width: 26px;
+    height: 24px
+    }
+a[href="/gtongue"]:after {
+    background-position: -90px 0;
+    width: 26px;
+    height: 25px
+    }
+a[href="/gohno"]:after, a[href="/gwah"]:after {
+    background-position: -120px 0;
+    width: 30px;
+    height: 30px
+    }
+a[href="/ghappy"]:after {
+    background-position: -150px 0;
+    width: 30px;
+    height: 30px
+    }
+a[href="/gbeh"]:after {
+    background-position: -180px 0;
+    width: 25px;
+    height: 25px
+    }
+a[href="/gohno"]:after {
+    background-position: -210px 0;
+    width: 30px;
+    height: 30px
+    }
+a[href="/gfu"]:after {
+    background-position: -240px 0;
+    width: 24px;
+    height: 25px
+    }
+a[href="/guhm"]:after {
+    background-position: -270px 0;
+    width: 25px;
+    height: 30px
+    }
+a[href="/fu"]:after {
+    background-position: 0 -29px;
+    width: 26px;
+    height: 26px
+    }
+a[href="/beh"]:after {
+    background-position: -29px -28px;
+    width: 27px;
+    height: 27px
+    }
+a[href="/gah"]:after {
+    background-position: -60px -30px;
+    width: 24px;
+    height: 26px
+    }
+a[href="/perfect"]:after {
+    background-position: -90px -30px;
+    width: 26px;
+    height: 23px
+    }
+a[href="/happy"]:after {
+    background-position: -120px -30px;
+    width: 26px;
+    height: 26px
+    }
+a[href="/uhm"]:after {
+    background-position: -150px -30px;
+    width: 24px;
+    height: 26px
+    }
+a[href="/wat"]:after {
+    background-position: -180px -30px;
+    width: 25px;
+    height: 27px
+    }
+a[href="/yey"]:after {
+    background-position: -210px -30px;
+    width: 24px;
+    height: 26px
+    }
+a[href="/fuckyeah"]:after {
+    background-position: -240px -30px;
+    width: 27px;
+    height: 23px
+    }
+a[href="/ewbte"]:after {
+    background-position: -270px -30px;
+    width: 24px;
+    height: 26px
+    }
+a[href="/son"]:after {
+    background-position: 0 -60px;
+    width: 23px;
+    height: 24px
+    }
+a[href="/high"]:after {
+    background-position: -30px -60px;
+    width: 26px;
+    height: 25px
+    }
+a[href="/poker"]:after {
+    background-position: -60px -60px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/rightmilk"]:after {
+    background-position: -90px -60px;
+    width: 23px;
+    height: 26px
+    }
+a[href="/megusta"]:after {
+    background-position: -120px -60px;
+    width: 25px;
+    height: 25px
+    }
+a[href="/troll"]:after {
+    background-position: -150px -60px;
+    width: 26px;
+    height: 27px
+    }
+a[href="/rtroll"]:after {
+    background-position: -180px -60px;
+    width: 25px;
+    height: 26px
+    }
+a[href="/leftmilk"]:after {
+    background-position: -210px -60px;
+    width: 22px;
+    height: 26px
+    }
+a[href="/futext"]:after {
+    background-position: -240px -60px;
+    width: 11px;
+    height: 30px
+    }
+a[href="/pft"]:after {
+    background-position: -270px -60px;
+    width: 24px;
+    height: 25px
+    }
+a[href="/sadtroll"]:after {
+    background-position: 0 -90px;
+    width: 25px;
+    height: 25px
+    }
+a[href="/wetodddog"]:after {
+    background-position: -30px -90px;
+    width: 27px;
+    height: 35px
+    }
+a[href="/harpdarp"]:after {
+    background-position: -60px -91px;
+    width: 35px;
+    height: 38px
+    }
+a[href="/dude"]:after {
+    background-position: -120px -90px;
+    width: 23px;
+    height: 26px
+    }
+a[href="/eyes"]:after {
+    background-position: -150px -90px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/awman"]:after {
+    background-position: -180px -90px;
+    width: 36px;
+    height: 29px
+    }
+a[href="/bepsausage"]:after {
+    background-position: -240px -90px;
+    width: 57px;
+    height: 19px
+    }
+a[href="/lol"]:after {
+    background-position: 0 -120px;
+    width: 22px;
+    height: 26px
+    }
+a[href="/omg"]:after {
+    background-position: -120px -120px;
+    width: 35px;
+    height: 30px
+    }
+a[href="/pissed"]:after {
+    background-position: -180px -120px;
+    width: 20px;
+    height: 25px
+    }
+a[href="/hmm"]:after {
+    background-position: -210px -120px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/whoa"]:after {
+    background-position: -240px -120px;
+    width: 25px;
+    height: 24px
+    }
+a[href="/sad"]:after {
+    background-position: -269px -119px;
+    width: 25px;
+    height: 25px
+    }
+a[href="/thumbsup"]:after {
+    background-position: 0 -150px;
+    width: 30px;
+    height: 25px
+    }
+a[href="/blackhair"]:after {
+    background-position: -30px -150px;
+    width: 25px;
+    height: 30px
+    }
+a[href="/hehheh"]:after {
+    background-position: -60px -150px;
+    width: 25px;
+    height: 25px
+    }
+a[href="/straight"]:after {
+    background-position: -90px -150px;
+    width: 25px;
+    height: 30px
+    }
+a[href="/bepinthemorning"]:after {
+    background-position: -120px -150px;
+    width: 100px;
+    height: 30px
+    }
+a[href="/red"]:after {
+    background-position: -240px -150px;
+    width: 34px;
+    height: 30px
+    }
+a[href="/bepislaughingatyourmum"]:after {
+    background-position: 0 -180px;
+    width: 60px;
+    height: 90px
+    }
+a[href="/nomegusta"]:after {
+    background-position: 0 -270px;
+    width: 24px;
+    height: 30px
+    }
+a[href="/wtf"]:after {
+    background-position: -90px -180px;
+    width: 60px;
+    height: 90px
+    }
+a[href="/trolldad"]:after {
+    background-position: -180px -180px;
+    width: 43px;
+    height: 60px
+    }
+a[href="/wayevil"]:after {
+    background-position: -240px -180px;
+    width: 40px;
+    height: 40px
+    }
+a[href="/challengeaccepted"]:after {
+    background-position: -300px -180px;
+    width: 30px;
+    height: 40px
+    }
+a[href="/melvin"]:after {
+    background-position: -300px -240px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/welp"]:after {
+    background-position: -300px -120px;
+    width: 30px;
+    height: 33px
+    }
+a[href="/bepistrollingyoubetter"]:after {
+    background-position: -300px -60px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/djlovestaco"]:after {
+    background-position: -60px -270px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/why"]:after {
+    background-position: -90px -270px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/surprised"]:after, a[href="/suprised"]:after {
+    background-position: -120px -270px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/longneck"]:after {
+    background-position: 0 -300px;
+    width: 63px;
+    height: 54px
+    }
+a[href="/sweetjesus"]:after {
+    background-position: -90px -300px;
+    width: 40px;
+    height: 38px
+    }
+a[href="/notokay"]:after {
+    background-position: 0 -360px;
+    width: 31px;
+    height: 37px
+    }
+a[href="/yuno"]:after {
+    background-position: -30px -360px;
+    width: 42px;
+    height: 44px
+    }
+a[href="/awyeah"]:after, a[href="/awyea"]:after {
+    background-position: -90px -360px;
+    width: 65px;
+    height: 40px
+    }
+a[href="/ohisthatacarrot"]:after, a[href="/carrt"]:after {
+    background-position: -160px -360px;
+    width: 32px;
+    height: 30px
+    }
+a[href="/iamawaffle"]:after {
+    background-position: -60px -540px;
+    width: 33px;
+    height: 35px
+    }
+a[href="/jackieeeee"]:after {
+    background-position: -210px -360px;
+    width: 100px;
+    height: 60px
+    }
+a[href="/aintthatsomeshit"]:after {
+    background-position: -210px -300px;
+    width: 50px;
+    height: 41px
+    }
+a[href="/igotthis"]:after {
+    background-position: -270px -300px;
+    width: 50px;
+    height: 50px
+    }
+a[href="/teeth"]:after {
+    background-position: -330px -60px;
+    width: 60px;
+    height: 60px
+    }
+a[href="/foreveralonewithyourmum"]:after {
+    background-position: -330px -120px;
+    width: 90px;
+    height: 95px
+    }
+a[href="/megustaperfect"]:after {
+    background-position: -330px 0;
+    width: 60px;
+    height: 52px
+    }
+a[href="/fapfap"]:after {
+    background-position: -330px -330px;
+    width: 45px;
+    height: 45px
+    }
+a[href="/schlick"]:after {
+    background-position: -390px -330px;
+    width: 40px;
+    height: 45px
+    }
+a[href="/gtfo"]:after {
+    background-position: -30px -270px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/stare"]:after {
+    background-position: -240px -240px;
+    width: 47px;
+    height: 36px
+    }
+a[href="/fumanchu"]:after {
+    background-position: -180px -240px;
+    width: 60px;
+    height: 41px
+    }
+a[href="/vuvu"]:after {
+    background-position: -390px 0;
+    width: 30px;
+    height: 30px
+    }
+a[href="/pfttext"]:after {
+    background-position: -120px -570px;
+    width: 30px;
+    height: 30px
+    }
+a[href="/indeed"]:after {
+    background-position: -450px 0;
+    width: 15px;
+    height: 25px
+    }
+a[href="/ifeelyoubrah"]:after {
+    background-position: -450px -30px;
+    width: 50px;
+    height: 50px
+    }
+a[href="/steve"]:after {
+    background-position: -510px -30px;
+    width: 40px;
+    height: 50px
+    }
+a[href="/serious"]:after {
+    background-position: -540px -90px;
+    width: 50px;
+    height: 50px
+    }
+a[href="/gserious"]:after {
+    background-position: -510px -150px;
+    width: 50px;
+    height: 50px
+    }
+a[href="/gaytroll"]:after {
+    background-position: -540px -210px;
+    width: 39px;
+    height: 50px
+    }
+a[href="/deviltroll"]:after {
+    background-position: -420px -90px;
+    width: 37px;
+    height: 50px
+    }
+a[href="/freddie"]:after {
+    background-position: -480px -240px;
+    width: 48px;
+    height: 100px
+    }
+a[href="/thestonedmod"]:after {
+    background-position: -540px -270px;
+    width: 50px;
+    height: 53px
+    }
+a[href="/notbad"]:after {
+    background-position: -420px -240px;
+    width: 42px;
+    height: 67px
+    }
+a[href="/trollmum"]:after {
+    background-position: -330px -240px;
+    width: 65px;
+    height: 80px
+    }
+a[href="/gwtf"]:after {
+    background-position: -420px -150px;
+    width: 65px;
+    height: 65px
+    }
+a[href="/okay"]:after {
+    background-position: -390px -30px;
+    width: 60px;
+    height: 59px
+    }
+a[href="/splashy"]:after {
+    background-position: -240px -420px;
+    width: 57px;
+    height: 45px
+    }
+a[href="/toomuchweed"]:after {
+    background-position: -180px -420px;
+    width: 45px;
+    height: 54px
+    }
+a[href="/chrisbrpwnd"]:after, a[href="/21424"]:after {
+    background-position: -150px -480px;
+    width: 91px;
+    height: 116px
+    }
+a[href="/biebs"]:after {
+    background-position: -120px -420px;
+    width: 49px;
+    height: 68px
+    }
+a[href="/cereal"]:after {
+    background-position: -47px -414px;
+    width: 40px;
+    height: 33px
+    }
+a[href="/foreveralonelaugh"]:after {
+    background-position: 0 -450px;
+    width: 75px;
+    height: 86px
+    }
+a[href="/ohcrap"]:after {
+    background-position: 0 -420px;
+    width: 30px;
+    height: 29px
+    }
+a[href="/jasonqualman"]:after {
+    background-position: -80px -485px;
+    width: 36px;
+    height: 50px
+    }
+a[href="/fyl"]:after {
+    background-position: -90px -480px;
+    width: 36px;
+    height: 50px
+    }
+a[href="/rmilk"]:after {
+    background-position: -90px -60px;
+    width: 21px;
+    height: 25px
+    }
+a[href="/ewbtetext"]:after {
+    background-position: -120px -541px;
+    width: 14px;
+    height: 10px
+    }
+a[href="/trap"]:after {
+    background-position: -480px -90px;
+    width: 41px;
+    height: 40px
+}

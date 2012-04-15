@@ -169,7 +169,12 @@
         log.store("joinRoom", listenerId);
 
         var venter = User.getById(venterId);
+		venter.partner_list.push(listenerId);
         var listener = User.getById(listenerId);
+		listener.partner_list.push(venterId);
+		
+		
+		
 
         var venterIP = venter ? venter.getIPAddress() || "" : "";
         var listenerIP = listener ? listener.getIPAddress() || "" : "";

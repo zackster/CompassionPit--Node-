@@ -22,6 +22,16 @@ script
 
 - }
 
+div#ad-leaderboard-top(style="text-align: center")
+    script(type="text/javascript")
+        google_ad_client = "ca-pub-6036766792552196";
+        /* Homepage Leaderboard */
+        google_ad_slot = "4663790079";
+        google_ad_width = 728;
+        google_ad_height = 90;
+    script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
+
+
 .cont_lft.fltlft
   h1#counts Currently Online: 
     span#listener-count 0
@@ -33,13 +43,7 @@ script
   em Help a random person get it off their chest:
   a.listen(href="/listen") &nbsp;
   span.new
-    script
-      google_ad_client = "ca-pub-6036766792552196";
-      /* CompassionPit Homepage Medium Rectangle */
-      google_ad_slot = "0693952875";
-      google_ad_width = 300;
-      google_ad_height = 250;
-    script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
+    img(src="img/hug-white.png")
 .cont_rht.fltrht
   h1 Compassion Pit visitors are people dealing with all sorts of life's problems. And we’re here to help...
   em Whether it’s sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
@@ -62,4 +66,13 @@ script
         })();
     li
       iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:240px; height:35px;", id="facebookLikeBoxIFrame")
+
+  div#bottom-ad-unit(style="float: right")
+    script(type="text/javascript")
+      google_ad_client = "ca-pub-6036766792552196";
+      /* Homepage Bottom Banner */
+      google_ad_slot = "0315967237";
+      google_ad_width = 468;
+      google_ad_height = 60;
+    script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
 .clear

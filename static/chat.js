@@ -131,6 +131,51 @@
             info('Connection error');
         });
 
+
+        var wallpaper_timer;
+        $('#playGame').click(function() { window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); $("#entertainmentChoice").hide(); $("#entertainmentGame").show(); });
+        $('#playRelaxingSounds').click(function() {
+            window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); $("#entertainmentChoice").hide();
+            $("#entertainmentSounds").show();
+            $("#entertainmentSounds").append($("<iframe width=\"1\" height=\"1\" src=\"http://www.youtube.com/embed/uupzk-YCBO0?rel=0&autoplay=1\" frameborder=\"0\"></iframe>"));
+            var beautiful_wallpapers = ["the-other-side.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-3.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-5.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-16.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-6.jpg", "elbalia.jpg", "ethaer.jpg", "shimuna.jpg", "paramount.jpg", "brothers.jpg", "Monument_Valley.jpg", "TRILITH_by_tigaer.jpg", "Terragen___The_Way_God_Made_Me.jpg", "The_Rock_by_DJMattRicks.jpg", "Lost.jpg", "splatter.jpg", "Pacific.jpg", "Unforgettable-Days.jpg", "skyscrapers-&-lost-wonders_01.jpg", "winter-wonderland.jpg", "winter-landscape.jpg", "Mt_Buller.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-15.jpg", "forestfall.jpg", "Dashing.jpg", "meelup-beach.jpg", "tion.jpg", "Viva-La-Nature-5-(3).jpg", "Viva-La-Nature-5-(4).jpg", "Viva-La-Nature-5-(11).jpg", "Viva-La-Nature-5-(15).jpg", "on-the-beach.jpg", "red-rocks.jpg", "another-morning.jpg", "Atomicsunset.jpg", "waterfall-desktop.jpg", "461.jpg", "sea-of-plague.jpg", "Afternoon1_01.jpg", "Grassy.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-11.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-13.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-18.jpg", "Lone_Tree_1600.jpg", "a_place_to_rest.jpg", "12.jpg", "Jungle_Dreaming.jpg", "west-new-york-girl.jpg", "a_year_has_gone.jpg", "dedication.jpg", "azalea.jpg", "yellow-field.jpg", "Summer_Sunflowers.jpg", "The-Greenway.jpg", "Sun_ray_in_the_woods.jpg", "51200203.jpg", "stonehenge_wallpaper.jpg", "Spot_of_Light.jpg", "Wafting.jpg", "the-other-side.jpg", "4rest_by_UncleCameleon.jpg", "DarkblissWraith.jpg", "KingdomOfHeaven.jpg", "magic-tree.jpg", "Reaching_for_the_Stars.jpg", "dreamy-world.jpg", "447.jpg", "001.jpg", "002.jpg", "no-more-rain.jpg", "night_comes_down.jpg", "Nexus-by-Burning-Liquid.jpg", "thetismoon2k72.jpg", "jungle_bath.jpg", "beautiful-day.jpg"];
+            var show_new_wallpaper = function() {
+                var wallpaper = beautiful_wallpapers[Math.floor(Math.random() * beautiful_wallpapers.length)];
+                var $wallpaper_img = $("<img></img>");
+                $wallpaper_img.attr('src', 'img/' + wallpaper);
+				$wallpaper_img.hide();
+
+				$("#wallpapers img").fadeOut(2000, function() {
+					$(this).remove();
+					$("#wallpapers").append($wallpaper_img);
+					$("#wallpapers img").fadeIn(2000);
+				});
+
+
+            };
+
+            show_new_wallpaper();
+            wallpaper_timer = setInterval(function() { show_new_wallpaper(); }, 30*1000);
+        });
+
+
+
+
+        var $entertainment = $("div#entertainment");
+
+        var resetEntertainment = function() {
+            clearInterval(wallpaper_timer);
+            window.Chat.ENTERTAINMENT_RUNNING = false;
+            $("#entertainmentSounds iframe").remove();
+            $("#column_left_chat").show();
+             $("#chat_input").show();
+            $("#entertainmentChoice").show();
+            $("#entertainmentGame").hide();
+            $("#entertainmentSounds").hide();
+            $("#entertainment").hide();
+
+        };
+
         var status = function(msg, cssClass, checkQueue) {
 
             checkingQueue = checkQueue && msg;
@@ -142,7 +187,9 @@
             $status.addClass(cssClass);
             if(msgform) {
                 $status.text("Connected");
+                resetEntertainment();
             } else {
+                $entertainment.show();
                 $status.text(msg);
             }
             queryQueuePosition();
@@ -231,6 +278,14 @@
         });
 
         $('#enable_sound').attr('checked', true);
+        $("#enable_sound").change(function() {
+            if (window.Chat.ENTERTAINMENT_RUNNING && !$(this).attr('checked')) {
+                $("#entertainmentSounds iframe").remove();
+            }
+            else if (window.Chat.ENTERTAINMENT_RUNNING) {
+                $("#entertainmentSounds").append($("<iframe width=\"1\" height=\"1\" src=\"http://www.youtube.com/embed/uupzk-YCBO0?rel=0&autoplay=1\" frameborder=\"0\"></iframe>"));
+            }
+        });
         $('#enable_typing').attr('checked', true);
         info('Initializing');
         $("#main").hide();
@@ -294,19 +349,29 @@
         window.gong = gong;
 
         var scrollToBottomOfChat = function () {
-            var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
-            scrollDiv.scrollTop = scrollDiv.scrollHeight;
+            if(!window.Chat.ENTERTAINMENT_RUNNING) {
+                var scrollDiv = document.getElementById("column_left_chat"); //scroll to bottom of chat
+                scrollDiv.scrollTop = scrollDiv.scrollHeight;
+            }
         };
+
+		var rageSubstitute = function($td){
+			var rages = ['/yuno', '/yey', '/wtf', '/why', '/whoa', '/wetodddog', '/welp', '/wayevil', '/wat', '/vuvu', '/uhm', '/trollmom', '/trolldad', '/troll', '/trap', '/teethrage', '/sweetjesus', '/surprised', '/suprised', '/straight', '/steve', '/stare', '/son', '/serious', '/schlick', '/sadtroll', '/sad', '/rtroll', '/rmilk', '/red', '/poker', '/pissed', '/pickletime', '/pfttxt', '/pft', '/perfect', '/omg', '/okay', '/ohcrap', '/notsure', '/notokay', '/notbad', '/nomegusta', '/milk', '/melvin', '/megustaperfect', '/megusta', '/longneck', '/lol', '/jizzsplosion', '/jackieeeee!', '/itstime', '/ilovethebeefytaco', '/ifeelsyabreh', '/hmm', '/high', '/hehheh', '/harpdarp', '/happy', '/gyey', '/gwat', '/gwah', '/guhm', '/gtroll', '/gtongue', '/gtfo', '/gsmile', '/gserious', '/gohno', '/ghappy', '/gfu', '/gbeh', '/gaytroll', '/gah', '/fy1', '/futext', '/fumanchu', '/fuckthatshit', '/fu', '/freddie', '/foreveralonelaugh', '/foreveralone', '/femyao', '/fap', '/eyes', '/ewbtetext', '/ewbte', '/dude', '/deviltroll', '/creepy', '/challengeaccepted', '/cereal', '/bzz', '/blackhair', '/biggusta', '/beh', '/awyeah', '/awyea', '/awman', '/aintthatsomeshit'];
+			window._.each(rages.reverse(), function(value, key, list) {
+				$td.html($td.html().replace(new RegExp("(\\" + value + ")", "g"), '<a href="' + value + '"/>'));
+			});
+		};
 
         i = 0;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg, cssClass) {
             var $td = $("<span>");
-            if (msg instanceof $) {
+            if (msg instanceof $) { // when the fuck does this happen.  trace it some time when you're sober, jackass.
                 $td.append(msg);
             } else {
                 $td.text(capitalize(from) + ": " + msg);
             }
+			rageSubstitute($td);
             $('#chatWindow > div:last')
                 .append($("<div>")
                     .addClass(cssClass || (from === 'Me' ? 'blue-row' : from === 'System' ? 'off-white-row' : 'white-row'))

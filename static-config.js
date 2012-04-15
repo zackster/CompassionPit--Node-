@@ -25,7 +25,8 @@ module.exports = function (config) {
         "css/abuse.css",
         "jquery-ui-1.8.13.custom.css",
         "jquery.ui.datetime.css",
-        "css/jquery-ui/jquery.ui.all.css"
+        "css/jquery-ui/jquery.ui.all.css",
+		"css/rage.css"
     ];
     config.version = 0;
     require('child_process').exec("git log -1 --format=format:%H", {

@@ -1,3 +1,52 @@
+split chat.jade into: listen.jade and vent.jade
+
+
+- Mandatory listener test noreg??
+listen->vent crasg
+
+
+* show who your previous listener was - info box with ability to message them on the forums, assign them positive feedback, or assign them negative feedback
+
+
+
+Each *User* instance has a property, an array, of previous partners - these are UIDs.
+When you join a room, your dyad partner's User.id gets pushed to the array, partnerList
+
+
+
+
+Whenever you get a new partner - the chat.js event/function is called - triggering a comm.request and gets the person's partnerList. it looks at partnerList[partnerList.length()-2] and returns it to the comm.request's callback function, which displays them.  a javascript $("#MostRecentChatPartner").html() is what happens.
+Chat.jade needs a #MOstRecentChatPartner div
+
+
+function getPreviousPartner() {
+	
+	x = User;// get the User object for the person sending the comm request
+	authServer.getUsernameFromListenerId(User.partner_list[User.partner_list.length()-2]);
+	
+
+
+}
+
+
+* when you rate someone positive, or negative, optionally give them feedback or cancel it
+
+Before it sends the event, hide it and replace it with a new form, then you need to create the form, and have a submit button, and when the submit button is clicked THEN the comm/event ( from word^5) and also include the additional-comments
+   
+
+* figure out why leaderboard isn't updating for users in real-time ... e.g. why doesn't "Zachary Burt" have any points?
+
+* figure out how many negative feedbacks have been assigned to Users with forum usernames... group by syntax, and paste it here
+
+* call joe esposito and figure out "getting started guide" for flaskDijscrape
+
+
+* create roleplay fetish chat site
+
+> respond to reddit thread 
+
+
+
 abuse mod tool
 19 Don't auto reconnect - if you are a listener and your venter leaves.  
 20 make sure to hook up feedback to logged conversations so i can analyze
@@ -11,8 +60,6 @@ Ask listeners to fill out an explanation for why they rated the person good
 
 
 13 show scrolling "TIP" bar linking to suicide threads, suicide hotline number, etc.
-14 Chat expands to fill browser
-
 
 
 

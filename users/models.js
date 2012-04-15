@@ -22,6 +22,8 @@
         this.id = id = id || guid();
         this.publicId = publicId = publicId || guid();
 		this.join_time = new Date().getTime();
+		
+		this.partner_list = [];
         
         this.socket = require("../app").socket;
         this.messageBacklog = [];

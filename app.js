@@ -138,7 +138,7 @@ function(err) {
         function(req, res) {
             res.render("chat", {
                 type: "venter",
-				layout: 'layout'
+                layout: 'minimal-layout'
             });
         });
 
@@ -147,7 +147,7 @@ function(err) {
             if ((process.env.NODE_ENV || "development") === 'development') {
                 res.render("chat", {
                     type: "listener",
-					layout: 'layout'
+                    layout: 'minimal-layout'
                 });
             }
             else {
@@ -157,21 +157,26 @@ function(err) {
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
                             res.render("chat", {
                                 type: "listener",
-								layout: 'layout',
+                                layout: 'minimal-layout',
                                 email: vB_info.email,
-								created_at: vB_info.created_at,
+                                created_at: vB_info.created_at,
                                 show_intercom: true
                             });
                         });
-                    } else if(feedbackServer.ipAddressHasNeverReceivedNegativeFeedback(req.headers['x-forwarded-for'] || req.address.address)) {
-						res.render("chat", {
-							layout: 'layout',
-							type: "listener",
-							show_intercom: false
-						});
-					} else {
-						res.render("listener-registration");
-					}
+                    }
+                    else {
+                        feedbackServer.ipAddressHasNeverReceivedNegativeFeedback(req.headers['x-forwarded-for'] || req.address.address, function(clean_record) {
+                            if(clean_record) {
+                                res.render("chat", {
+                                    layout: 'minimal-layout',
+                                    type: "listener",
+                                    show_intercom: false
+                                });
+                            } else {
+                                res.render("listener-registration");
+                            }
+                        });
+                    }
                 });
             }
         });
@@ -455,15 +460,15 @@ function(err) {
       * Request the current position the client is in the queue for
       */
         socketHandlers.queue = function(client, user, _, callback) {
-						
-			var queue_info = Room.getQueuePosition(user.id);
-			log.logWaitTime({
-				userid: user.id, 
-				user_type: queue_info.user_type, 
-				queuePosition: queue_info.queue_position, 
-				join_time: user.join_time,
-				current_time: new Date().getTime()
-			});
+
+            var queue_info = Room.getQueuePosition(user.id);
+            log.logWaitTime({
+                userid: user.id,
+                user_type: queue_info.user_type,
+                queuePosition: queue_info.queue_position,
+                join_time: user.join_time,
+                current_time: new Date().getTime()
+            });
 
             callback(queue_info.queue_position);
         };
@@ -471,7 +476,7 @@ function(err) {
         socketHandlers.authenticateUser = function(client, user, data, callback) {
             authServer.login(user.id, data.username, data.password,
             function(success) {
-                if (success) {                    
+                if (success) {
                     feedbackServer.creditFeedback({
                         id: user.id,
                         username: data.username
@@ -510,16 +515,21 @@ function(err) {
             }
             var listenerId = room.conversation.listener.userId;
 
-			console.log('Adding feedback...');
+            console.log('Adding feedback...');
             feedbackServer.addFeedback({
                 venter: venterId,
                 listener: listenerId,
                 direction: data.direction
             });
 
-			console.log('Sending acknowledgement....');
-			console.log('sending to: ', listenerId);
+            console.log('Sending acknowledgement....');
+            console.log('sending to: ', listenerId);
             room.sendToUser(listenerId, "received-feedback", data.direction);
+        };
+
+        socketHandlers.getPreviousPartner = function(client, user, data, callback) {
+            var previous_partners = User.getById(user.id).partner_list;
+            callback(authServer.getUsernameFromListenerId(previous_partners[previous_partners.length()-2]));
         };
 
         /**

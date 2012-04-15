@@ -9,6 +9,23 @@
 div(id="main",style="display:none")
   #audioPlayer
   #left
+    #entertainment(style="display: none")
+        #entertainmentChoice
+            h2 While you wait for the next available chat partner, you have some options for how to kill time.
+            button(id="playGame") Play Game
+            | -or- 
+            button(id="playRelaxingSounds") Experience Relaxing Landscape Sounds
+        #entertainmentGame(style="display: none; text-align: center")
+            //iframe(src="board.htm", height=350, width=300, id="tetris_board", name="tetris_board")
+            object(classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000", codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0", width="350", height="340", title="tetrisFlash")
+                param(name="movie", value="nbloxFreeTetris.swf")
+                param(name="quality", value="high")
+                embed(src="nbloxFreeTetris.swf", quality="high", pluginspage="http://www.macromedia.com/go/getflashplayer", type="application/x-shockwave-flash", width="350", height="340")
+            h3 As soon as your chat partner enters, the game will be hidden
+        #entertainmentSounds(style="display: none; text-align: center")     
+            #wallpapers
+                img
+            h3 As soon as your chat partner enters, the show will stop
     #column_left_chat
       div#chatWindow
         div

@@ -27,7 +27,7 @@
     window.COMPASSION_PIT_VERSION = undefined;
 
     // amount of time to consider a disconnect a "real" disconnect.
-    var DISCONNECT_LEEWAY = 10 * 1000;
+    var DISCONNECT_LEEWAY = 30 * 1000;
 
     var BACKLOG_SIZE = 100;
 
@@ -79,7 +79,6 @@
           socketio_addr = null;
         }
 
-        window.log('determining sio addr');
 
         if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
 
@@ -105,9 +104,8 @@
 
         var events = {};
 
-        window.log('declaring emit');
+
         var emit = function (event) {
-          window.log("Emit was called for event " + event);
             var callbacks = has.call(events, event) && events[event];
             if (callbacks) {
                 var args = Array.prototype.slice.call(arguments, 1);
@@ -135,7 +133,6 @@
         var sentConnectedEvents = false;
 
         var register = function () {
-          window.log("big register method being called.");
             currentConnectIndex += 1;
             isRegistered = false;
             var registerMessage = {
@@ -312,7 +309,6 @@
             checkSend();
         };
 
-        window.log('returning from comm');
 
         return {
             on: function (event, callback) {
@@ -341,7 +337,6 @@
                 socket.socket.reconnect();
             },
             register: function (userId) {
-                window.log("calling register method");
                 register();
             }
         };
