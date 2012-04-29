@@ -5,7 +5,8 @@
   "description": "an anonymous two-way chat application",
   "contributors": [
     "Yogi Patel <yogi.patel@gmail.com>",
-    "Cameron Knight <ckknight@gmail.com>"
+    "Cameron Knight <ckknight@gmail.com>",
+    "Jonathan Soeder <jonathan.soeder@gmail.com"
   ],
   "scripts": {
     "start": "node ./bin/http-server",
