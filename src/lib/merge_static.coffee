@@ -2,7 +2,7 @@
 fs = require("fs")
 uglify = require("uglify-js")
 sqwish = require("sqwish")
-config = require("./config")
+config = require("../config")
 hashlib = require("hashlib2")
 
 module.exports = (finishCallback) ->

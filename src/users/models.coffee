@@ -1,9 +1,9 @@
 "use strict"
 log = require("../log")
-createHash = require("../utils").createHash
-guid = require("../utils").guid
+createHash = require("../lib/utils").createHash
+guid = require("../lib/utils").guid
 config = require("../config")
-forceLatency = require("../utils").forceLatency
+forceLatency = require("../lib/utils").forceLatency
 userIdToUser = {}
 userPublicIdToUserId = {}
 userIdToSocketIOId = {}

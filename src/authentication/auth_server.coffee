@@ -1,7 +1,7 @@
 "use strict"
 
 hashlib = require("hashlib2")
-createHash = require("../utils").createHash
+createHash = require("../lib/utils").createHash
 mysql = require("mysql")
 config = require("../config")
 

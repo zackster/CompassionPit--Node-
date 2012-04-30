@@ -217,16 +217,16 @@ do ->
   socketIO        = require("socket.io")
   Room            = require("./rooms/models").Room
   User            = require("./users/models").User
-  guid            = require("./utils").guid
-  forceLatency    = require("./utils").forceLatency
-  latencyWrap     = require("./utils").latencyWrap
+  guid            = require("./lib/utils").guid
+  forceLatency    = require("./lib/utils").forceLatency
+  latencyWrap     = require("./lib/utils").latencyWrap
   config          = require("./config")
   log             = require("./log")
-  mergeStatic     = require("./mergeStatic")
+  mergeStatic     = require("./lib/merge_static")
   geoip           = require("geoip")
-  vB_dao          = require("./vBDao")
-  authServer      = require("./authentication/auth-server").authServer()
-  feedbackServer  = require("./feedback/feedback-server").feedbackServer()
+  vB_dao          = require("./lib/vbdao")
+  authServer      = require("./authentication/auth_server").authServer()
+  feedbackServer  = require("./feedback/feedback_server").feedbackServer()
 
   getRoomCounts = ->
     result = Room.calculateCounts()
@@ -237,13 +237,13 @@ do ->
 
   registerAppRoutes = (app) ->
     app.sessionId = guid()
-    app.geoipCity = new geoip.City(__dirname + "/GeoLiteCity.dat")
+    app.geoipCity = new geoip.City(__dirname + "/../GeoLiteCity.dat")
     app.dynamicHelpers base: ->
       (if "/" is app.route then "" else app.route)
 
     app.helpers config: config
     app.configure ->
-      app.use express["static"](__dirname + "/static")
+      app.use express["static"](__dirname + "/../static")
       app.use express.bodyParser()
       app.use express.cookieParser()
       app.use express.errorHandler(
@@ -251,7 +251,7 @@ do ->
         showStack: true
       )
 
-    app.set "views", __dirname + "/views"
+    app.set "views", __dirname + "/../views"
     app.set "view engine", "jade"
     app.get "/", (req, res, next) ->
       opts =

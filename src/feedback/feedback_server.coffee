@@ -1,7 +1,7 @@
 "use strict"
 mongoose    = require("mongoose")
 _           = require("underscore")
-regexp      = require("../utils").regexp
+regexp      = require("../lib/utils").regexp
 User        = require("../users/models").User
 authServer  = require("../authentication/auth_server").authServer()
 Schema      = mongoose.Schema
@@ -28,10 +28,10 @@ Feedback = mongoose.model "Feedback", new Schema
   ipAddress:
     type: String
 
-Server = ->
-  self = this
-  self.listenerScores = {}
-  @addFeedback = (feedback) ->
+class Server
+  listenerScores: {}
+
+  addFeedback : (feedback) ->
     console.log "Adding feedback"
     console.log feedback
     instance = new Feedback()
@@ -57,7 +57,7 @@ Server = ->
       else
         console.log "successfully added feedback"
 
-  @creditFeedback = (user) ->
+  creditFeedback : (user) ->
     console.log "About to credit feedback"
     console.log "user id:", user.id
     console.log "user username:", user.username
@@ -70,9 +70,11 @@ Server = ->
       console.log "error: ", err
       console.log "numAffected: ", numAffected
 
-  @calculateLeaderboard = ->
+  calculateLeaderboard: ->
     console.log "We are calculating the leaderboard."
     server_object_context = this
+    self = @
+
     Feedback.distinct "listener",
       listener:
         $exists: true
@@ -90,7 +92,8 @@ Server = ->
               if err
                 console.log "error! " + err
                 return
-              self.listenerScores[thisListener] = (self.listenerScores[thisListener] or 0) + (5 * docs)
+
+              self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (5 * docs)
 
             Feedback.count
               listener: thisListener
@@ -100,13 +103,14 @@ Server = ->
                 console.log "error! " + err
                 return
               self.listenerScores[thisListener] = (self.listenerScores[thisListener] or 0) + (-3 * docs)
-          ) listeners[i]
+          )(listeners[i])
+
       setTimeout (->
         server_object_context.calculateLeaderboard()
       ), 5000 * 1000
 
-  @getLeaderboardForUser = (loggedInUser, cb) ->
-    scores = self.listenerScores
+  getLeaderboardForUser : (loggedInUser, cb) ->
+    scores = @listenerScores
     user_scores = []
     _.each scores, (score, username, list) ->
       if username.length isnt 24 and not regexp().email.test(username)
@@ -145,8 +149,8 @@ Server = ->
         score: "No Score"
         diff: "N/A"
 
-  @getLeaderboard = (top15Only, cb) ->
-    scores = self.listenerScores
+  getLeaderboard : (top15Only, cb) ->
+    scores = @listenerScores
     user_scores = []
     _.each scores, (score, username, list) ->
       if username.length isnt 24 and not regexp().email.test(username)
@@ -165,7 +169,7 @@ Server = ->
     else
       cb.call null, user_scores
 
-  @ipAddressHasNeverReceivedNegativeFeedback = (ip_address, callback) ->
+  ipAddressHasNeverReceivedNegativeFeedback: (ip_address, callback) ->
     Feedback.count
       ipAddress: ip_address
       direction: "negative"

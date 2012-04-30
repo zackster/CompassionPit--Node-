@@ -83,4 +83,4 @@ config =
       password: "password"
 
 module.exports = config[process.env.NODE_ENV or "development"]
-require("./static-config")(module.exports)
+require("./config/assets")(module.exports)
