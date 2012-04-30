@@ -1,7 +1,7 @@
 !!! 5
 html
   head
-    script 
+    script
       var _sf_startpt=(new Date()).getTime()
     title Compassion Pit
     - if (config.serveMerged)
@@ -14,14 +14,7 @@ html
     meta(name="description", content="Feeling down? CompassionPit makes it easy to find an anonymous friend to share your troubles with, without fear of being blackmailed later on.")
     script
       window.COMPASSION_PIT_VERSION = !{JSON.stringify(config.version || 0)};
-    - if (config.serveMerged)
-      script
-        (function(){var noop=function(){};var console={log:noop,error:noop}})()
-      script(src="/script.min.js?" + jsHash)
-      script(src="//platform.twitter.com/widgets.js")      
-    - else
-      - each script in config.scripts
-        script(src="/" + script)
+
     script
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-17971348-1']);
@@ -79,3 +72,15 @@ html
       img(src="img/lft_btmcurve.png", width="200", height="367", alt="decorative border")
     .rht_btmcurve
       img(src="img/btm_rhtcurve.png", width="200", height="367", alt="decorative border")
+
+    - if (config.serveMerged)
+      script
+        (function(){var noop=function(){};var console={log:noop,error:noop}})()
+      script(src="/script.min.js?" + jsHash)
+      script(src="//platform.twitter.com/widgets.js")
+    - else
+      - each script in config.scripts
+        script(src="/" + script)
+
+    - if (locals.require_chat_init)
+      script(src="chat-init.js")

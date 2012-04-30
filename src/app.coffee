@@ -296,12 +296,17 @@ do ->
       res.render "chat",
         type: "venter"
         layout: "minimal-layout"
+        locals:
+          require_chat_init: true
 
     app.get "/listen", (req, res) ->
+      require_chat_init = true
       if (process.env.NODE_ENV or "development") is "development"
         res.render "chat",
           type: "listener"
           layout: "minimal-layout"
+          locals:
+            require_chat_init: true
       else
         authServer.checkLogin req, (username) ->
           if username
@@ -312,6 +317,8 @@ do ->
                 email: vB_info.email
                 created_at: vB_info.created_at
                 show_intercom: true
+                locals:
+                  require_chat_init: true
           else
             feedbackServer.ipAddressHasNeverReceivedNegativeFeedback req.headers["x-forwarded-for"] or req.address.address, (clean_record) ->
               if clean_record
@@ -319,6 +326,8 @@ do ->
                   layout: "minimal-layout"
                   type: "listener"
                   show_intercom: false
+                  locals:
+                    require_chat_init: true
               else
                 res.render "listener-registration"
 

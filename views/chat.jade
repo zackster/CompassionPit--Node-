@@ -13,7 +13,7 @@ div(id="main",style="display:none")
         #entertainmentChoice
             h2 While you wait for the next available chat partner, you have some options for how to kill time.
             button(id="playGame") Play Game
-            | -or- 
+            | -or-
             button(id="playRelaxingSounds") Experience Relaxing Landscape Sounds
         #entertainmentGame(style="display: none; text-align: center")
             //iframe(src="board.htm", height=350, width=300, id="tetris_board", name="tetris_board")
@@ -22,7 +22,7 @@ div(id="main",style="display:none")
                 param(name="quality", value="high")
                 embed(src="nbloxFreeTetris.swf", quality="high", pluginspage="http://www.macromedia.com/go/getflashplayer", type="application/x-shockwave-flash", width="350", height="340")
             h3 As soon as your chat partner enters, the game will be hidden
-        #entertainmentSounds(style="display: none; text-align: center")     
+        #entertainmentSounds(style="display: none; text-align: center")
             #wallpapers
                 img
             h3 As soon as your chat partner enters, the show will stop
@@ -65,7 +65,7 @@ div(id="main",style="display:none")
         div(class="announce")
         //-
           div#spinner
-          div#reputationLogin            
+          div#reputationLogin
             div(class="form_errors",id="form_errors")
             label(class="login")
               input(type="text", id="loginUsername", name="loginUsername", class="login", placeholder="Username")
@@ -112,4 +112,3 @@ script
   window.CLIENT_TYPE = !{JSON.stringify(type)};
 
 script(src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js")
-script(src="chat-init.js")
