@@ -385,11 +385,12 @@ Room::sendToUser = (userId, type) ->
   user = User.getById(userId)
   return  unless user
   message = t: type
-  if arguments_.length > 2
-    if arguments_.length is 3
-      message.d = arguments_[2]
+  if arguments.length > 2
+    if arguments.length is 3
+      message.d = arguments[2]
     else
-      message.d = Array::slice.call(arguments_, 2)
+      message.d = Array::slice.call(arguments, 2)
+
   user.send message
 
 Room::receiveMessage = (userId, message, callback) ->
