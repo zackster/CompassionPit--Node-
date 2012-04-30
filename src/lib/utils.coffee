@@ -29,17 +29,14 @@ module.exports.createHash = (data, freeze) ->
 
   hash
 
-exports.forceLatency = (->
+exports.forceLatency = do ->
   LATENCY_TIME = require("./config").forceLatency
   if LATENCY_TIME <= 0
-    (callback) ->
-      callback()
+    return (callback) -> callback()
   else
-    (callback) ->
-      setTimeout callback, LATENCY_TIME
-())
+    return (callback) -> setTimeout callback, LATENCY_TIME
 
-exports.latencyWrap = (->
+exports.latencyWrap = do ->
   LATENCY_TIME = require("./config").forceLatency
   if LATENCY_TIME <= 0
     (callback) ->
@@ -51,7 +48,6 @@ exports.latencyWrap = (->
         setTimeout (->
           callback.apply `undefined`, args
         ), LATENCY_TIME
-())
 
 hashSalt = require("./config").hashIPAddressSalt or ""
 

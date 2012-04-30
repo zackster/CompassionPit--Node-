@@ -24,6 +24,8 @@
   "dependencies": {
     "colors": "*",
     "flatiron": "0.1.x",
+    "js2coffee" : "*",
+    "coffee-script" : "*",
     "date-utils": "1.2.9",
     "optimist": "0.2.x",
     "union": "0.1.x",
@@ -55,8 +57,5 @@
     "node": ">=0.4"
   },
   "optionalDependencies": {},
-  "engines": {
-    "node": ">.5"
-  },
   "homepage": "http://www.compassionpit.com"
 }
