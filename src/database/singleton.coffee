@@ -1,4 +1,4 @@
-config    = require(".././config")
+config    = require("../config")
 mongoose  = require("mongoose")
 
 mongoose.connect config.mongodb.uri, (err) ->
