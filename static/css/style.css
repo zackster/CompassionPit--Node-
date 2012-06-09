@@ -533,11 +533,15 @@ ul.footernav li a				{ text-decoration:none; font:normal 0.786em Tahoma, Geneva,
 ul.footernav li a:hover			{ text-decoration:none; color:#fff; }
 ul.footernav li.last			{ padding:0 0 0 ;}
 
+/*
+
 .lft_curve						{ position:absolute; top:0; left:0; width:200px; height:367px;}
 .rht_curves						{ position:absolute; top:0; right:0; width:200px; height:367px;}
 
 .lft_btmcurve					{ position:absolute; bottom:0; left:0; width:200px; height:367px;}
 .rht_btmcurve					{ position:absolute; bottom:0; right:0; width:200px; height:367px;}
+
+*/
 
 /* ----------------- Index page ---------------------- */
 

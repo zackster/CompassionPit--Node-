@@ -6,15 +6,22 @@
     &nbsp;seconds.
   #progressbar
 
+script(type="text/javascript")
+  (function() {
+    var rotateAds = function() {
+      var cloned = $("#adSenseAd").clone();
+      cloned.id = 'adSenseAd';
+      $("#adSenseAd").remove();
+      $("#sendmessage").after(cloned);
+      setTimeout('rotateAds()', 30000);
+    };
+    rotateAds();
+  })();
+
 div(id="main",style="display:none")
   #audioPlayer
   #left
     #entertainment(style="display: none")
-        #entertainmentChoice
-            h2 While you wait for the next available chat partner, you have some options for how to kill time.
-            button(id="playGame") Play Game
-            | -or- 
-            button(id="playRelaxingSounds") Experience Relaxing Landscape Sounds
         #entertainmentGame(style="display: none; text-align: center")
             //iframe(src="board.htm", height=350, width=300, id="tetris_board", name="tetris_board")
             object(classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000", codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0", width="350", height="340", title="tetrisFlash")
@@ -82,31 +89,6 @@ div(id="main",style="display:none")
           p Currently logged in as:&nbsp;
           span#currentUser
           a(style="display:block", href="/forum/z_logout.php?do=logout", onclick="javascript:window.onbeforeunload=undefined;") Log Out
-
-
-- if (typeof(show_intercom) != "undefined" && show_intercom) {
-  script#IntercomSettingsScriptTag
-    var intercomSettings = {
-       app_id: 'fc0u2tpj',
-       email: !{JSON.stringify(email)},
-       created_at: !{JSON.stringify(created_at)}
-     };
-   script
-     (function() {
-       function async_load() {
-         var s = document.createElement('script');
-         s.type = 'text/javascript'; s.async = true;
-         s.src = 'https://api.intercom.io/api/js/library.js';
-         var x = document.getElementsByTagName('script')[0];
-         x.parentNode.insertBefore(s, x);
-       }
-       if (window.attachEvent) {
-         window.attachEvent('onload', async_load);
-       } else {
-         window.addEventListener('load', async_load, false);
-       }
-     })();
-- }
 
 script
   window.CLIENT_TYPE = !{JSON.stringify(type)};

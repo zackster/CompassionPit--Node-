@@ -32,23 +32,21 @@ html
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
+    script
+      (function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
+      mixpanel.init("786403ab5b4976f094b54a6f862dacb3");
+
   body
     #wrapper
-      .lft_curve
-        img(src="img/lft_curve.png", width="200", height="367", alt="decorative border")
-      .rht_curves
-        img(src="img/rht_curve.png", width="200", height="367", alt="decorative border")
 
       #header
         .container
           a(href="/")
-            img.logo(src="img/logo.png", width="604", height="367", alt="compassionpit logo")
+            img.logo(src="img/logo-homepage.png", width="604", height="367", alt="compassionpit logo")
           .nav
             ul
               li
-                a(href="/vent") Vent
-              li
-                a(href="/listen") Listen
+                a(href="/listener-training") Training
               li
                 a(href="/forum/") Forum
               li
@@ -75,10 +73,7 @@ html
               a(href="/terms-of-service") Terms
             li
               a(href="/privacy-policy") Privacy
+            li
+              a(href="/hypnosis.html") Is hypnosis the answer?
             li.last
               a(href="/contact") Contact
-
-    .lft_btmcurve
-      img(src="img/lft_btmcurve.png", width="200", height="367", alt="decorative border")
-    .rht_btmcurve
-      img(src="img/btm_rhtcurve.png", width="200", height="367", alt="decorative border")

@@ -40,10 +40,8 @@
       instance.venter = feedback.venter;
 
       var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
-
       instance.listener = listener_account ? listener_account : feedback.listener;
       instance.direction = feedback.direction;
-
       var venter_ip = User.getById(feedback.venter).getIPAddress();
       var listener_ip = User.getById(feedback.listener).getIPAddress();
       instance.ipAddress = listener_ip;
@@ -53,7 +51,6 @@
         return;
       }
 
-
       instance.save(function(err) {
         if(err && err.errors) {
           var badFields = [];
@@ -62,14 +59,17 @@
               badFields.push(badField);
             }
           }
-          console.log("ERROR!");
+          console.log("ERROR! inserting feeedback error.");
           console.log(badFields);
         }
         else if(err) {
-          console.log("ERROR! duplicate");
+          console.log("ERROR! duplicate feedback.");
         }
         else {
           console.log('successfully added feedback');
+	  if(feedback.direction=='negative') {
+		globals.bad_ips.push(listener_ip);
+	  }
         }
       });
     };
@@ -90,6 +90,18 @@
       });
     };
 
+	
+	this.getNegativeIPs = function(callback) {
+
+	   var nipCallback = function(err, docs) {
+		var bad_ips = [];
+		_.each(docs,function(value,key,list) {
+			bad_ips.push(value['ipAddress']);	
+		});
+		callback(bad_ips);
+	   }
+	   Feedback.where('direction').in(['negative']).run(nipCallback); 
+	};	
 
    this.calculateLeaderboard = function() {
       console.log("We are calculating the leaderboard.");
@@ -234,11 +246,15 @@
     };
 
     this.ipAddressHasNeverReceivedNegativeFeedback = function(ip_address, callback) {
+	console.log('ip address check - within FeedbackServer - invoked');
         Feedback.count({
             ipAddress: ip_address,
             direction: 'negative'
         },
         function(err, docs) {
+	    console.log('feedback count callback');
+		console.log(err);
+		console.log(docs);
             if (err) {
                 console.log("error! " + err);
                 return;
@@ -259,8 +275,6 @@
 
   exports.feedbackServer = function() {
     var server = new Server();
-    // console.log("We are calling calculate leaderboard!");
-    server.calculateLeaderboard();
     return server;
   };
 

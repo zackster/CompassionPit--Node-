@@ -1,13 +1,25 @@
 script
+  mixpanel.track("Homepage View");
   window.startingRoomCounts = !{JSON.stringify(roomCounts)};
   if (!document.cookie.match(/referrer=http/)) {
       document.cookie = "referrer=" + encodeURIComponent(document.referrer);
   }
   
+  $(document).ready(function() { 
+    $("a.vent").click(function(){
+      mixpanel.track("Clicked Vent Button");
+      return true;
+    }); 
+    $("a.listen").click(function(){
+      mixpanel.track("Clicked Listen Button");
+      return true;
+    });
+  });
+  
+  
 - if(loggedOut) {
   script
     (function($) {
-    
       $(document).ready(function() {
         $("body")
           .prepend($("<div>")
@@ -31,7 +43,6 @@ div#ad-leaderboard-top(style="text-align: center")
         google_ad_height = 90;
     script(src="http://pagead2.googlesyndication.com/pagead/show_ads.js")
 
-
 .cont_lft.fltlft
   h1#counts Currently Online: 
     span#listener-count 0
@@ -39,6 +50,9 @@ div#ad-leaderboard-top(style="text-align: center")
     span#venter-count 0
     span Venters
   em Spill your guts to a random chat partner:
+  div(id="venterIntro",style="display:none; font-size:1.3em; width: 80%; background-color: #FFB6C1")
+    p Talking about your problems with someone may help you see things more clearly, gain a new or different perspective, relieve some tension, and let you know that you are not alone.
+    p Listeners of Compassion Pit are regular people with no professional training, willing to dedicate their time to listen to you. If you feel your problems are critical, we strongly suggest you to seek help from professionals.
   a.vent(href="/vent") &nbsp;
   em Help a random person get it off their chest:
   a.listen(href="/listen") &nbsp;
@@ -46,7 +60,7 @@ div#ad-leaderboard-top(style="text-align: center")
     img(src="img/hug-white.png")
 .cont_rht.fltrht
   h1 Compassion Pit visitors are people dealing with all sorts of life's problems. And we’re here to help...
-  em Whether it’s sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
+  em Whether it's sex, gender identity, relationship problems, sexual identity, domestic abuse, friendship loyalty, sexual perversions, money, crime, sexually transmitted diseases, procrastination, boredom... You name it! Learn more at our 
     a(href="/faq") FAQ Page
   span.testimonial
     b This site has really given me hope. Somehow you end up talking to someone that really help you.
@@ -66,6 +80,13 @@ div#ad-leaderboard-top(style="text-align: center")
         })();
     li
       iframe(src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.compassionpit.com&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=35", scrolling="no", frameborder="0", style="border:none; overflow:hidden; width:240px; height:35px;", id="facebookLikeBoxIFrame")
+
+  div(id="infoDisclaimer", style="background:#EEB4B4;font-size:1.2em")
+    p At Compassion Pit we strive to create an environment where our users can positively affect each other over the World Wide Web. We do not claim to be medical professionals, so if your problems are severe or life-threatening then please call your local authorities. 
+    br
+    br 
+    pre Thank you,
+        \ The Staff
 
   div#bottom-ad-unit(style="float: right")
     script(type="text/javascript")

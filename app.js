@@ -21,6 +21,7 @@ function(err) {
 
     var app = module.exports = express.createServer(),
     util = require("util"),
+    _ = require('underscore'),
     socketIO = require("socket.io"),
     Room = require("./rooms/models").Room,
     User = require("./users/models").User,
@@ -42,6 +43,8 @@ function(err) {
             v: result[1]
         };
     };
+
+    var bad_ips = [];
 
     var registerAppRoutes = function(app) {
         app.sessionId = guid();
@@ -72,6 +75,9 @@ function(err) {
 
         app.get("/",
         function(req, res, next) {
+        /*res.statusCode=302;
+            res.setHeader("Location", "http://v2.compassionpit.com");
+        res.end();*/
             var opts = {
                 loggedOut: false,
                 roomCounts: getRoomCounts()
@@ -114,6 +120,11 @@ function(err) {
             res.render('faq');
         });
 
+    app.get("/listener-training",
+    function(req, res) {
+        res.render('listener-training');
+    });
+
         app.get("/privacy-policy",
         function(req, res) {
             res.render('privacy-policy');
@@ -137,8 +148,7 @@ function(err) {
         app.get("/vent",
         function(req, res) {
             res.render("chat", {
-                type: "venter",
-                layout: 'minimal-layout'
+                type: "venter"
             });
         });
 
@@ -146,39 +156,38 @@ function(err) {
         function(req, res) {
             if ((process.env.NODE_ENV || "development") === 'development') {
                 res.render("chat", {
-                    type: "listener",
-                    layout: 'minimal-layout'
+                    type: "listener"
                 });
             }
             else {
-                authServer.checkLogin(req,
+            console.log(req.headers['x-forwarded-for'] || req.address.address);
+            console.log('checking login');
+            authServer.checkLogin(req,
                 function(username) {
+                    console.log('check login called back with username ' + username);
                     if (username) {
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
                             res.render("chat", {
                                 type: "listener",
-                                layout: 'minimal-layout',
                                 email: vB_info.email,
-                                created_at: vB_info.created_at,
-                                show_intercom: true
+                                created_at: vB_info.created_at
                             });
                         });
                     }
                     else {
-                        feedbackServer.ipAddressHasNeverReceivedNegativeFeedback(req.headers['x-forwarded-for'] || req.address.address, function(clean_record) {
-                            if(clean_record) {
-                                res.render("chat", {
-                                    layout: 'minimal-layout',
-                                    type: "listener",
-                                    show_intercom: false
-                                });
-                            } else {
+                        console.log('checking ip address for records');
+                        var ip_addr = req.headers['x-forwarded-for'] || req.address.address;
+                        if(_.indexOf(bad_ips,ip_addr) === -1) {
+                            res.render("chat", {
+                                    type: "listener"
+                            });
+                        } 
+                        else {
                                 res.render("listener-registration");
-                            }
-                        });
+                        }
                     }
-                });
-            }
+               });
+           }
         });
 
         app.get("/chat.html",
@@ -279,13 +288,6 @@ function(err) {
 
             socket.set('authorization',
             function(handshakeData, callback) {
-                // console.log('calling authorization inside socketio');
-                // console.log(handshakeData);
-                // console.log(callback);
-                // console.log("Do we have client info?");
-                // console.log(this.client);
-
-                /// cookies = handshakeData.headers.cookie
                 var headers = handshakeData.headers;
                 if (headers) {
                     var ipAddress = headers['x-forwarded-for'];
@@ -624,6 +626,10 @@ function(err) {
 
         app.listen(config.port);
         util.puts("Server started on port " + config.port);
+    function bip_callback(bad_ips) { 
+        global.bad_ips = bad_ips;
+    }
+    setTimeout(feedbackServer.getNegativeIPs(bip_callback),10000);
 
     });
 

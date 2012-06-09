@@ -133,9 +133,16 @@
 
 
         var wallpaper_timer;
-        $('#playGame').click(function() { window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); $("#entertainmentChoice").hide(); $("#entertainmentGame").show(); });
+        var playTetrisGame = function() { 
+		mixpanel.track("Played Game While Waiting"); 
+		window.Chat.ENTERTAINMENT_RUNNING = true; 
+		$("#chat_input").hide(); 
+		$("#column_left_chat").hide(); 
+		$("#entertainmentGame").show(); 
+	};
         $('#playRelaxingSounds').click(function() {
-            window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); $("#entertainmentChoice").hide();
+            mixpanel.track("Watched Landscape Sounds While Waiting");
+            window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); 
             $("#entertainmentSounds").show();
             $("#entertainmentSounds").append($("<iframe width=\"1\" height=\"1\" src=\"http://www.youtube.com/embed/uupzk-YCBO0?rel=0&autoplay=1\" frameborder=\"0\"></iframe>"));
             var beautiful_wallpapers = ["the-other-side.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-3.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-5.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-16.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-6.jpg", "elbalia.jpg", "ethaer.jpg", "shimuna.jpg", "paramount.jpg", "brothers.jpg", "Monument_Valley.jpg", "TRILITH_by_tigaer.jpg", "Terragen___The_Way_God_Made_Me.jpg", "The_Rock_by_DJMattRicks.jpg", "Lost.jpg", "splatter.jpg", "Pacific.jpg", "Unforgettable-Days.jpg", "skyscrapers-&-lost-wonders_01.jpg", "winter-wonderland.jpg", "winter-landscape.jpg", "Mt_Buller.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-15.jpg", "forestfall.jpg", "Dashing.jpg", "meelup-beach.jpg", "tion.jpg", "Viva-La-Nature-5-(3).jpg", "Viva-La-Nature-5-(4).jpg", "Viva-La-Nature-5-(11).jpg", "Viva-La-Nature-5-(15).jpg", "on-the-beach.jpg", "red-rocks.jpg", "another-morning.jpg", "Atomicsunset.jpg", "waterfall-desktop.jpg", "461.jpg", "sea-of-plague.jpg", "Afternoon1_01.jpg", "Grassy.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-11.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-13.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-18.jpg", "Lone_Tree_1600.jpg", "a_place_to_rest.jpg", "12.jpg", "Jungle_Dreaming.jpg", "west-new-york-girl.jpg", "a_year_has_gone.jpg", "dedication.jpg", "azalea.jpg", "yellow-field.jpg", "Summer_Sunflowers.jpg", "The-Greenway.jpg", "Sun_ray_in_the_woods.jpg", "51200203.jpg", "stonehenge_wallpaper.jpg", "Spot_of_Light.jpg", "Wafting.jpg", "the-other-side.jpg", "4rest_by_UncleCameleon.jpg", "DarkblissWraith.jpg", "KingdomOfHeaven.jpg", "magic-tree.jpg", "Reaching_for_the_Stars.jpg", "dreamy-world.jpg", "447.jpg", "001.jpg", "002.jpg", "no-more-rain.jpg", "night_comes_down.jpg", "Nexus-by-Burning-Liquid.jpg", "thetismoon2k72.jpg", "jungle_bath.jpg", "beautiful-day.jpg"];
@@ -169,11 +176,9 @@
             $("#entertainmentSounds iframe").remove();
             $("#column_left_chat").show();
              $("#chat_input").show();
-            $("#entertainmentChoice").show();
             $("#entertainmentGame").hide();
             $("#entertainmentSounds").hide();
             $("#entertainment").hide();
-
         };
 
         var status = function(msg, cssClass, checkQueue) {
@@ -336,6 +341,7 @@
             });
             info('Waiting for a chat partner... ');
             addMessage("System", "Searching for a chat partner...");
+	    playTetrisGame();
         }
 
         function gong() {
@@ -437,6 +443,7 @@
 
 
         function sendMessage(msg) {
+            mixpanel.track("Chatted to " + OTHER_CLIENT_TYPE + " chat partner");
             if (msg === '' || !hasPartner) {
                 return;
             }
@@ -457,6 +464,7 @@
             addMessage("System", message, 'yellow-row');
         });
         comm.handler("msg", function (type, message) {
+            mixpanel.track("Received chat from " + OTHER_CLIENT_TYPE + " chat partner");
             if (type !== CLIENT_TYPE) {
                 addMessage(type, message);
                 $("#abuseButtonContainer")
@@ -534,6 +542,7 @@
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
+                    mixpanel.track("Successfully connected to " + OTHER_CLIENT_TYPE + " chat partner");
                     if(CLIENT_TYPE === 'venter') {
                       $("div#listenerFeedback").show();
                     }
