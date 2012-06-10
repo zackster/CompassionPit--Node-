@@ -3,6 +3,7 @@
 //just for debugging -- looking for errors that would trigger disconnects, and any other problems
 //todo - modify log.js to insert this into the database .
 
+
 var util = require("util");
 
 process.on('uncaughtException',
@@ -38,12 +39,17 @@ function(err) {
 
     var getRoomCounts = function() {
         var result = Room.calculateCounts();
-        return {
+        global.room_counts = {
             l: result[0],
             v: result[1]
         };
     };
-
+    global.room_counts = {
+    	l: 0,
+        v: 0
+    };
+    setInterval(getRoomCounts,120*1000);
+    
     var bad_ips = [];
 
     var registerAppRoutes = function(app) {
@@ -75,13 +81,9 @@ function(err) {
 
         app.get("/",
         function(req, res, next) {
-        /*res.statusCode=302;
-            res.setHeader("Location", "http://v2.compassionpit.com");
-        res.end();*/
             var opts = {
                 loggedOut: false,
-                roomCounts: getRoomCounts()
-                // TODO: make sure this is cached in memory
+                roomCounts: global.room_counts
             };
             if (req.query && req.query.logout === 'true') {
                 opts.loggedOut = true;
@@ -92,7 +94,7 @@ function(err) {
         app.get("/counts",
         function(req, res) {
             res.setHeader('content-type', 'application/json');
-            res.end(JSON.stringify(getRoomCounts()));
+            res.end(JSON.stringify(global.room_counts));
         });
 
         app.get("/index.html",
@@ -147,6 +149,7 @@ function(err) {
 
         app.get("/vent",
         function(req, res) {
+		console.log("new venter: " + (req.headers['x-forwarded-for'] || req.address.address));
             res.render("chat", {
                 type: "venter"
             });
@@ -160,8 +163,7 @@ function(err) {
                 });
             }
             else {
-            console.log(req.headers['x-forwarded-for'] || req.address.address);
-            console.log('checking login');
+	    console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
             authServer.checkLogin(req,
                 function(username) {
                     console.log('check login called back with username ' + username);
@@ -175,7 +177,6 @@ function(err) {
                         });
                     }
                     else {
-                        console.log('checking ip address for records');
                         var ip_addr = req.headers['x-forwarded-for'] || req.address.address;
                         if(_.indexOf(bad_ips,ip_addr) === -1) {
                             res.render("chat", {
@@ -601,7 +602,7 @@ function(err) {
         };
 
         socketHandlers.counts = function(client, user, _, callback) {
-            callback(getRoomCounts());
+            callback(global.room_counts);
         };
 
     }
@@ -626,10 +627,15 @@ function(err) {
 
         app.listen(config.port);
         util.puts("Server started on port " + config.port);
-    function bip_callback(bad_ips) { 
-        global.bad_ips = bad_ips;
-    }
-    setTimeout(feedbackServer.getNegativeIPs(bip_callback),10000);
+
+	// REFACTOR this to fire once the MongoDB connection connects
+    	function bip_callback(bad_ips) { 
+        	global.bad_ips = bad_ips;
+    	}
+    	setTimeout(feedbackServer.getNegativeIPs(bip_callback),10000);
+	
+	// REFACTOR this to fire once someone joins teh chat
+	getRoomCounts();
 
     });
 

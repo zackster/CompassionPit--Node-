@@ -27,7 +27,7 @@
         var Schema = mongoose.Schema;
         var ConversationPartner = {
             userId: { type: String },
-            hashedIPAddress: { type: String },
+            IPAddress: { type: String },
             geoLocation: {},
             userAgent: { type: String }
         };
@@ -184,13 +184,13 @@
             status: "active",
             venter: {
                 userId: venterId,
-                hashedIPAddress: hashIPAddress(venterIP),
+                IPAddress: venterIP,
                 geoLocation: {},
                 userAgent: venter ? venter.userAgent || "" : ""
             },
             listener: {
                 userId: listenerId,
-                hashedIPAddress: hashIPAddress(listenerIP),
+                IPAddress: listenerIP,
                 geoLocation: {},
                 userAgent: listener ? listener.userAgent || "" : ""
             },
@@ -552,6 +552,7 @@
      * @param {String} reason Either "disconnect" or "request".
      */
     Room.prototype.deleteRoom = function (type, reason) {
+		console.log("deleting room for a reason", reason);
         log.info({
             event: "Delete room",
             room: this.id
@@ -766,14 +767,12 @@
 				self.lookupUserGeoIP(otherUserId, function(geoInfo2) {
 					if(geoInfo2 && geoInfo2.data && geoInfo2.data.country_name && geoInfo2.data.country_name === geoInfo.data.country_name) { 
 						
-						console.log('They are from Same country.!!');
 						
 						callback(geoInfo);
 						return;
 					}
 				});
 			}
-			console.log('They are NOT from same country.');
 			callback(null);
 			return;
 	    });		
@@ -836,7 +835,6 @@
 		                    });							
 						}
 						
-						console.log("other client type", otherClientType);
 	                }
 	
 	                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
@@ -887,6 +885,7 @@
                 function( user, callback ) {
                     if ( reason === 'disconnect' ) {
                         console.log( 'dropping user %s from room', user );
+			console.log("user", user, User.getById(user).getIPAddress());
 
                         delete users[ user ];
                         delete userIdToRoomId[ user ];

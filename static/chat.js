@@ -112,6 +112,7 @@
             requestNewChatChannel(false);
         });
         comm.on('disconnect', function () {
+	    $("div#listenerFeedback").hide();
             addMessage('System', 'You have been disconnected. Trying to reconnect...', 'yellow-row');
             info("Reconnecting...");
             setHasPartner(false);
@@ -311,10 +312,18 @@
             if ($(this).hasClass("disabled")) {
                 return false;
             }
+            $("#apologies").show();
+            
+        });
+	$("#giveApology").live('click', function() {
+	    addMessage(OTHER_CLIENT_TYPE, $("#apologySelect").val());
+	    $("#apologies").hide();
             requestNewChatPartner();
             refocusInformInput();
-            return false;
-        });
+            return false;		
+
+	});
+
 
         $('#reportAbuse').live( 'click', function() {
             if ($(this).hasClass("disabled")) {
@@ -574,6 +583,7 @@
 
         comm.handler("partRequest", function (type) {
             // partner requested a new match, automatically reconnect
+	    $("div#listenerFeedback").hide();
             addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
             setHasPartner( false );
 

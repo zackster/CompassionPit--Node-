@@ -68,7 +68,7 @@
         else {
           console.log('successfully added feedback');
 	  if(feedback.direction=='negative') {
-		globals.bad_ips.push(listener_ip);
+		global.bad_ips.push(listener_ip);
 	  }
         }
       });
