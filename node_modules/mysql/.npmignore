@@ -1,4 +1,3 @@
-/node_modules
-/test/config.js
-*.swo
 *.un~
+
+/node_modules

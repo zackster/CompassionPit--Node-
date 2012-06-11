@@ -3,18 +3,22 @@
         var mysql = require('mysql'),
         config = require("./config");
 
-    var getMySQLClient = function() {
-      var client = mysql.createClient({
+    exports.getMySQLClient = function() {
+      var client = mysql.createConnection({
          user: config.vBulletin.username,
-         password: config.vBulletin.password
+         password: config.vBulletin.password,
+	 database: config.vBulletin.database,
+	 host: '74.207.228.243', 
       });
-      client.query('USE '+config.vBulletin.database);
+	client.connect(function(err) {
+//		console.log(err);
+	});
       return client;
     };
 
     exports.getEmailAndJoindateForUser = function(username, callback) {
 
-		var client = getMySQLClient();
+		var client = exports.getMySQLClient();
 		client.query("SELECT email, joindate as created_at FROM user WHERE username = ?", [username], function selectCb(err, results, fields) {
 			if(err) {
 				throw err;
@@ -25,5 +29,6 @@
 			}
 		});  
     };
+
 
 }());

@@ -3,23 +3,15 @@
     var hashlib = require('hashlib2'),
         createHash = require("../utils").createHash,
         mysql = require('mysql'),
+	vB_dao = require('../vBDao'),
         config = require("../config");
 
     function Server() {
       this.logged_in_users = createHash();
     }
 
-    Server.prototype.getMySQLClient = function() {
-      var client = mysql.createClient({
-         user: config.vBulletin.username,
-         password: config.vBulletin.password
-      });
-      client.query('USE '+config.vBulletin.database);
-      return client;
-    };
-
     Server.prototype.userInfo = function(id, callback) {
-      var client = this.getMySQLClient();
+      var client = vB_dao.getMySQLClient();
       client.query("SELECT * FROM user WHERE userid = ? LIMIT 1", [id], function (err, results, fields) {
         if(err) {
           throw err;
@@ -30,7 +22,7 @@
     };
 
     Server.prototype.getEmailAddressFromUsername = function(username, callback) {
-      var client = this.getMySQLClient();
+      var client = vB_dao.getMySQLClient();
       client.query("SELECT email FROM user WHERE username = ? LIMIT 1", [username], function (err, results, fields) {
         if(err) {
           throw err;
@@ -44,7 +36,7 @@
       var self = this;
 
       this.userInfo(user, function(uinfo) {
-        var client = self.getMySQLClient();
+        var client = vB_dao.getMySQLClient();
         var epoch_in_seconds = Date.now() / 1000; // vBulletin stores epoch in seconds, Date.now() returns a value in ms
         client.query("UPDATE user SET lastactivity = ? WHERE userid = ? LIMIT 1", [epoch_in_seconds, user], function (err, results, fields) {
           if(err) {
@@ -90,7 +82,7 @@
     Server.prototype.getCookie = function(id, pass, callback) {
 
       var self = this;
-      var client = this.getMySQLClient();
+      var client = vB_dao.getMySQLClient();
 
       client.query("SELECT * FROM user WHERE userid = ? LIMIT 1", [id], function (err, results, fields) {
         if(err) {
@@ -132,7 +124,7 @@
       var ip = ip_address.split('.').slice(0, 3).join('.');
       var newidhash = hashlib.md5(user_agent + ip);
 
-      var client = this.getMySQLClient();
+      var client = vB_dao.getMySQLClient();
       client.query("SELECT * FROM session WHERE sessionhash = ? LIMIT 1", [hash], function (err, results, fields) {
 
         if(err) {
@@ -163,8 +155,7 @@
     };
 
     Server.prototype.login = function (id, username, password, callback) {
-      var client = this.getMySQLClient();
-      client.query('USE '+config.vBulletin.database);
+      var client = vB_dao.getMySQLClient();
       var self = this;
       client.query(
         'SELECT username, password, salt FROM user WHERE username=?', [username], function (err, results, fields) {

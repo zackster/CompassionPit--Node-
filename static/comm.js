@@ -72,33 +72,13 @@
       var socketio_addr, socket;
         $("#initializing").append('<br>'+"Socket connection started");
 
-        if(/compassionpit\.com/i.test(document.domain)) {
-          socketio_addr = /staging\.compassionpit\.com/i.test(document.domain) ? "staging.compassionpit.com:8001" : "compassionpit.com:8000";
-        }
-        else {
-          socketio_addr = null;
-        }
-
-
-        if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){
-
-            socket = io.connect(socketio_addr, {
-                       'connect timeout': 500,
-            'transports': ['xhr-polling'],
-                        'try multiple transports': true,
-                       'reconnect': true,
-                       'reconnection delay': 500,
-                       'reopen delay': 500,
-                       'max reconnection attempts': 10
-                   });
-
-        }
-        else {
+          socketio_addr = "74.207.228.243:8000";
             socket = io.connect(socketio_addr, {
                 'max reconnection attempts': 5,
                 'force new connection': true
             });
-        }
+
+	console.log('addr', socketio_addr);
 
         window.globalSocket = socket;
 
