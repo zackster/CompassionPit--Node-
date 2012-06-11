@@ -30,7 +30,7 @@
     "sqwish": "0.2.0",
     "uglify-js": "1.2.5",
     "socket.io": "0.9.0",
-    "mysql": "0.9.5",
+    "mysql": "2.0.0-alpha2",
     "mongoose": "2.5.10",
     "marked": "0.2.1",
     "jade": "0.20.3",
