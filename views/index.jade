@@ -14,6 +14,15 @@ script
       mixpanel.track("Clicked Listen Button");
       return true;
     });
+    var treatment_type;
+    if(Math.floor(Math.random()*2)) {
+        treatment_type = "bothering";
+        $("em.venting").text("Is anything bothering you at all?")
+    }
+    else {
+        treatment_type = "default";
+    }
+    mixpanel.register({"AB-TEST": "500", "TREATMENT": treatment_type});    
   });
   
   
