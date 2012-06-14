@@ -163,8 +163,8 @@ function(err) {
                 });
             }
             else {
-	    console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
-            authServer.checkLogin(req,
+	    		console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
+            	authServer.checkLogin(req,
                 function(username) {
                     console.log('check login called back with username ' + username);
                     if (username) {
@@ -172,7 +172,8 @@ function(err) {
                             res.render("chat", {
                                 type: "listener",
                                 email: vB_info.email,
-                                created_at: vB_info.created_at
+                                created_at: vB_info.created_at,
+								username: username
                             });
                         });
                     }
@@ -237,35 +238,6 @@ function(err) {
             }
         });
 
-
-
-
-        app.get('/leaderboard',
-        function(req, res) {
-            authServer.checkLogin(req,
-            function(username) {
-                feedbackServer.getLeaderboard(true,
-                function(top15) {
-                    if (username) {
-                        feedbackServer.getLeaderboardForUser(username,
-                        function(userStats) {
-                            // console.log("user stats", userStats);
-                            res.render('leaderboard', {
-                                scores: top15,
-                                username: username,
-                                userLeaderboard: userStats
-                            });
-                        });
-                    }
-                    else {
-                        res.render('leaderboard', {
-                            scores: top15,
-                            username: username
-                        });
-                    }
-                });
-            });
-        });
 
         // import in the room-based actions
         require("./rooms/actions")(app);

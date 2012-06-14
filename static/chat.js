@@ -112,7 +112,7 @@
             requestNewChatChannel(false);
         });
         comm.on('disconnect', function () {
-	    $("div#listenerFeedback").hide();
+        $("div#listenerFeedback").hide();
             addMessage('System', 'You have been disconnected. Trying to reconnect...', 'yellow-row');
             info("Reconnecting...");
             setHasPartner(false);
@@ -134,16 +134,16 @@
 
 
         var wallpaper_timer;
-        var playTetrisGame = function() { 
-		mixpanel.track("Played Game While Waiting"); 
-		window.Chat.ENTERTAINMENT_RUNNING = true; 
-		$("#chat_input").hide(); 
-		$("#column_left_chat").hide(); 
-		$("#entertainmentGame").show(); 
-	};
+        var playTetrisGame = function() {
+        mixpanel.track("Played Game While Waiting");
+        window.Chat.ENTERTAINMENT_RUNNING = true;
+        $("#chat_input").hide();
+        $("#column_left_chat").hide();
+        $("#entertainmentGame").show();
+    };
         $('#playRelaxingSounds').click(function() {
             mixpanel.track("Watched Landscape Sounds While Waiting");
-            window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide(); 
+            window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide();
             $("#entertainmentSounds").show();
             $("#entertainmentSounds").append($("<iframe width=\"1\" height=\"1\" src=\"http://www.youtube.com/embed/uupzk-YCBO0?rel=0&autoplay=1\" frameborder=\"0\"></iframe>"));
             var beautiful_wallpapers = ["the-other-side.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-3.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-5.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-16.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-6.jpg", "elbalia.jpg", "ethaer.jpg", "shimuna.jpg", "paramount.jpg", "brothers.jpg", "Monument_Valley.jpg", "TRILITH_by_tigaer.jpg", "Terragen___The_Way_God_Made_Me.jpg", "The_Rock_by_DJMattRicks.jpg", "Lost.jpg", "splatter.jpg", "Pacific.jpg", "Unforgettable-Days.jpg", "skyscrapers-&-lost-wonders_01.jpg", "winter-wonderland.jpg", "winter-landscape.jpg", "Mt_Buller.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-15.jpg", "forestfall.jpg", "Dashing.jpg", "meelup-beach.jpg", "tion.jpg", "Viva-La-Nature-5-(3).jpg", "Viva-La-Nature-5-(4).jpg", "Viva-La-Nature-5-(11).jpg", "Viva-La-Nature-5-(15).jpg", "on-the-beach.jpg", "red-rocks.jpg", "another-morning.jpg", "Atomicsunset.jpg", "waterfall-desktop.jpg", "461.jpg", "sea-of-plague.jpg", "Afternoon1_01.jpg", "Grassy.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-11.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-13.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-18.jpg", "Lone_Tree_1600.jpg", "a_place_to_rest.jpg", "12.jpg", "Jungle_Dreaming.jpg", "west-new-york-girl.jpg", "a_year_has_gone.jpg", "dedication.jpg", "azalea.jpg", "yellow-field.jpg", "Summer_Sunflowers.jpg", "The-Greenway.jpg", "Sun_ray_in_the_woods.jpg", "51200203.jpg", "stonehenge_wallpaper.jpg", "Spot_of_Light.jpg", "Wafting.jpg", "the-other-side.jpg", "4rest_by_UncleCameleon.jpg", "DarkblissWraith.jpg", "KingdomOfHeaven.jpg", "magic-tree.jpg", "Reaching_for_the_Stars.jpg", "dreamy-world.jpg", "447.jpg", "001.jpg", "002.jpg", "no-more-rain.jpg", "night_comes_down.jpg", "Nexus-by-Burning-Liquid.jpg", "thetismoon2k72.jpg", "jungle_bath.jpg", "beautiful-day.jpg"];
@@ -151,13 +151,13 @@
                 var wallpaper = beautiful_wallpapers[Math.floor(Math.random() * beautiful_wallpapers.length)];
                 var $wallpaper_img = $("<img></img>");
                 $wallpaper_img.attr('src', 'img/' + wallpaper);
-				$wallpaper_img.hide();
+                $wallpaper_img.hide();
 
-				$("#wallpapers img").fadeOut(2000, function() {
-					$(this).remove();
-					$("#wallpapers").append($wallpaper_img);
-					$("#wallpapers img").fadeIn(2000);
-				});
+                $("#wallpapers img").fadeOut(2000, function() {
+                    $(this).remove();
+                    $("#wallpapers").append($wallpaper_img);
+                    $("#wallpapers img").fadeIn(2000);
+                });
 
 
             };
@@ -313,16 +313,16 @@
                 return false;
             }
             $("#apologies").show();
-            
+
         });
-	$("#giveApology").live('click', function() {
-	    addMessage(OTHER_CLIENT_TYPE, $("#apologySelect").val());
-	    $("#apologies").hide();
+    $("#giveApology").live('click', function() {
+        addMessage(OTHER_CLIENT_TYPE, $("#apologySelect").val());
+        $("#apologies").hide();
             requestNewChatPartner();
             refocusInformInput();
-            return false;		
+            return false;
 
-	});
+    });
 
 
         $('#reportAbuse').live( 'click', function() {
@@ -350,7 +350,7 @@
             });
             info('Waiting for a chat partner... ');
             addMessage("System", "Searching for a chat partner...");
-	    playTetrisGame();
+        playTetrisGame();
         }
 
         function gong() {
@@ -370,14 +370,16 @@
             }
         };
 
-		var rageSubstitute = function($td){
-			var rages = ['/yuno', '/yey', '/wtf', '/why', '/whoa', '/wetodddog', '/welp', '/wayevil', '/wat', '/vuvu', '/uhm', '/trollmom', '/trolldad', '/troll', '/trap', '/teethrage', '/sweetjesus', '/surprised', '/suprised', '/straight', '/steve', '/stare', '/son', '/serious', '/schlick', '/sadtroll', '/sad', '/rtroll', '/rmilk', '/red', '/poker', '/pissed', '/pickletime', '/pfttxt', '/pft', '/perfect', '/omg', '/okay', '/ohcrap', '/notsure', '/notokay', '/notbad', '/nomegusta', '/milk', '/melvin', '/megustaperfect', '/megusta', '/longneck', '/lol', '/jizzsplosion', '/jackieeeee!', '/itstime', '/ilovethebeefytaco', '/ifeelsyabreh', '/hmm', '/high', '/hehheh', '/harpdarp', '/happy', '/gyey', '/gwat', '/gwah', '/guhm', '/gtroll', '/gtongue', '/gtfo', '/gsmile', '/gserious', '/gohno', '/ghappy', '/gfu', '/gbeh', '/gaytroll', '/gah', '/fy1', '/futext', '/fumanchu', '/fuckthatshit', '/fu', '/freddie', '/foreveralonelaugh', '/foreveralone', '/femyao', '/fap', '/eyes', '/ewbtetext', '/ewbte', '/dude', '/deviltroll', '/creepy', '/challengeaccepted', '/cereal', '/bzz', '/blackhair', '/biggusta', '/beh', '/awyeah', '/awyea', '/awman', '/aintthatsomeshit'];
-			window._.each(rages.reverse(), function(value, key, list) {
-				$td.html($td.html().replace(new RegExp("(\\" + value + ")", "g"), '<a href="' + value + '"/>'));
-			});
-		};
+        var rageSubstitute = function($td){
+            var rages = ['/yuno', '/yey', '/wtf', '/why', '/whoa', '/wetodddog', '/welp', '/wayevil', '/wat', '/vuvu', '/uhm', '/trollmom', '/trolldad', '/troll', '/trap', '/teethrage', '/sweetjesus', '/surprised', '/suprised', '/straight', '/steve', '/stare', '/son', '/serious', '/schlick', '/sadtroll', '/sad', '/rtroll', '/rmilk', '/red', '/poker', '/pissed', '/pickletime', '/pfttxt', '/pft', '/perfect', '/omg', '/okay', '/ohcrap', '/notsure', '/notokay', '/notbad', '/nomegusta', '/milk', '/melvin', '/megustaperfect', '/megusta', '/longneck', '/lol', '/jizzsplosion', '/jackieeeee!', '/itstime', '/ilovethebeefytaco', '/ifeelsyabreh', '/hmm', '/high', '/hehheh', '/harpdarp', '/happy', '/gyey', '/gwat', '/gwah', '/guhm', '/gtroll', '/gtongue', '/gtfo', '/gsmile', '/gserious', '/gohno', '/ghappy', '/gfu', '/gbeh', '/gaytroll', '/gah', '/fy1', '/futext', '/fumanchu', '/fuckthatshit', '/fu', '/freddie', '/foreveralonelaugh', '/foreveralone', '/femyao', '/fap', '/eyes', '/ewbtetext', '/ewbte', '/dude', '/deviltroll', '/creepy', '/challengeaccepted', '/cereal', '/bzz', '/blackhair', '/biggusta', '/beh', '/awyeah', '/awyea', '/awman', '/aintthatsomeshit'];
+            window._.each(rages.reverse(), function(value, key, list) {
+                $td.html($td.html().replace(new RegExp("(\\" + value + ")", "g"), '<a href="' + value + '"/>'));
+            });
+        };
 
         i = 0;
+        window.msgCount = 0;
+        window.treatment_type = Math.floor(Math.random()*3)+1;
         var titleCurrentlyChanging = false;
         function addMessage(from, msg, cssClass) {
             var $td = $("<span>");
@@ -386,7 +388,41 @@
             } else {
                 $td.text(capitalize(from) + ": " + msg);
             }
-			rageSubstitute($td);
+            window.msgCount+=1;
+            if(window.msgCount===5 && window.treatment_type===1) {
+				var script2   = document.createElement("script");
+				script2.type  = "text/javascript";
+				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
+
+				var script   = document.createElement("script");
+				script.type  = "text/javascript";
+				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "7147599266";google_ad_width = 468;google_ad_height = 60;';
+				$("#header .container a > .logo").replaceWith(script);
+				$("#header .container script").after(script2);
+            }
+            else if(window.msgCount===10 && window.treatment_type===2) {
+				script2   = document.createElement("script");
+				script2.type  = "text/javascript";
+				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
+
+				script   = document.createElement("script");
+				script.type  = "text/javascript";
+				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "0427669924";google_ad_width = 468;google_ad_height = 60;';
+				$("#header .container a > .logo").replaceWith(script);
+				$("#header .container script").after(script2);
+            }
+            else if(window.msgCount===15 && window.treatment_type===3) {
+				script2   	  = document.createElement("script");
+				script2.type  = "text/javascript";
+				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
+
+				script	 	 = document.createElement("script");
+				script.type  = "text/javascript";
+				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "6283430487";google_ad_width = 468;google_ad_height = 60;';
+				$("#header .container a > .logo").replaceWith(script);
+				$("#header .container script").after(script2);
+            }
+            rageSubstitute($td);
             $('#chatWindow > div:last')
                 .append($("<div>")
                     .addClass(cssClass || (from === 'Me' ? 'blue-row' : from === 'System' ? 'off-white-row' : 'white-row'))
@@ -583,7 +619,7 @@
 
         comm.handler("partRequest", function (type) {
             // partner requested a new match, automatically reconnect
-	    $("div#listenerFeedback").hide();
+        $("div#listenerFeedback").hide();
             addMessage( 'System', 'Your chat partner disconnected, please wait while we find you a new ' + OTHER_CLIENT_TYPE + '.' );
             setHasPartner( false );
 

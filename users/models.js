@@ -24,7 +24,7 @@
 		this.join_time = new Date().getTime();
 		
 		this.partner_list = [];
-        
+
         this.socket = require("../app").socket;
         this.messageBacklog = [];
         this.messageQueue = [];

@@ -8,8 +8,7 @@
     "Cameron Knight <ckknight@gmail.com>"
   ],
   "scripts": {
-    "start": "node ./bin/http-server",
-    "test": "vows --spec --isolate"
+    "start": "node app.js"
   },
   "main": "app.js",
   "repository": {
