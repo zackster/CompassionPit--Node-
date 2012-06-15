@@ -366,11 +366,7 @@ function(err) {
             lastMessageReceived = data.n || 0,
             userAgent = data.a || null,
             referrer = data.r || null;
-            // var cookies = {
-            //     bb_userid: data.bb_userid,
-            //     bb_sessionhash: data.bb_sessionhash,
-            //     bb_password: data.bb_password
-            // };
+
 
             var clientId = client.id;
 
@@ -435,7 +431,32 @@ function(err) {
                     });
                 }
                 else {
+
+		            var cookies = {
+		                bb_userid: data.bb_userid,
+		                bb_sessionhash: data.bb_sessionhash,
+		                bb_password: data.bb_password
+		            };
+					console.log('cookies');
+					console.log(cookies);
+					console.log('get ip address');
+					console.log(user.getIPAddress());
+					console.log('user agent');
+					console.log(user.userAgent);		                
+					
+                    authServer.checkLoginWithCookies(cookies, user.getIPAddress(), user.userAgent,
+                    function(username) {
+						console.log("Check login returned with value: %s", username);
+                        if (username !== false) {
+                            authServer.logged_in_users[user.id] = username;
+                            console.log('checkLogin called back with username: ', username);
+							user.setForumsId(username);
+						}
+					});
                     callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);
+
+
+
                 }
 
             }
