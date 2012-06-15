@@ -63,7 +63,7 @@
           });
         }
         else {
-          self.getSession(ip_address, user_agent, cookies.bb_sessionhash, function(user) {
+          self.getSessionWithIP(ip_address, user_agent, cookies.bb_sessionhash, function(user) {
             if(user) {
               self.markLoggedIn(user, function(username) {
                 callback.call(self, username);
