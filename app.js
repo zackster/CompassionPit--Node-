@@ -45,11 +45,11 @@ function(err) {
         };
     };
     global.room_counts = {
-    	l: 0,
+        l: 0,
         v: 0
     };
     setInterval(getRoomCounts,120*1000);
-    
+
     var bad_ips = [];
 
     var registerAppRoutes = function(app) {
@@ -149,7 +149,7 @@ function(err) {
 
         app.get("/vent",
         function(req, res) {
-		console.log("new venter: " + (req.headers['x-forwarded-for'] || req.address.address));
+        console.log("new venter: " + (req.headers['x-forwarded-for'] || req.address.address));
             res.render("chat", {
                 type: "venter"
             });
@@ -163,8 +163,8 @@ function(err) {
                 });
             }
             else {
-	    		console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
-            	authServer.checkLogin(req,
+                console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
+                authServer.checkLogin(req,
                 function(username) {
                     console.log('check login called back with username ' + username);
                     if (username) {
@@ -173,7 +173,7 @@ function(err) {
                                 type: "listener",
                                 email: vB_info.email,
                                 created_at: vB_info.created_at,
-								username: username
+                                username: username
                             });
                         });
                     }
@@ -183,7 +183,7 @@ function(err) {
                             res.render("chat", {
                                     type: "listener"
                             });
-                        } 
+                        }
                         else {
                                 res.render("listener-registration");
                         }
@@ -366,6 +366,12 @@ function(err) {
             lastMessageReceived = data.n || 0,
             userAgent = data.a || null,
             referrer = data.r || null;
+            var cookies = {
+                bb_userid: data.bb_userid,
+                bb_sessionhash: data.bb_sessionhash,
+                bb_password: data.bb_password
+            };
+
             var clientId = client.id;
 
 
@@ -381,6 +387,9 @@ function(err) {
                 user.getIPAddress();
                 user.referrer = referrer || "";
                 user.userAgent = userAgent || "";
+                authServer.checkLoginWithCookies(cookies, user.getIPAddress(), user.userAgent, function(username) {
+                    console.log('cookie-login called back with username: ', username);
+                });
                 user.disconnect(function() {
                     var room = Room.getByUserId(user.id);
                     if (room) {
@@ -414,6 +423,7 @@ function(err) {
                     function(username) {
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
+                            console.log('checkLogin called back with username: ', username);
                             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
                         }
                         else {
@@ -600,14 +610,14 @@ function(err) {
         app.listen(config.port);
         util.puts("Server started on port " + config.port);
 
-	// REFACTOR this to fire once the MongoDB connection connects
-    	function bip_callback(bad_ips) { 
-        	global.bad_ips = bad_ips;
-    	}
-    	setTimeout(feedbackServer.getNegativeIPs(bip_callback),10000);
-	
-	// REFACTOR this to fire once someone joins teh chat
-	getRoomCounts();
+    // REFACTOR this to fire once the MongoDB connection connects
+        function bip_callback(bad_ips) {
+            global.bad_ips = bad_ips;
+        }
+        setTimeout(feedbackServer.getNegativeIPs(bip_callback),10000);
+
+
+        getRoomCounts();
 
     });
 

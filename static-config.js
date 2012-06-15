@@ -6,6 +6,7 @@ module.exports = function (config) {
         "error-handling.js",
         "jquery.jplayer.js",
         "jquery.flot.js",
+		"jquery.cookies.2.2.0.min.js",
         "jquery.ui.core.js",
         "jquery.ui.widget.js",
         "jquery.ui.datepicker.js",
