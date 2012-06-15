@@ -80,6 +80,9 @@
 
     Server.prototype.checkLogin = function(req, callback) {
       var self = this; // Server context
+	  if(!req.cookies) {
+		return false;
+	  }	
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         if(user) {
           self.markLoggedIn(req.cookies.bb_userid, function(username) {
