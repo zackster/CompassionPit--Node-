@@ -82,6 +82,7 @@
       var self = this; // Server context
 	  if(!req || !req.cookies) {
 		callback.call(self,false);
+		return false;
 	  }	
       this.getCookie(req.cookies.bb_userid, req.cookies.bb_password, function(user) {
         if(user) {
