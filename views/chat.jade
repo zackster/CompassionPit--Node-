@@ -55,7 +55,11 @@ div(id="main",style="display:none")
             option(value="I don't feel I can help you") I don't feel I can help you
           button(id="giveApology") Share reason
         li#reportAbuse
-          a(href="#") Report abuse?
+          a(href="#") Report abuse?          
+      li
+        label
+          input(type="checkbox", id="share_username")
+          #{" Share my forums username"}          
         li
           label
             input(type="checkbox", id="enable_sound")
@@ -77,6 +81,7 @@ div(id="main",style="display:none")
             button(id="login", class="login") Log In!
             br
             a(href="javascript:return false;", id="register_account", class="login_mistake") Don't have an account? Register one at the CompassionPit Forums!
+        div#partnerUsername
         div#listenerFeedback
           p Please give feedback to keep CompassionPit high-quality
             button(id="helpful") This person is a good listener! =)

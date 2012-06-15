@@ -24,7 +24,7 @@
 		this.join_time = new Date().getTime();
 		
 		this.partner_list = [];
-
+		this.forums_id = false;
         this.socket = require("../app").socket;
         this.messageBacklog = [];
         this.messageQueue = [];
@@ -243,6 +243,10 @@
             }
         });
     };
+
+	User.prototype.setForumsId = function (username) { 
+		this.forums_id = username;
+	};
     
     User.prototype.send = function (message) {
         message.n = this.lastSentMessageIndex = this.lastSentMessageIndex + 1;

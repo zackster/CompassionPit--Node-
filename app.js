@@ -366,11 +366,11 @@ function(err) {
             lastMessageReceived = data.n || 0,
             userAgent = data.a || null,
             referrer = data.r || null;
-            var cookies = {
-                bb_userid: data.bb_userid,
-                bb_sessionhash: data.bb_sessionhash,
-                bb_password: data.bb_password
-            };
+            // var cookies = {
+            //     bb_userid: data.bb_userid,
+            //     bb_sessionhash: data.bb_sessionhash,
+            //     bb_password: data.bb_password
+            // };
 
             var clientId = client.id;
 
@@ -387,9 +387,6 @@ function(err) {
                 user.getIPAddress();
                 user.referrer = referrer || "";
                 user.userAgent = userAgent || "";
-                authServer.checkLoginWithCookies(cookies, user.getIPAddress(), user.userAgent, function(username) {
-                    console.log('cookie-login called back with username: ', username);
-                });
                 user.disconnect(function() {
                     var room = Room.getByUserId(user.id);
                     if (room) {
@@ -424,6 +421,7 @@ function(err) {
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
                             console.log('checkLogin called back with username: ', username);
+							user.setForumsId(username);
                             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
                         }
                         else {
@@ -440,6 +438,29 @@ function(err) {
 
             Room.checkQueues();
         };
+		
+		
+		socketHandlers.showUsername = function(client, user, data, callback) {		
+		    var listenerId = user.id,
+            room = Room.getByUserId(listenerId);
+            if (!room) {
+                return;
+            }
+            var venterId = room.conversation.venter.userId;
+            room.sendToUser(venterId, "forum-username", user.forums_id);            
+		};
+		socketHandlers.hideUsername = function(client, user, data, callback) {		
+		    var listenerId = user.id,
+            room = Room.getByUserId(listenerId);
+            if (!room) {
+                return;
+            }
+            var venterId = room.conversation.venter.userId;
+            room.sendToUser(venterId, "forum-username", false);            
+		};
+		
+
+		
 
         /**
       * Request the current position the client is in the queue for

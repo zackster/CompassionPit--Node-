@@ -196,6 +196,7 @@
                       $("span#currentUser").html(forums_username);
                       $("div#reputationLogin").hide();
                       $("div#loggedInAs").show();
+					  $("div#share_username").show();
                       window.LISTENER_LOGGED_IN = true;
                       updateHUD();
                     }

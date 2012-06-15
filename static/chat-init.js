@@ -17,7 +17,7 @@
 
   $(document).ready(function() {
 
-    $("div#Chatmain, div#loggedInAs, div#reputationLogin, div#listenerFeedback, a#meant_to_login, button#register, li.scoreCard").hide();
+    $("div#Chatmain, div#loggedInAs, input#share_username, div#reputationLogin, div#partnerUsername, div#listenerFeedback, a#meant_to_login, button#register, li.scoreCard").hide();
     window.LISTENER_LOGGED_IN = false;
 
     var comm = window.Comm.create();

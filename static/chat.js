@@ -455,7 +455,15 @@
             }
         }
 
-
+		$('#share_username').change(function() {
+			if ($(this).is(':checked')){
+               addMessage('System', 'Your partner can now see when your forums username');
+               comm.request("showUsername");
+            } else {
+               addMessage('System', 'Your partner will no longer be able to see your forums username');
+               comm.request("hideUsername");
+            }            			
+		});
         $('#enable_typing').change(function(){
             if ($(this).is(':checked')){
                addMessage('System', 'Others can now see when you\'re typing');
@@ -516,6 +524,14 @@
                     .removeClass("hidden");
             }
         });
+		comm.handler("forum-username", function(username) {
+			if(username) {
+				$("#partnerUsername").html('<b>' + username + '</b>');				
+			}
+			else {
+				$("#partnerUsername").hide();
+			}
+		});
         comm.handler("received-feedback", function(message) {
           window.comm.request("updateHUD", {}, function(userLeaderboard) {
               $('li.scoreCard').show().css('display', 'block !important').css('height', 'auto');
