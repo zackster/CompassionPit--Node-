@@ -422,6 +422,7 @@ function(err) {
                             authServer.logged_in_users[user.id] = username;
                             console.log('checkLogin called back with username: ', username);
 							user.setForumsId(username);
+							console.log(user.forums_id);
                             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
                         }
                         else {
@@ -447,6 +448,7 @@ function(err) {
                 return;
             }
             var venterId = room.conversation.venter.userId;
+			console.log('user', user);
             room.sendToUser(venterId, "forum-username", user.forums_id);            
 		};
 		socketHandlers.hideUsername = function(client, user, data, callback) {		
