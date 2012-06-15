@@ -154,7 +154,8 @@ function(err) {
                 type: "venter"
             });
         });
-
+		
+		global.ip2req=[];
         app.get("/listen",
         function(req, res) {
             if ((process.env.NODE_ENV || "development") === 'development') {
@@ -168,6 +169,7 @@ function(err) {
                 function(username) {
                     console.log('check login called back with username ' + username);
                     if (username) {
+						global.ip2req[(req.headers['x-forwarded-for'] || req.address.address)] = req;
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
                             res.render("chat", {
                                 type: "listener",
@@ -432,19 +434,7 @@ function(err) {
                 }
                 else {
 
-		            var cookies = {
-		                bb_userid: data.bb_userid,
-		                bb_sessionhash: data.bb_sessionhash,
-		                bb_password: data.bb_password
-		            };
-					console.log('cookies');
-					console.log(cookies);
-					console.log('get ip address');
-					console.log(user.getIPAddress());
-					console.log('user agent');
-					console.log(user.userAgent);		                
-					
-                    authServer.checkLoginWithCookies(cookies, user.getIPAddress(), user.userAgent,
+                    authServer.checkLogin(global.ip2req[user.getIPAddress()],
                     function(username) {
 						console.log("Check login returned with value: %s", username);
                         if (username !== false) {
