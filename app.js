@@ -413,11 +413,14 @@ function(err) {
                 callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, 'Zachary Burt']);
             }
             else {
+				console.log("Req is accessible within register.");
                 var req = client.manager.handshaken[clientId.toString()];
                 if (req.headers && req.headers.cookie) {
+					console.log("headers and cookies are accessible");
                     req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
                     authServer.checkLogin(req,
                     function(username) {
+						console.log("Check login returned with value: %s", username);
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
                             console.log('checkLogin called back with username: ', username);
@@ -442,6 +445,7 @@ function(err) {
 		
 		
 		socketHandlers.showUsername = function(client, user, data, callback) {		
+			console.log("USER NAME IS: %s", user.forums_id);
 		    var listenerId = user.id,
             room = Room.getByUserId(listenerId);
             if (!room) {
