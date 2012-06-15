@@ -46,6 +46,7 @@
 
         if(CLIENT_TYPE === 'listener') {
           $("div#reputationLogin").show();
+		  $("#share_username").parent().parent().show();
         }
         $("div#main").css('height','405px').css('overflow-y','hidden');
 
@@ -527,6 +528,7 @@
 		comm.handler("forum-username", function(username) {
 			if(username) {
 				$("#partnerUsername").html('<b>' + username + '</b>');				
+				$("#partnerUsername").show();
 			}
 			else {
 				$("#partnerUsername").hide();
