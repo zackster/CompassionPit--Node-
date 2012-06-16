@@ -37,7 +37,7 @@
               $exists: true
           }
       },
-      function(err, listeners, callback) { // we have a list of distinct listeners
+      function(err, listeners) { // we have a list of distinct listeners
           if (err) {
               console.log("Error! " + err);
               return;
@@ -61,6 +61,7 @@
                     }
                     self.listenerScores[thisListener] = (self.listenerScores[thisListener] || 0) + (1 * docs);
 					posStep+=1;
+					console.log(self.listenerScores);
 					if(posStep===listeners.length && negStep===listeners.length) {
 						callback(true);
 					}
@@ -180,7 +181,7 @@
   };
 
 
-require("./database/singleton");
+require(".././database/singleton");
 setTimeout(function() {
 	
 
