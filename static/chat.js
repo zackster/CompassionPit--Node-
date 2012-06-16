@@ -609,6 +609,12 @@
                     if(CLIENT_TYPE === 'venter') {
                       $("div#listenerFeedback").show();
                     }
+					else {
+						if($("#share_username").is(':checked')) {
+			               comm.request("showUsername");	
+						}
+					}
+
                 }
                 addMessage('System', message);
             }
