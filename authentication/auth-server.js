@@ -80,7 +80,7 @@
 
     Server.prototype.checkLogin = function(req, callback) {
       var self = this; // Server context
-	  if(!req || !req.cookies) {
+	  if(!req || !req.hasOwnProperty('cookies')) {
 		callback.call(self,false);
 		return false;
 	  }	
