@@ -48,11 +48,12 @@ div(id="main",style="display:none")
           a(href="#", id="newPartner") Find a new partner
         li(style="display:none",id="apologies")
           select(id="apologySelect")
-            option(value="I feel like we've hit a brick wall in this conversation") I feel like we've hit a brick wall in this conversation
+            option(value="I feel like we've hit a brick wall in this conversation") I feel like we've hit a brick wall in this conversation.
             option(value="I feel uncomfortable chatting with you.") I feel uncomfortable chatting with you.
             option(value="I feel like you are being rude, and I would like to be treated kindly.") I feel like you are being rude, and I would like to be treated kindly.
-            option(value="This is a situation that I'm not comfortable discussing or that I don't have enough knowledge in") This is a situation that I'm not comfortable discussing or that I don't have enough knowledge in
-            option(value="I don't feel I can help you") I don't feel I can help you
+            option(value="This is a situation that I'm not comfortable discussing or that I don't have enough knowledge in") This is a situation that I'm not comfortable discussing or that I don't have enough knowledge in.
+            option(value="I don't feel I can help you") I don't feel I can help you.
+            option(value="You haven't been responding, so I am moving on so I can help somebody else.") You haven't been responding, so I am moving on so I can help somebody else.
           button(id="giveApology") Share reason
         li#reportAbuse
           a(href="#") Report abuse?          
@@ -60,6 +61,12 @@ div(id="main",style="display:none")
           label
             input(type="checkbox", id="share_username")
             #{" Share my forums username"}          
+        li
+          label
+            input(type="text", id="twitter_username", value="@", size=10) 
+            #{"Your Twitter username?"}
+          label
+            button(id="encourage_twitter_follow") Suggest they follow you
         li
           label
             input(type="checkbox", id="enable_sound")

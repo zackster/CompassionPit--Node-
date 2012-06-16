@@ -47,6 +47,7 @@
         if(CLIENT_TYPE === 'listener') {
           $("div#reputationLogin").show();
 		  $("#share_username").parent().parent().show();
+		  $("#encourage_twitter_follow").parent().parent().show();
         }
         $("div#main").css('height','405px').css('overflow-y','hidden');
 
@@ -456,6 +457,14 @@
             }
         }
 
+		$("#encourage_twitter_follow").click(function() {
+			comm.request("encourageTwitterFollow", {
+				twitter_username:$("#twitter_username").val()
+			});
+			addMessage('System', 'Your partner was shown a button to follow you on Twitter');
+			
+		});
+
 		$('#share_username').change(function() {
 			if ($(this).is(':checked')){
                addMessage('System', 'Your partner can now see when your forums username');
@@ -525,6 +534,13 @@
                     .removeClass("hidden");
             }
         });
+		comm.handler("twitter-encouragement", function(twitter_username) {
+			twitter_username = twitter_username.replace(/@/g,'')
+			var part1 = $('<a href="https://twitter.com/'+twitter_username+'" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @'+twitter_username+'</a>');
+			var part2 = $('<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>');
+			addMessage(OTHER_CLIENT_TYPE, part1);
+			addMessage(OTHER_CLIENT_TYPE, part2);
+		});
 		comm.handler("forum-username", function(username) {
 			if(username) {
 				$("#partnerUsername").html('<b>' + username + '</b>');				

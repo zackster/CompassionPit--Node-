@@ -149,7 +149,6 @@ function(err) {
 
         app.get("/vent",
         function(req, res) {
-        console.log("new venter: " + (req.headers['x-forwarded-for'] || req.address.address));
             res.render("chat", {
                 type: "venter"
             });
@@ -164,10 +163,10 @@ function(err) {
                 });
             }
             else {
-                console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
+                // console.log("new listener: " + (req.headers['x-forwarded-for'] || req.address.address));
                 authServer.checkLogin(req,
                 function(username) {
-                    console.log('check login called back with username ' + username);
+                    // console.log('check login called back with username ' + username);
                     if (username) {
 						global.ip2req[(req.headers['x-forwarded-for'] || req.address.address)] = req;
                         vB_dao.getEmailAndJoindateForUser(username, function(vB_info) {
@@ -283,7 +282,7 @@ function(err) {
                         if (handler) {
                             var user = User.getBySocketIOId(client.id);
                             if (type !== "register" && !user) {
-                                console.log("Received message from unregistered user: " + client.id + ": " + JSON.stringify(data));
+                                // console.log("Received message from unregistered user: " + client.id + ": " + JSON.stringify(data));
                             } else {
                                 if (user && data.i && user.lastReceivedMessageIndex < data.i) {
                                     user.lastReceivedMessageIndex = data.i;
@@ -411,19 +410,19 @@ function(err) {
                 callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, 'Zachary Burt']);
             }
             else {
-				console.log("Req is accessible within register.");
+				// console.log("Req is accessible within register.");
                 var req = client.manager.handshaken[clientId.toString()];
                 if (req.headers && req.headers.cookie) {
-					console.log("headers and cookies are accessible");
+					// console.log("headers and cookies are accessible");
                     req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
                     authServer.checkLogin(req,
                     function(username) {
-						console.log("Check login returned with value: %s", username);
+						// console.log("Check login returned with value: %s", username);
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
-                            console.log('checkLogin called back with username: ', username);
+                            // console.log('checkLogin called back with username: ', username);
 							user.setForumsId(username);
-							console.log(user.forums_id);
+							// console.log(user.forums_id);
                             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
                         }
                         else {
@@ -436,10 +435,10 @@ function(err) {
 
                     authServer.checkLogin(global.ip2req[user.getIPAddress()],
                     function(username) {
-						console.log("Check login returned with value: %s", username);
+						// console.log("Check login returned with value: %s", username);
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
-                            console.log('checkLogin called back with username: ', username);
+                            // console.log('checkLogin called back with username: ', username);
 							user.setForumsId(username);
 						}
 					});
@@ -453,17 +452,27 @@ function(err) {
 
             Room.checkQueues();
         };
-		
-		
-		socketHandlers.showUsername = function(client, user, data, callback) {		
-			console.log("USER NAME IS: %s", user.forums_id);
+
+		socketHandlers.encourageTwitterFollow = function(client, user, data, callback) {		
 		    var listenerId = user.id,
             room = Room.getByUserId(listenerId);
             if (!room) {
                 return;
             }
             var venterId = room.conversation.venter.userId;
-			console.log('user', user);
+            room.sendToUser(venterId, "twitter-encouragement", data.twitter_username);            
+		};		
+		
+		
+		socketHandlers.showUsername = function(client, user, data, callback) {		
+			// console.log("USER NAME IS: %s", user.forums_id);
+		    var listenerId = user.id,
+            room = Room.getByUserId(listenerId);
+            if (!room) {
+                return;
+            }
+            var venterId = room.conversation.venter.userId;
+			// console.log('user', user);
             room.sendToUser(venterId, "forum-username", user.forums_id);            
 		};
 		socketHandlers.hideUsername = function(client, user, data, callback) {		
@@ -538,15 +547,15 @@ function(err) {
             }
             var listenerId = room.conversation.listener.userId;
 
-            console.log('Adding feedback...');
+            // console.log('Adding feedback...');
             feedbackServer.addFeedback({
                 venter: venterId,
                 listener: listenerId,
                 direction: data.direction
             });
-
-            console.log('Sending acknowledgement....');
-            console.log('sending to: ', listenerId);
+            // 
+            // console.log('Sending acknowledgement....');
+            // console.log('sending to: ', listenerId);
             room.sendToUser(listenerId, "received-feedback", data.direction);
         };
 
