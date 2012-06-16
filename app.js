@@ -408,21 +408,17 @@ function(err) {
 
             if ((process.env.NODE_ENV || "development") === 'development') {
                 callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, 'Zachary Burt']);
+				user.setForumsId('Zachary Burt');
             }
             else {
-				// console.log("Req is accessible within register.");
                 var req = client.manager.handshaken[clientId.toString()];
                 if (req.headers && req.headers.cookie) {
-					// console.log("headers and cookies are accessible");
                     req.cookies = require('connect').utils.parseCookie(req.headers.cookie);
                     authServer.checkLogin(req,
                     function(username) {
-						// console.log("Check login returned with value: %s", username);
                         if (username !== false) {
                             authServer.logged_in_users[user.id] = username;
-                            // console.log('checkLogin called back with username: ', username);
 							user.setForumsId(username);
-							// console.log(user.forums_id);
                             callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
                         }
                         else {
@@ -440,9 +436,13 @@ function(err) {
                             authServer.logged_in_users[user.id] = username;
                             // console.log('checkLogin called back with username: ', username);
 							user.setForumsId(username);
+							callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, username]);
+		                    
+						}
+						else {
+							callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);		                    
 						}
 					});
-                    callback([config.version, isNewUser, user.id, user.publicId, user.lastReceivedMessageIndex, false]);
 
 
 
@@ -483,10 +483,7 @@ function(err) {
             }
             var venterId = room.conversation.venter.userId;
             room.sendToUser(venterId, "forum-username", false);            
-		};
-		
-
-		
+		};			
 
         /**
       * Request the current position the client is in the queue for
@@ -523,17 +520,13 @@ function(err) {
 
         socketHandlers.updateHUD = function(client, user, data, callback) {
 
-            // console.log(client);
-            // console.log('------------------------------------------------');
-            // console.log(user);
-            // console.log(data);
-            // console.log(callback);
-            var listenerId = user.id;
 
-            feedbackServer.getLeaderboardForUser(listenerId,
-            function(info) {
-                callback(info);
-            });
+            // var listenerId = user.id;
+            // 
+            // feedbackServer.getLeaderboardForUser(listenerId,
+            // function(info) {
+            //     callback(info);
+            // });
 
             return;
         };

@@ -33,14 +33,13 @@
     self.listenerScores = {};
 
     this.addFeedback = function (feedback) {
-      console.log("Adding feedback");
-      console.log(feedback);
 
       var instance = new Feedback();
       instance.venter = feedback.venter;
 
-      var listener_account = authServer.getUsernameFromListenerId(feedback.listener);
+      var listener_account = authServer.getUsernameFromListenerId(feedback.listener) ? authServer.getUsernameFromListenerId(feedback.listener) : User.getById(feedback.listener).forums_id;
       instance.listener = listener_account ? listener_account : feedback.listener;
+
       instance.direction = feedback.direction;
       var venter_ip = User.getById(feedback.venter).getIPAddress();
       var listener_ip = User.getById(feedback.listener).getIPAddress();
@@ -67,7 +66,7 @@
         }
         else {
           console.log('successfully added feedback');
-	  if(feedback.direction=='negative') {
+	  if(feedback.direction==='negative') {
 		global.bad_ips.push(listener_ip);
 	  }
         }
@@ -191,7 +190,7 @@
       if(user_position !== -1) { // user is on leaderboard
         // console.log("user position", user_position);
         var logged_in_user_score = user_scores_sorted[user_position-1].score;
-        for(var i=user_position-2; i>=0; i--) {
+        for(var i=user_position-2; i>=0; i-=1) {
           // console.log("user scores", user_scores_sorted);
           // console.log("i", i);
           // console.log("user scores i", user_scores_sorted[i]);
@@ -259,7 +258,7 @@
                 console.log("error! " + err);
                 return;
             }
-            if(docs==0) {
+            if(docs===0) {
                 callback(true);
             }
             else {
@@ -281,4 +280,4 @@
 
 
 
-})();
+}());
