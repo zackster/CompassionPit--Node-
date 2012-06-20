@@ -14,8 +14,6 @@
             
             $('#listener-count').text(listeners);
             $('#venter-count').text(venters);
-            $('#counts').removeClass("loading");
-            $('#counts').show();
         };
 
         if (window.startingRoomCounts) {
@@ -28,7 +26,6 @@
             timeoutId = null;
             $.getJSON('/counts', updateCounts);
 
-            $('#counts').addClass("loading");
             if (hasFocus) {
                 timeoutId = setTimeout(requestCounts, 10 * 1000);
             }
