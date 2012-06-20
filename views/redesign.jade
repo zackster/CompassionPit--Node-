@@ -1,0 +1,103 @@
+!!! 5
+html
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title Compression Pit
+    link(href='reset.css', rel='stylesheet', type='text/css')
+    link(href='960_grid.css', rel='stylesheet', type='text/css')
+    link(href='css3.css', rel='stylesheet', type='text/css')
+    script(src='jquery-1.4.3.min.js', type='text/javascript')
+    script(type='text/javascript')
+      $(function(){
+      if((navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i))
+      || (navigator.userAgent.match(/iPod/i)) ||
+      (navigator.userAgent.match(/iPad/i))){
+      $('.outer_wrapper').css('width','1024px');
+      }
+      });
+  body
+    .outer_wrapper
+      .container_12
+        #header
+          a.logo(href='index.html')
+            img(src='redesign-logo.png', width='964', height='140', alt='')
+        #body_container
+          .grid_12
+            .grid_6.alpha.omega.left_container
+              h2
+                | Compassion Pit visitors are people dealing with all
+                br
+                | sorts of life's problems. And we're here to help...
+            .grid_6.alpha.omega.right_container
+              p
+                | Whether it's sex, gender identity, relationship problems, sexual identity,
+                br
+                | domestic abuse, friendship loyalty, sexual perversions, money, crime,
+                br
+                | sexually transmitted diseases, procrastination, boredom... You name it!
+                br
+                | Learn more at our
+                a(href='#') FAQ Page
+          #banner.grid_12
+            em
+            a.banner_sec1(href="/vent")
+              h2 Vent
+              h3 anonymously
+            a.banner_sec2.push_6(href="/listen")
+              h2 Listen
+              h3 to a venter
+            .banner_sec3
+              p
+                | Currently Online:
+                br
+                span(id="listener-count") 0
+                &nbsp;
+                |Listeners
+                br                
+                | and 
+                span(id="venter-count") 0
+                &nbsp;
+                |Venters
+          .grid_12.content_sec
+            p
+              | "This site has really given me hope. Somehow you end up talking to someone that really help you."
+              br
+              | -Anonymous
+          .grid_4.push_4.alpha.omega.content_btn
+            a(href='http://www.compassionpit.com/forum/') Forum
+            a(href='terms-of-service') Terms
+            a(href='privacy-policy') Privacy
+            
+          ul.grid_6.followus
+            li
+              a(href='#')
+                em
+            li
+              a(href='#')
+                strong
+            li
+              a(href='#')
+                span
+            li
+              a(href='#')
+                small
+          .grid_12.content_sec
+            p
+              | At Compassion Pit we strive to create an environment where our users can positively affect each other over the World Wide Web.
+              br
+              | We do not claim to be medical professionals, so if your problems are severe or life-threatening then please call your local authorities.
+        #footer.grid_12
+          p &copy; 2012 CompassionPit.com All rights reserved.
+          ul
+            li
+              a(href='#') Home
+            li
+              a(href='#') About Us
+            li
+              a(href='#') Blog
+            li
+              a(href='#') FAQ
+            li
+              a(href='#') Testimonials
+            li
+              a(href='#') Contact

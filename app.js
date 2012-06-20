@@ -82,13 +82,14 @@ function(err) {
         app.get("/",
         function(req, res, next) {
             var opts = {
+				layout: false,
                 loggedOut: false,
                 roomCounts: global.room_counts
             };
             if (req.query && req.query.logout === 'true') {
                 opts.loggedOut = true;
             }
-            res.render('index', opts);
+            res.render('redesign', opts);
         });
 
         app.get("/counts",

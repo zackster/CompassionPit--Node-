@@ -1,0 +1,3 @@
+#body_container {border-radius:16px; -webkit-border-radius:16px; -o-border-radius:16px; -mz-border-radius:16px; -moz-border-radius:16px; position: relative; border:0px solid; behavior:url(PIE.htc); } 
+
+.banner_sec1, .banner_sec2, .banner_sec3, .content_btn a  {border-radius:16px; -webkit-border-radius:16px; -mz-border-radius:16px; -o-border-radius:16px; -moz-border-radius:16px; position: relative; behavior:url(PIE.htc); } 

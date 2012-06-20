@@ -1,0 +1,7 @@
+body, div, ul, li, ol, h1, h2, h3, h4, h5, h6, form, fieldset, p, select, input { margin: 0; padding: 0; outline: 0; border: none; list-style: none; font-weight: normal; font-size: 100%; }
+img, fieldset, input { border: none; padding: 0; margin: 0; }
+.clear { clear: both; }
+a:focus { outline: none; }
+a { text-decoration: none; outline: none; color: #000000; }
+a:hover { text-decoration: none; cursor: pointer; }
+img { border: 0; outline: none; }
