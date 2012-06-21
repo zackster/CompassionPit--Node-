@@ -73,6 +73,7 @@
         $("#initializing").append('<br>'+"Socket connection started");
 
 			socketio_addr = "74.207.228.243:8000";
+
             socket = io.connect(socketio_addr, {
                 'max reconnection attempts': 5,
                 'force new connection': true
