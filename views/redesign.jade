@@ -9,7 +9,7 @@ html
     script(src='jquery-1.7.2.js', type='text/javascript')
     script(src='index.js', type='text/javascript')
     script(type='text/javascript')
-      $(function(){
+      $(document).ready(function(){
       if((navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i))
       || (navigator.userAgent.match(/iPod/i)) ||
       (navigator.userAgent.match(/iPad/i))){
@@ -69,19 +69,6 @@ html
             a(href='terms-of-service') Terms
             a(href='privacy-policy') Privacy
             
-          ul.grid_6.followus
-            li
-              a(href='#')
-                em
-            li
-              a(href='#')
-                strong
-            li
-              a(href='#')
-                span
-            li
-              a(href='#')
-                small
           .grid_12.content_sec
             p
               | At Compassion Pit we strive to create an environment where our users can positively affect each other over the World Wide Web.
@@ -102,3 +89,9 @@ html
               a(href='#') Testimonials
             li
               a(href='#') Contact
+    script(type='text/javascript', src='https://d31qbv1cthcecs.cloudfront.net/atrk.js')
+    script(type='text/javascript')
+      _atrk_opts = { atrk_acct: "IpTUf1aYS500EW", domain:"compassionpit.com"}; atrk ();
+    noscript
+      img(src='https://d5nxst8fruw4z.cloudfront.net/atrk.gif?account=IpTUf1aYS500EW', style='display: none;', height='1', width='1', alt='')
+
