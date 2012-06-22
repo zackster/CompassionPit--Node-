@@ -19,7 +19,10 @@ html
           if(window.screen && window.screen.width>1024) {
             // let's insert some more ad units!
             $("#leftAd").show();
+            var ad_offset = (((screen.width-960)/2)-120)/2;
+            $("#leftAd").css({left:ad_offset + 'px'});
             $("#rightAd").show();
+            $("#rightAd").css({right:ad_offset + 'px'});
           }
       });
   body
