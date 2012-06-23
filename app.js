@@ -22,6 +22,7 @@ function(err) {
 
     var app = module.exports = express.createServer(),
     util = require("util"),
+	hashlib = require('hashlib2'),
     _ = require('underscore'),
     socketIO = require("socket.io"),
     Room = require("./rooms/models").Room,
@@ -148,11 +149,39 @@ function(err) {
             res.redirect("/terms-of-service", 301);
         });
 
+		app.get("/r",
+		function(req, res) {
+			var convo_request = req.query.c;
+			if(convo_request) {
+				var convo_id = convo_request.split('-');
+				if(hashlib.hmac_md5(convo_id[0]+convo_id[1]+config.systemPassword) === convo_id[2]) {
+					Room.prototype.recoverConversation(convo_id[0],convo_id[1], function(messages) {					
+						res.render("reconnectedConvo", {
+							messages: messages
+						});
+						return;
+					});
+				}				
+			
+				else {
+					res.render("wrongConvoID");
+					return;
+				}
+			}
+			
+		});	
+		
+
         app.get("/vent",
         function(req, res) {
-            res.render("chat", {
-                type: "venter"
-            });
+			// 9e9988a5352458d99efb9711-e7e79db722e0a6d802448c02-4e6ed671b7752e6fb2de079b05c40833
+//			var room = new Room();
+			//9e9988a5352458d99efb9711', 'e7e79db722e0a6d802448c02', '4e6ed671b7752e6fb2de079b05c40833'
+
+	            res.render("chat", {
+	                type: "venter"
+	            });			
+
         });
 		
 		global.ip2req=[];
@@ -578,6 +607,19 @@ function(err) {
             Room.addUserToQueue(userId, data.type, data.partnerId, data.priority);
             callback(true);
         };
+
+		socketHandlers.reconnectURL = function(client,user,message,callback) {
+			var userId = user.id;
+
+            var room = Room.getByUserId(userId);
+            if (!room) {
+                callback(false);
+                return;
+            }
+			console.log('!');
+			console.log(room.getReconnectURL());
+			callback(room.getReconnectURL());
+		};
 
         /**
       * Send a chat message to the room the client is current in.

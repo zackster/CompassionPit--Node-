@@ -46,8 +46,8 @@
 
         if(CLIENT_TYPE === 'listener') {
           $("div#reputationLogin").show();
-		  $("#share_username").parent().parent().show();
-		  $("#encourage_twitter_follow").parent().parent().show();
+          $("#share_username").parent().parent().show();
+          $("#encourage_twitter_follow").parent().parent().show();
         }
         $("div#main").css('height','405px').css('overflow-y','hidden');
 
@@ -136,11 +136,11 @@
 
 
         var wallpaper_timer;
-      
+
         var playRelaxingSounds = function() {
-	      $("#chat_input").hide();
-	        $("#column_left_chat").hide();
-	          window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide();
+          $("#chat_input").hide();
+            $("#column_left_chat").hide();
+              window.Chat.ENTERTAINMENT_RUNNING = true; $("#chat_input").hide(); $("#column_left_chat").hide();
             $("#entertainmentSounds").show();
             $("#entertainmentSounds").append($("<iframe width=\"1\" height=\"1\" src=\"http://www.youtube.com/embed/uupzk-YCBO0?rel=0&autoplay=1\" frameborder=\"0\"></iframe>"));
             var beautiful_wallpapers = ["the-other-side.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-3.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-5.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-16.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-6.jpg", "elbalia.jpg", "ethaer.jpg", "shimuna.jpg", "paramount.jpg", "brothers.jpg", "Monument_Valley.jpg", "TRILITH_by_tigaer.jpg", "Terragen___The_Way_God_Made_Me.jpg", "The_Rock_by_DJMattRicks.jpg", "Lost.jpg", "splatter.jpg", "Pacific.jpg", "Unforgettable-Days.jpg", "skyscrapers-&-lost-wonders_01.jpg", "winter-wonderland.jpg", "winter-landscape.jpg", "Mt_Buller.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-15.jpg", "forestfall.jpg", "Dashing.jpg", "meelup-beach.jpg", "tion.jpg", "Viva-La-Nature-5-(3).jpg", "Viva-La-Nature-5-(4).jpg", "Viva-La-Nature-5-(11).jpg", "Viva-La-Nature-5-(15).jpg", "on-the-beach.jpg", "red-rocks.jpg", "another-morning.jpg", "Atomicsunset.jpg", "waterfall-desktop.jpg", "461.jpg", "sea-of-plague.jpg", "Afternoon1_01.jpg", "Grassy.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-11.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-13.jpg", "Hamad_Darwish_dot_com_Windows_Vista_Wallpapers_-18.jpg", "Lone_Tree_1600.jpg", "a_place_to_rest.jpg", "12.jpg", "Jungle_Dreaming.jpg", "west-new-york-girl.jpg", "a_year_has_gone.jpg", "dedication.jpg", "azalea.jpg", "yellow-field.jpg", "Summer_Sunflowers.jpg", "The-Greenway.jpg", "Sun_ray_in_the_woods.jpg", "51200203.jpg", "stonehenge_wallpaper.jpg", "Spot_of_Light.jpg", "Wafting.jpg", "the-other-side.jpg", "4rest_by_UncleCameleon.jpg", "DarkblissWraith.jpg", "KingdomOfHeaven.jpg", "magic-tree.jpg", "Reaching_for_the_Stars.jpg", "dreamy-world.jpg", "447.jpg", "001.jpg", "002.jpg", "no-more-rain.jpg", "night_comes_down.jpg", "Nexus-by-Burning-Liquid.jpg", "thetismoon2k72.jpg", "jungle_bath.jpg", "beautiful-day.jpg"];
@@ -280,12 +280,12 @@
             refocusInformInput();
         });
 
-		$("#rage_tut").click(function() {
-			window.alert("/yey      /wtf      /why      /whoa      /wetodddog\n/welp      /wayevil      /wat      /uhm      /troll\n/trap      /teethrage      /sweetjesus      /surprised\n/straight      /steve      /stare      /son      /serious\n/schlick      /sadtroll      /sad      /rtroll      /rmilk\n/red      /poker      /pissed      /pickletime      /pfttxt\n/pft      /perfect      /omg      /okay      /ohcrap\n/notsure      /notokay      /notbad      /nomegusta\n/milk      /melvin      /megustaperfect      /megusta\n/longneck      /lol      /jizzsplosion      /jackieeeee!\n/itstime      /ilovethebeefytaco      /ifeelsyabreh\n/hmm      /high      /hehheh      /harpdarp      /happy\n/gyey      /gwat      /gwah      /guhm      /gtroll\n/gtongue      /gtfo      /gsmile      /gserious\n/gohno      /ghappy      /gfu      /gbeh      /gaytroll\n/gah      /fy1      /futext      /fumanchu      /fuckthatshit\n/fu      /freddie      /foreveralonelaugh      /foreveralone\n/femyao      /fap      /eyes      /ewbtetext      /ewbte\n/dude      /deviltroll      /creepy      /challengeaccepted\n/cereal      /bzz      /blackhair      /biggusta      /beh\n/awman      /aintthatsomeshit");      
-		});
-		setTimeout(function() {
-			$("#rage_tut").slideUp();
-		}, 15*1000)
+        $("#rage_tut").click(function() {
+            window.alert("/yey      /wtf      /why      /whoa      /wetodddog\n/welp      /wayevil      /wat      /uhm      /troll\n/trap      /teethrage      /sweetjesus      /surprised\n/straight      /steve      /stare      /son      /serious\n/schlick      /sadtroll      /sad      /rtroll      /rmilk\n/red      /poker      /pissed      /pickletime      /pfttxt\n/pft      /perfect      /omg      /okay      /ohcrap\n/notsure      /notokay      /notbad      /nomegusta\n/milk      /melvin      /megustaperfect      /megusta\n/longneck      /lol      /jizzsplosion      /jackieeeee!\n/itstime      /ilovethebeefytaco      /ifeelsyabreh\n/hmm      /high      /hehheh      /harpdarp      /happy\n/gyey      /gwat      /gwah      /guhm      /gtroll\n/gtongue      /gtfo      /gsmile      /gserious\n/gohno      /ghappy      /gfu      /gbeh      /gaytroll\n/gah      /fy1      /futext      /fumanchu      /fuckthatshit\n/fu      /freddie      /foreveralonelaugh      /foreveralone\n/femyao      /fap      /eyes      /ewbtetext      /ewbte\n/dude      /deviltroll      /creepy      /challengeaccepted\n/cereal      /bzz      /blackhair      /biggusta      /beh\n/awman      /aintthatsomeshit");
+        });
+        setTimeout(function() {
+            $("#rage_tut").slideUp();
+        }, 15*1000)
         $('#enable_sound').attr('checked', true);
         $("#enable_sound").change(function() {
             if (window.Chat.ENTERTAINMENT_RUNNING && !$(this).attr('checked')) {
@@ -353,7 +353,7 @@
             });
             info('Waiting for a chat partner... ');
             addMessage("System", "Searching for a chat partner...");
-        	playRelaxingSounds();
+            playRelaxingSounds();
         }
 
         function gong() {
@@ -391,40 +391,6 @@
             } else {
                 $td.text(capitalize(from) + ": " + msg);
             }
-            window.msgCount+=1;
-            if(window.msgCount===5 && window.treatment_type===1) {
-				var script2   = document.createElement("script");
-				script2.type  = "text/javascript";
-				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
-
-				var script   = document.createElement("script");
-				script.type  = "text/javascript";
-				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "7147599266";google_ad_width = 468;google_ad_height = 60;';
-				$("#header .container a > .logo").replaceWith(script);
-				$("#header .container script").after(script2);
-            }
-            else if(window.msgCount===10 && window.treatment_type===2) {
-				script2   = document.createElement("script");
-				script2.type  = "text/javascript";
-				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
-
-				script   = document.createElement("script");
-				script.type  = "text/javascript";
-				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "0427669924";google_ad_width = 468;google_ad_height = 60;';
-				$("#header .container a > .logo").replaceWith(script);
-				$("#header .container script").after(script2);
-            }
-            else if(window.msgCount===15 && window.treatment_type===3) {
-				script2   	  = document.createElement("script");
-				script2.type  = "text/javascript";
-				script2.src   = "http://pagead2.googlesyndication.com/pagead/show_ads.js";
-
-				script	 	 = document.createElement("script");
-				script.type  = "text/javascript";
-				script.text  = 'google_ad_client = "ca-pub-6036766792552196";google_ad_slot = "6283430487";google_ad_width = 468;google_ad_height = 60;';
-				$("#header .container a > .logo").replaceWith(script);
-				$("#header .container script").after(script2);
-            }
             rageSubstitute($td);
             $('#chatWindow > div:last')
                 .append($("<div>")
@@ -458,23 +424,23 @@
             }
         }
 
-		$("#encourage_twitter_follow").click(function() {
-			comm.request("encourageTwitterFollow", {
-				twitter_username:$("#twitter_username").val()
-			});
-			addMessage('System', 'Your partner was shown a button to follow you on Twitter');
-			
-		});
+        $("#encourage_twitter_follow").click(function() {
+            comm.request("encourageTwitterFollow", {
+                twitter_username:$("#twitter_username").val()
+            });
+            addMessage('System', 'Your partner was shown a button to follow you on Twitter');
 
-		$('#share_username').change(function() {
-			if ($(this).is(':checked')){
+        });
+
+        $('#share_username').change(function() {
+            if ($(this).is(':checked')){
                addMessage('System', 'Your partner can now see when your forums username');
                comm.request("showUsername");
             } else {
                addMessage('System', 'Your partner will no longer be able to see your forums username');
                comm.request("hideUsername");
-            }            			
-		});
+            }
+        });
         $('#enable_typing').change(function(){
             if ($(this).is(':checked')){
                addMessage('System', 'Others can now see when you\'re typing');
@@ -507,7 +473,6 @@
 
 
         function sendMessage(msg) {
-            mixpanel.track("Chatted to " + OTHER_CLIENT_TYPE + " chat partner");
             if (msg === '' || !hasPartner) {
                 return;
             }
@@ -528,29 +493,28 @@
             addMessage("System", message, 'yellow-row');
         });
         comm.handler("msg", function (type, message) {
-            mixpanel.track("Received chat from " + OTHER_CLIENT_TYPE + " chat partner");
             if (type !== CLIENT_TYPE) {
                 addMessage(type, message);
                 $("#abuseButtonContainer")
                     .removeClass("hidden");
             }
         });
-		comm.handler("twitter-encouragement", function(twitter_username) {
-			twitter_username = twitter_username.replace(/@/g,'')
-			var part1 = $('<a href="https://twitter.com/'+twitter_username+'" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @'+twitter_username+'</a>');
-			var part2 = $('<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>');
-			addMessage(OTHER_CLIENT_TYPE, part1);
-			addMessage(OTHER_CLIENT_TYPE, part2);
-		});
-		comm.handler("forum-username", function(username) {
-			if(username) {
-				$("#partnerUsername").html('<b>' + username + '</b>');				
-				$("#partnerUsername").show();
-			}
-			else {
-				$("#partnerUsername").hide();
-			}
-		});
+        comm.handler("twitter-encouragement", function(twitter_username) {
+            twitter_username = twitter_username.replace(/@/g,'')
+            var part1 = $('<a href="https://twitter.com/'+twitter_username+'" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @'+twitter_username+'</a>');
+            var part2 = $('<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>');
+            addMessage(OTHER_CLIENT_TYPE, part1);
+            addMessage(OTHER_CLIENT_TYPE, part2);
+        });
+        comm.handler("forum-username", function(username) {
+            if(username) {
+                $("#partnerUsername").html('<b>' + username + '</b>');
+                $("#partnerUsername").show();
+            }
+            else {
+                $("#partnerUsername").hide();
+            }
+        });
         comm.handler("received-feedback", function(message) {
           window.comm.request("updateHUD", {}, function(userLeaderboard) {
               $('li.scoreCard').show().css('display', 'block !important').css('height', 'auto');
@@ -601,6 +565,8 @@
                 }
             }
         });
+
+
         comm.handler("join", function (otherUserId, type, geoInfo) {
             if (type !== CLIENT_TYPE) {
                 var oldUserId = lastPartnerId;
@@ -615,6 +581,11 @@
                     message = 'You were reconnected with your previous ' + OTHER_CLIENT_TYPE;
                 } else {
                     // new partner
+
+                    comm.request('reconnectURL', null, function(rcURL) {
+						$("#rcURL").attr('value','http://compassionpit.com/r?c=' + rcURL);
+						$("li#rejoin").show();
+					});
                     if (geoInfo) {
                         // we have geolocation info.
                         addMessage('System', 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat from ' + geoInfo);
@@ -622,15 +593,14 @@
                     } else {
                         message = 'A new ' + OTHER_CLIENT_TYPE + ' has entered your chat';
                     }
-                    mixpanel.track("Successfully connected to " + OTHER_CLIENT_TYPE + " chat partner");
                     if(CLIENT_TYPE === 'venter') {
                       $("div#listenerFeedback").show();
                     }
-					else {
-						if($("#share_username").is(':checked')) {
-			               comm.request("showUsername");	
-						}
-					}
+                    else {
+                        if($("#share_username").is(':checked')) {
+                           comm.request("showUsername");
+                        }
+                    }
 
                 }
                 addMessage('System', message);

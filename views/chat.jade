@@ -58,21 +58,16 @@ div(id="main",style="display:none")
           button(id="giveApology") Share reason
         li#reportAbuse
           a(href="#") Report abuse?          
-        li
-          label
-            input(type="checkbox", id="share_username")
-            #{" Share my forums username"}          
-        li
-          label
-            input(type="text", id="twitter_username", value="@", size=10) 
-            #{"Your Twitter username?"}
-          label
-            button(id="encourage_twitter_follow") Suggest they follow you
+        li#rejoin
+          span(style="font-size:0.8em") Rejoin the convo anytime by going to this link:
+          input#rcURL(style="float:left;width:99%")
+          br
+          br
+          br
         li
           label
             input(type="checkbox", id="enable_sound")
             #{" Enable Sound"}
-        li
           label
             input(type="checkbox", id="enable_typing")
             #{" Visible Typing"}

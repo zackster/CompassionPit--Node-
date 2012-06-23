@@ -6,9 +6,11 @@
     "use strict";
 
     var log = require("../log"),
-	underscore = require("underscore"),
+    underscore = require("underscore"),
         guid = require("../utils").guid,
         createHash = require("../utils").createHash,
+        config = require(".././config"),
+		hashlib = require("hashlib2"),
         User = require("../users/models").User,
         hashIPAddress = require("../utils").hashIPAddress,
         feedbackServer = require('../feedback/feedback-server').feedbackServer(),
@@ -75,6 +77,8 @@
             });
         }
     };
+
+
 
     setTimeout(function () {
         var serverSession = require("../app").sessionId;
@@ -163,18 +167,20 @@
             room: id
         });
 
+        this.reconnectURL = listenerId + '-' + venterId + '-' + hashlib.hmac_md5(listenerId+venterId+config.systemPassword);
+
         this.addUser(venterId, "venter");
         this.addUser(listenerId, "listener");
         log.store("joinRoom", venterId);
         log.store("joinRoom", listenerId);
 
         var venter = User.getById(venterId);
-		venter.partner_list.push(listenerId);
+        venter.partner_list.push(listenerId);
         var listener = User.getById(listenerId);
-		listener.partner_list.push(venterId);
-		
-		
-		
+        listener.partner_list.push(venterId);
+
+
+
 
         var venterIP = venter ? venter.getIPAddress() || "" : "";
         var listenerIP = listener ? listener.getIPAddress() || "" : "";
@@ -265,14 +271,14 @@
 
 
             if(listeners_here >= 1 && venters_here >= 1 && (Date.now() - room.startTime) > 1000*60*10) { // room is full; they've been talking for > 15 min
-		underscore.each(room.users, function(value, key, list) {
-			if (value === 'venter') {
-				venterId = key;
-			}
-			else if (value === 'listener') {
-				listenerId = key;
-			}
-		});
+        underscore.each(room.users, function(value, key, list) {
+            if (value === 'venter') {
+                venterId = key;
+            }
+            else if (value === 'listener') {
+                listenerId = key;
+            }
+        });
 
               feedbackServer.addFeedback({
                 venter: venterId,
@@ -373,6 +379,7 @@
 
     /**
      * Check the queues and create rooms if necessary
+     * TODO: rewrite and reorganize thisfunction
      */
     Room.checkQueues = function () {
         if (venterQueue.length === 0 || listenerQueue.length === 0) {
@@ -500,10 +507,10 @@
         var index = venterQueue.indexOf(userId);
         var queue;
         var otherQueue;
-		var user_type;
+        var user_type;
         if (index !== -1) {
             // venter
-			user_type = 'venter';
+            user_type = 'venter';
             queue = venterQueue;
             otherQueue = listenerQueue;
         } else {
@@ -512,7 +519,7 @@
                 return -1;
             }
             // listener
-			user_type = 'listener';
+            user_type = 'listener';
             queue = listenerQueue;
             otherQueue = venterQueue;
         }
@@ -552,7 +559,7 @@
      * @param {String} reason Either "disconnect" or "request".
      */
     Room.prototype.deleteRoom = function (type, reason) {
-		console.log("deleting room for a reason", reason);
+        console.log("deleting room for a reason", reason);
         log.info({
             event: "Delete room",
             room: this.id
@@ -604,6 +611,11 @@
     Room.prototype.hasType = function (type) {
         return !!this.types[type];
     };
+
+
+	Room.prototype.getReconnectURL = function() {
+		return this.reconnectURL;
+	};
 
     /**
      * Return whether all expected client types are in the Room.
@@ -679,9 +691,9 @@
             }
         }
 
-		// console.log('we will be sending a message of type: %s to userId: %s', type, userId);
-		// console.log('the message is:', message);
-		// console.log('the user <object> is:', user);
+        // console.log('we will be sending a message of type: %s to userId: %s', type, userId);
+        // console.log('the message is:', message);
+        // console.log('the user <object> is:', user);
         user.send(message);
     };
 
@@ -751,32 +763,38 @@
 
     Room.prototype.lookupUserGeoIP = function (userId, callback) {
         var user = User.getById(userId);
-        if (!user) {   								//was:         if (!user || this.users[userId] !== "listener") {
+        if (!user) {                                //was:         if (!user || this.users[userId] !== "listener") {
             callback(null);
         } else {
             user.lookupGeoIP(callback);
         }
     }
 
-	// takes in: two user IDs
-	// calls back with: geoInfo if users are from same country; otherwise, null
-	Room.prototype.areUsersFromSameCountry = function(userId, otherUserId, callback) {
-		var self = this;
-	    self.lookupUserGeoIP(userId, function (geoInfo) {
-			if(geoInfo && geoInfo.data && geoInfo.data.country_name) {
-				self.lookupUserGeoIP(otherUserId, function(geoInfo2) {
-					if(geoInfo2 && geoInfo2.data && geoInfo2.data.country_name && geoInfo2.data.country_name === geoInfo.data.country_name) { 
-						
-						
-						callback(geoInfo);
-						return;
-					}
-				});
-			}
-			callback(null);
-			return;
-	    });		
-	}
+    // takes in: two user IDs
+    // calls back with: geoInfo if users are from same country; otherwise, null
+    Room.prototype.areUsersFromSameCountry = function(userId, otherUserId, callback) {
+        var self = this;
+        self.lookupUserGeoIP(userId, function (geoInfo) {
+            if(geoInfo && geoInfo.data && geoInfo.data.country_name) {
+                self.lookupUserGeoIP(otherUserId, function(geoInfo2) {
+                    if(geoInfo2 && geoInfo2.data && geoInfo2.data.country_name && geoInfo2.data.country_name === geoInfo.data.country_name) {
+
+
+                        callback(geoInfo);
+                        return;
+                    }
+                });
+            }
+            callback(null);
+            return;
+        });
+    }
+
+    Room.prototype.recoverConversation = function(listenerId, venterId, callback) {
+        Conversation.findOne({ 'listener.userId': listenerId, 'venter.userId': venterId}, function (err, conversations) {
+            callback(conversations.messages);
+        });
+    }
 
     /**
      * Add the provided user to the Room.
@@ -818,28 +836,28 @@
         // let the new user know about the other users in the room.
         Object.keys(this.users).forEach(function (otherUserId) {
             if (otherUserId !== userId) {
-	                
-				self.areUsersFromSameCountry(userId, otherUserId, function(geoInfo) {
-					var user = User.getById(userId);
-	                self.sendToUser(otherUserId, "join", user && user.publicId, type, geoInfo);  // let the old user know that the new one has joined
-	                var otherClientType = self.users[otherUserId];
-	                if (VALID_TYPES[otherClientType]) {
-						var otherUser = User.getById(otherUserId);
-	                    // let the new user know about the existing old users
-						if(otherClientType=='venter') {
-	                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, null);
-						}
-						else {
-		                    self.lookupUserGeoIP(otherUserId, function (geoInfo) {		                        
-		                        self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
-		                    });							
-						}
-						
-	                }
-	
-	                (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
-	                (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);	
-				});
+
+                self.areUsersFromSameCountry(userId, otherUserId, function(geoInfo) {
+                    var user = User.getById(userId);
+                    self.sendToUser(otherUserId, "join", user && user.publicId, type, geoInfo);  // let the old user know that the new one has joined
+                    var otherClientType = self.users[otherUserId];
+                    if (VALID_TYPES[otherClientType]) {
+                        var otherUser = User.getById(otherUserId);
+                        // let the new user know about the existing old users
+                        if(otherClientType==='venter') {
+                            self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, null);
+                        }
+                        else {
+                            self.lookupUserGeoIP(otherUserId, function (geoInfo) {
+                                self.sendToUser(userId, "join", otherUser && otherUser.publicId, otherClientType, geoInfo);
+                            });
+                        }
+
+                    }
+
+                    (userInteractions[userId] || (userInteractions[userId] = [])).push(otherUserId);
+                    (userInteractions[otherUserId] || (userInteractions[otherUserId] = [])).push(userId);
+                });
             }
         });
 
@@ -885,7 +903,7 @@
                 function( user, callback ) {
                     if ( reason === 'disconnect' ) {
                         console.log( 'dropping user %s from room', user );
-			console.log("user", user, User.getById(user).getIPAddress());
+            console.log("user", user, User.getById(user).getIPAddress());
 
                         delete users[ user ];
                         delete userIdToRoomId[ user ];
