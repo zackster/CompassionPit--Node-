@@ -72,10 +72,11 @@
       var socketio_addr, socket;
         $("#initializing").append('<br>'+"Socket connection started");
 
-			socketio_addr = "74.207.228.243:8000";
+			socketio_addr = 'compassionpit.com';
             socket = io.connect(socketio_addr, {
                 'max reconnection attempts': 5,
-                'force new connection': true
+                'force new connection': true,
+		'port': 80
             });
 
 
